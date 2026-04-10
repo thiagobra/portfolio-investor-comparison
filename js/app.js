@@ -12,13 +12,14 @@ import {
 
 // ── State ──
 let currentInvestor = null;
+let selectedInvestorId = '';
 
 // ── DOM refs ──
 const totalDisplay = document.getElementById('total-display');
-const btnCompare = document.getElementById('btn-compare');
 const btnDownload = document.getElementById('btn-download-sample');
 const csvUpload = document.getElementById('csv-upload');
 const investorSelect = document.getElementById('investor-select');
+const investorCards = document.querySelectorAll('.investor-card');
 const resultsSection = document.getElementById('results');
 
 // ── Form input listeners ──
@@ -35,40 +36,37 @@ function updateTotal() {
 
   if (Math.abs(total - 100) < 0.5) {
     totalDisplay.className = 'total-value valid';
-    btnCompare.disabled = false;
+    tryAutoCompare();
   } else {
     totalDisplay.className = 'total-value invalid';
-    btnCompare.disabled = true;
+    resultsSection.classList.add('hidden');
   }
 }
 
-// ── Compare button ──
-btnCompare.addEventListener('click', async () => {
-  const investorId = investorSelect.value;
-  if (!investorId) {
-    investorSelect.focus();
-    return;
-  }
+// ── Investor card selection ──
+for (const card of investorCards) {
+  card.addEventListener('click', () => {
+    // Deselect all
+    for (const c of investorCards) c.classList.remove('selected');
+    // Select this one
+    card.classList.add('selected');
+    selectedInvestorId = card.dataset.investor;
+    investorSelect.value = selectedInvestorId;
 
-  await runComparison(investorId);
-});
+    tryAutoCompare();
+  });
+}
 
-// ── Investor select change ──
-investorSelect.addEventListener('change', async () => {
-  const investorId = investorSelect.value;
-  if (!investorId) {
-    resultsSection.classList.add('hidden');
-    currentInvestor = null;
-    return;
-  }
+// ── Auto-compare: fires when both investor selected AND total ≈ 100% ──
+function tryAutoCompare() {
+  if (!selectedInvestorId) return;
 
-  // Auto-compare if form is valid
   const values = readFormValues();
   const total = getTotal(values);
   if (Math.abs(total - 100) < 0.5) {
-    await runComparison(investorId);
+    runComparison(selectedInvestorId);
   }
-});
+}
 
 // ── CSV upload ──
 csvUpload.addEventListener('change', (e) => {

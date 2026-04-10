@@ -134,42 +134,53 @@
   flex-wrap: wrap;
 }
 
-/* ── Select / Dropdown ── */
-.select-wrapper {
-  position: relative;
+/* ── Investor Cards ── */
+.investor-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
 }
 
-.select-wrapper select {
-  appearance: none;
-  width: 100%;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  padding: var(--space-sm) var(--space-xl) var(--space-sm) var(--space-md);
+@media (max-width: 640px) {
+  .investor-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.investor-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
   cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
   outline: none;
-  transition: border-color var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
-.select-wrapper select:focus {
-  border-color: var(--border-focus);
+.investor-card:hover {
+  border-color: var(--text-muted);
+  background: var(--bg-tertiary);
 }
 
-.select-wrapper::after {
-  content: '';
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--text-secondary);
-  pointer-events: none;
+.investor-card.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.investor-card-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.investor-card-style {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: 1.4;
 }
 
 /* ── Comparison Bars ── */

@@ -13,11 +13,31 @@
 
     <!-- Header -->
     <header class="header">
-      <h1>Portfolio Investor Comparison</h1>
-      <p>Compare your portfolio against legendary investors</p>
+      <h1 class="header-title">Portfolio <span class="gradient-text">Investor</span> Comparison</h1>
+      <p class="header-subtitle">See how your asset allocation stacks up against the world's greatest investors</p>
     </header>
 
-    <!-- Step 1: Your Portfolio -->
+    <!-- Step 1: Select Investor -->
+    <section class="section">
+      <div class="section-title">Choose an Investor</div>
+      <div class="investor-cards" id="investor-cards">
+        <button class="investor-card" data-investor="warren-buffett">
+          <div class="investor-card-name">Warren Buffett</div>
+          <div class="investor-card-style">Value investing &middot; Long-term concentrated bets on moated companies</div>
+        </button>
+        <button class="investor-card" data-investor="ray-dalio">
+          <div class="investor-card-name">Ray Dalio</div>
+          <div class="investor-card-style">All-Weather &middot; Risk-balanced across economic environments</div>
+        </button>
+        <button class="investor-card" data-investor="michael-burry">
+          <div class="investor-card-name">Michael Burry</div>
+          <div class="investor-card-style">Contrarian &middot; Asymmetric bets with deep margin of safety</div>
+        </button>
+      </div>
+      <input type="hidden" id="investor-select" value="">
+    </section>
+
+    <!-- Step 2: Your Portfolio -->
     <section class="section">
       <div class="section-title">Your Portfolio</div>
       <div class="card">
@@ -67,23 +87,7 @@
               <input type="file" id="csv-upload" accept=".csv,.tsv,.txt">
             </label>
             <button class="btn btn-secondary" id="btn-download-sample">Download Sample</button>
-            <button class="btn btn-primary" id="btn-compare" disabled>Compare</button>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Step 2: Select Investor -->
-    <section class="section">
-      <div class="section-title">Select Investor</div>
-      <div class="card">
-        <div class="select-wrapper">
-          <select id="investor-select">
-            <option value="">Choose a legendary investor...</option>
-            <option value="warren-buffett">Warren Buffett</option>
-            <option value="ray-dalio">Ray Dalio</option>
-            <option value="michael-burry">Michael Burry</option>
-          </select>
         </div>
       </div>
     </section>
