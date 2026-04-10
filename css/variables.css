@@ -1,0 +1,79 @@
+:root {
+  /* VS Code Dark Theme */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d2d;
+  --bg-hover: #3e3e3e;
+  --bg-input: #3c3c3c;
+  --border: #3e3e3e;
+  --border-focus: #007acc;
+
+  /* Text */
+  --text-primary: #d4d4d4;
+  --text-secondary: #9d9d9d;
+  --text-muted: #6a6a6a;
+
+  /* Accent */
+  --accent: #007acc;
+  --accent-hover: #1a8ad4;
+  --accent-subtle: rgba(0, 122, 204, 0.15);
+
+  /* Semantic */
+  --success: #4ec9b0;
+  --warning: #dcdcaa;
+  --error: #f44747;
+  --info: #569cd6;
+
+  /* Chart */
+  --chart-user: #569cd6;
+  --chart-investor: #ce9178;
+  --chart-bg: #1a1a1a;
+
+  /* Sector colors */
+  --sector-tech: #569cd6;
+  --sector-finance: #4ec9b0;
+  --sector-consumer: #ce9178;
+  --sector-health: #c586c0;
+  --sector-energy: #dcdcaa;
+  --sector-industrial: #d7ba7d;
+  --sector-other: #6a9955;
+
+  /* Geo colors */
+  --geo-us: #569cd6;
+  --geo-europe: #4ec9b0;
+  --geo-china: #ce9178;
+  --geo-latam: #c586c0;
+  --geo-row: #6a9955;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  /* Typography */
+  --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}

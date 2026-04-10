@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Investor Comparison</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>Portfolio Investor Comparison</h1>
+      <p>Compare your portfolio against legendary investors</p>
+    </header>
+
+    <!-- Step 1: Your Portfolio -->
+    <section class="section">
+      <div class="section-title">Your Portfolio</div>
+      <div class="card">
+        <div class="grid-2" id="portfolio-form">
+          <div class="input-group">
+            <label for="input-fixed-income">Fixed income (bonds)</label>
+            <input type="number" id="input-fixed-income" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-equities">Equities (stocks)</label>
+            <input type="number" id="input-equities" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-cash">Cash and Savings</label>
+            <input type="number" id="input-cash" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-real-estate">Real estate</label>
+            <input type="number" id="input-real-estate" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-pensions">Pensions (priv. &amp; gov.)</label>
+            <input type="number" id="input-pensions" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-gold">Gold</label>
+            <input type="number" id="input-gold" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="input-crypto">Crypto</label>
+            <input type="number" id="input-crypto" min="0" max="100" step="0.1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="total-row">
+          <span class="total-value" id="total-display">Total: 0%</span>
+          <div class="actions-row">
+            <label class="file-upload-label">
+              Upload CSV
+              <input type="file" id="csv-upload" accept=".csv,.tsv,.txt">
+            </label>
+            <button class="btn btn-secondary" id="btn-download-sample">Download Sample</button>
+            <button class="btn btn-primary" id="btn-compare" disabled>Compare</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Select Investor -->
+    <section class="section">
+      <div class="section-title">Select Investor</div>
+      <div class="card">
+        <div class="select-wrapper">
+          <select id="investor-select">
+            <option value="">Choose a legendary investor...</option>
+            <option value="warren-buffett">Warren Buffett</option>
+            <option value="ray-dalio">Ray Dalio</option>
+            <option value="michael-burry">Michael Burry</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results (hidden until comparison) -->
+    <div id="results" class="hidden">
+
+      <!-- Similarity Score -->
+      <section class="section">
+        <div class="section-title">Similarity Score</div>
+        <div class="card">
+          <div class="score-container">
+            <div class="score-number" id="score-value">0%</div>
+            <div class="score-label">alignment with <span id="score-investor-name"></span></div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="score-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Asset Allocation Comparison -->
+      <section class="section">
+        <div class="section-title">Asset Allocation Comparison</div>
+        <div class="card" id="asset-comparison"></div>
+      </section>
+
+      <!-- Geographic Allocation -->
+      <section class="section">
+        <div class="section-title">Geographic Allocation</div>
+        <div class="card" id="geo-allocation"></div>
+      </section>
+
+      <!-- Sector Drilldown -->
+      <section class="section">
+        <div class="section-title">Sector Drilldown (within Equities)</div>
+        <div class="card" id="sector-drilldown"></div>
+      </section>
+
+      <!-- Suggestions -->
+      <section class="section">
+        <div class="section-title">Suggestions</div>
+        <div class="card" id="suggestions"></div>
+      </section>
+
+      <!-- Investor Philosophy -->
+      <section class="section">
+        <div class="section-title">Investor Philosophy</div>
+        <div class="card" id="philosophy"></div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

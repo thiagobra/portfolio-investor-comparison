@@ -1,0 +1,41 @@
+# Ray Dalio
+
+> Balance risk across economic environments: inflation, deflation, growth, and contraction.
+
+## Asset Allocation
+| Asset Class | % |
+|---|---|
+| Equities (stocks) | 30 |
+| Fixed income (bonds) | 55 |
+| Cash and Savings | 0 |
+| Real estate | 0 |
+| Pensions (priv. & gov.) | 0 |
+| Gold | 7.5 |
+| Crypto | 0 |
+
+## Geographic Allocation
+| Region | % |
+|---|---|
+| US | 60 |
+| Europe | 15 |
+| China | 10 |
+| LatAm | 3 |
+| Rest of World | 12 |
+
+## Sector Allocation
+| Sector | % | Key Industries |
+|---|---|---|
+| Technology | 20 | Software, Semiconductors |
+| Financials | 15 | Banking, Asset Management |
+| Consumer | 18 | Retail, E-commerce |
+| Healthcare | 15 | Pharma, Biotech |
+| Energy | 10 | Oil & Gas, Renewables |
+| Industrials | 12 | Manufacturing, Infrastructure |
+| Other | 10 | — |
+
+## Key Principles
+- Risk parity: balance risk, not dollar amounts
+- Diversify across asset classes and geographies
+- All Weather portfolio for any economic environment
+- Systematic, rules-based approach
+- Commodities and gold as inflation hedges
