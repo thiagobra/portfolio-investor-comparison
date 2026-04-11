@@ -43,6 +43,12 @@
         </button>
       </div>
       <input type="hidden" id="investor-select" value="">
+      <div class="snapshot-row" id="snapshot-row" style="display:none;">
+        <label for="snapshot-select" class="snapshot-label">📅 Load saved portfolio:</label>
+        <select id="snapshot-select" class="snapshot-select">
+          <option value="">— Select a saved snapshot —</option>
+        </select>
+      </div>
     </section>
 
     <!-- Step 2: Your Portfolio -->
@@ -80,6 +86,7 @@
         <div class="total-row">
           <span class="total-value" id="total-display">Total: 0%</span>
           <div class="actions-row">
+            <button class="btn btn-primary" id="btn-save-portfolio">💾 Save Portfolio</button>
             <label class="file-upload-label">
               Upload CSV
               <input type="file" id="csv-upload" accept=".csv,.tsv,.txt">

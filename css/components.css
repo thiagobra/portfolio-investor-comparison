@@ -701,3 +701,33 @@
 .flag-br {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 14'><rect width='20' height='14' fill='%23009b3a'/><polygon points='10,1.5 18,7 10,12.5 2,7' fill='%23fedf00'/><circle cx='10' cy='7' r='2.5' fill='%23002776'/></svg>");
 }
+
+/* ── Snapshot dropdown ── */
+.snapshot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.snapshot-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.snapshot-select {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+.snapshot-select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}

@@ -178,6 +178,123 @@ csvUpload.addEventListener('change', (e) => {
   reader.readAsText(file);
 });
 
+// ── Portfolio snapshots (localStorage) ────────────────────────────
+const SNAPSHOT_KEY = 'portfolio-snapshots';
+const btnSave = document.getElementById('btn-save-portfolio');
+const snapshotRow = document.getElementById('snapshot-row');
+const snapshotSelect = document.getElementById('snapshot-select');
+
+function loadSnapshots() {
+  try {
+    return JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveSnapshots(list) {
+  localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(list));
+}
+
+function captureSnapshot() {
+  return {
+    timestamp: Date.now(),
+    assets: readFormValues(),
+    sectors: readSectorValues(),
+    geo: readGeoValues(),
+    industries: readIndustryValues(),
+  };
+}
+
+function applySnapshot(snap) {
+  if (snap.assets) setFormValues(snap.assets);
+  if (snap.sectors) {
+    for (const id of SECTOR_INPUT_IDS) {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    }
+    for (const [key, val] of Object.entries(snap.sectors)) {
+      const idx = ['Technology','Financials','Consumer','Healthcare','Energy','Industrials','Other'].indexOf(key);
+      if (idx >= 0 && val) document.getElementById(SECTOR_INPUT_IDS[idx]).value = val;
+    }
+  }
+  if (snap.geo) {
+    for (const id of GEO_INPUT_IDS) {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    }
+    const geoKeys = ['US','Europe','China','LatAm','Rest of World'];
+    for (const [key, val] of Object.entries(snap.geo)) {
+      const idx = geoKeys.indexOf(key);
+      if (idx >= 0 && val) document.getElementById(GEO_INPUT_IDS[idx]).value = val;
+    }
+  }
+  if (snap.industries) {
+    for (const id of INDUSTRY_INPUT_IDS) {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    }
+    const indKeys = ['Semiconductors','Pharmaceuticals','Finance','Software','Internet/Software Services','Medical Specialties','Banks','Telecom Equipment','Industrial Machinery','Biotechnology','Other'];
+    for (const [key, val] of Object.entries(snap.industries)) {
+      const idx = indKeys.indexOf(key);
+      if (idx >= 0 && val) document.getElementById(INDUSTRY_INPUT_IDS[idx]).value = val;
+    }
+  }
+  updateTotal();
+  updateSectorTotalDisplay();
+  updateGeoTotalDisplay();
+  updateIndustryTotalDisplay();
+  if (cachedInvestor) {
+    renderGeoSection();
+    renderSectorSection();
+    renderIndustrySection();
+  }
+}
+
+function formatTimestamp(ts) {
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function refreshSnapshotDropdown() {
+  const snaps = loadSnapshots();
+  snapshotSelect.innerHTML = '<option value="">— Select a saved snapshot —</option>';
+  if (snaps.length === 0) {
+    snapshotRow.style.display = 'none';
+    return;
+  }
+  snapshotRow.style.display = '';
+  snaps
+    .slice()
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .forEach(snap => {
+      const opt = document.createElement('option');
+      opt.value = String(snap.timestamp);
+      opt.textContent = formatTimestamp(snap.timestamp);
+      snapshotSelect.appendChild(opt);
+    });
+}
+
+btnSave.addEventListener('click', () => {
+  const snap = captureSnapshot();
+  const snaps = loadSnapshots();
+  snaps.push(snap);
+  saveSnapshots(snaps);
+  refreshSnapshotDropdown();
+  btnSave.textContent = '✅ Saved!';
+  setTimeout(() => { btnSave.textContent = '💾 Save Portfolio'; }, 1500);
+});
+
+snapshotSelect.addEventListener('change', () => {
+  const ts = parseInt(snapshotSelect.value, 10);
+  if (!ts) return;
+  const snap = loadSnapshots().find(s => s.timestamp === ts);
+  if (snap) applySnapshot(snap);
+});
+
+refreshSnapshotDropdown();
+
 btnDownload.addEventListener('click', () => {
   const csv = generateSampleCSV();
   const blob = new Blob([csv], { type: 'text/csv' });
