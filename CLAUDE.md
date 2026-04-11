@@ -9,8 +9,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Key constraints:
 - **No npm/build tools** — native ES modules, CSS custom properties only
 - **No framework** — vanilla JS, direct DOM manipulation
-- **No external API** — all data is local (Markdown + CSV)
+- **No external runtime APIs** — all investor data is static (Markdown files + CSV uploads)
 - **CSV + Markdown as data** — not a database
+- **Research → Commit:** Use external APIs (Perplexity, SEC filing sources) during *development* to source data, then commit results as `.md` files. No API calls in production code.
 
 ## Running Locally
 
@@ -27,6 +28,26 @@ python -m http.server 8000
 ```
 
 Then navigate to `http://localhost:3000` or the port your server reports.
+
+## Data Sourcing & Validation
+
+Investor allocation data must reflect **current, authoritative sources**:
+
+- **Primary:** SEC 13F filings (quarterly) from whalewisdom.com, 13f.info, 13radar.com, acquirersmultiple.com
+- **Secondary:** Official investor publications (Berkshire letters, Bridgewater reports, investor interviews)
+- **Historical:** For past periods, cite specific books (Lynch's "One Up On Wall Street", Buffett's annual letters, academic sources)
+
+Before updating an investor's `.md` file:
+1. Verify allocations against 2–3 authoritative sources
+2. Prioritize **recent data** (Q3/Q4 2025, earliest 2026; avoid stale holdings)
+3. Ensure all percentages sum to **exactly 100%** (asset class, geographic, and sector tables)
+4. Commit with clear source attribution in message (see Git Commit Convention below)
+
+Example sources to check:
+- Buffett: Berkshire 13F filings, annual letter
+- Dalio: Bridgewater publications, Bloomberg interviews
+- Burry: Scion Asset Management 13F, social media updates
+- Lynch: Historical Magellan Fund data, published books
 
 ## Core Architecture
 
@@ -67,6 +88,30 @@ Parser extracts via regex. To add an investor:
 2. Add to `INVESTOR_FILES` dict in `investors-loader.js`
 3. Add `<button class="investor-card" data-investor="id">` in `index.html`
 
+## Git Commit Convention
+
+Maintain consistency and auditability with atomic commits:
+
+**Investor data updates:** One commit per investor with source attribution
+```
+Update [Investor] [section] to [Source Data] ([Key finding])
+```
+Examples:
+- `Update Buffett geo+sector to Q4 2025 13F data (BYD exited, Financials 40%)`
+- `Update Burry geo+sector to Q3 2025 Scion 13F (exited China, bearish AI pivot)`
+- `Update Lynch geo to historical Magellan data (90% US confirmed 1984)`
+
+**Feature work:** Group related changes; reference GitHub issues
+```
+[Action] [scope] + issue reference
+```
+Examples:
+- `Add industry allocation section to all investors (fixes #17)`
+- `Implement industry allocation UI form + comparison (fixes #18)`
+- `Closes #N` auto-closes the issue when merged
+
+Always use `rtk git` for token-efficient output (see Performance & Bundle).
+
 ## Common Tasks
 
 ### Modify an Investor's Allocation
@@ -94,6 +139,27 @@ Geo/sector inputs are **optional**:
 - If user fills them (sum ~100%), show "You vs Investor" comparison side-by-side
 - This logic is in `renderGeoAllocation()` and `renderSectorSection()` in app.js
 
+## Feature Development Workflow
+
+Features are tracked and prioritized via GitHub issues:
+
+1. **Create issue** with clear acceptance criteria
+   - Label with `enhancement` (feature/UI), `data` (investor data updates), or `user-suggestion` (from in-app tool)
+   - Include authoritative sources if it's data-driven
+
+2. **Dependency chain:** Data issues must complete before dependent UI issues
+   - Example: **#17 (data)** "Add ## Industry Allocation section to investor .md files"
+   - Blocks: **#18 (enhancement)** "Add user industry allocation input form"
+
+3. **Implement → Reference issue in commit** with `Closes #N` or `Fix #N`
+   - Automatic issue closure on merge
+
+4. **For data-driven features:** Always cite sources (SEC filings, publications, etc.) in issue and commit
+
+**Current roadmap:**
+- **#17 (data):** Add `## Industry Allocation` section to all investor `.md` files (top 10–15 industries + "Other", must sum to 100%)
+- **#18 (enhancement):** Add user industry allocation input form + side-by-side UI comparison (dependent on #17)
+
 ## Styling & Theme
 
 - **CSS custom properties** in `variables.css` — all colors, spacing, typography defined there
@@ -110,7 +176,17 @@ No minification, no tree-shaking needed. CSS is inline-linked (no critical CSS e
 - `index.html` — ~12KB (entire form + results skeleton)
 - `css/*.css` — ~16KB total
 - `js/*.js` — ~20KB total
-- 4 investor `.md` files — ~4KB total
+- 4+ investor `.md` files — ~4KB total
+
+**Token efficiency:** Use `rtk` prefix for common commands to reduce token overhead:
+```bash
+rtk git status          # Ultra-compact status
+rtk git log             # Compact log
+rtk git diff            # Compact diffs
+rtk git add             # Ultra-compact confirmations
+rtk git commit          # Ultra-compact confirmations
+```
+See global CLAUDE.md for full RTK reference and savings on ~60–90% of common operations.
 
 GH issue auto-close works via commit message keyword (`Closes #N`).
 
