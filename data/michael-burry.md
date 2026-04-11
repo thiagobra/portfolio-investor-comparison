@@ -14,22 +14,22 @@
 ## Geographic Allocation
 | Region | % |
 |---|---|
-| US | 65 |
-| Europe | 5 |
-| China | 15 |
-| LatAm | 2 |
-| Rest of World | 13 |
+| US | 100 |
+| Europe | 0 |
+| China | 0 |
+| LatAm | 0 |
+| Rest of World | 0 |
 
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 10 | Semiconductors, Hardware |
-| Financials | 5 | Regional Banks |
-| Consumer | 15 | Retail, Apparel |
-| Healthcare | 35 | Pharma, Biotech, Medical Devices |
-| Energy | 20 | Oil & Gas, Natural Resources |
-| Industrials | 5 | Manufacturing |
-| Other | 10 | — |
+| Technology | 0 | — |
+| Financials | 20 | Student Loans, Regional Banks |
+| Consumer | 26 | Apparel, Retail |
+| Healthcare | 35 | Managed Care, Pharma, Biotech |
+| Energy | 0 | — |
+| Industrials | 0 | — |
+| Other | 19 | Puts, Hedges |
 
 ## Key Principles
 - Deep value: buy far below intrinsic value
