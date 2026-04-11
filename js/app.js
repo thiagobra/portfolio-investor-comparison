@@ -41,6 +41,7 @@ const investorSelect = document.getElementById('investor-select');
 const investorCards = document.querySelectorAll('.investor-card');
 const resultsSection = document.getElementById('results');
 const sectorFitPanel = document.getElementById('sector-fit-panel');
+const sectorDrilldownPanel = document.getElementById('sector-drilldown-panel');
 
 for (const id of INPUT_IDS) {
   document.getElementById(id).addEventListener('input', updateTotal);
@@ -255,8 +256,10 @@ function renderSectorSection() {
       cachedInvestor.name
     );
     sectorFitPanel.classList.remove('hidden');
+    sectorDrilldownPanel.classList.add('hidden');
   } else {
     sectorFitPanel.classList.add('hidden');
+    sectorDrilldownPanel.classList.remove('hidden');
   }
 }
 
