@@ -146,6 +146,8 @@ btnSuggestion.addEventListener('click', () => {
     title
   )}&body=${encodeURIComponent(body || '')}`;
   window.open(url, '_blank', 'noopener');
+  suggestionTitle.value = '';
+  suggestionBody.value = '';
 });
 
 async function runComparison(investorId) {
