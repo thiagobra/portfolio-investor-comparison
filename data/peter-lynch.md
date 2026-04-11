@@ -14,11 +14,11 @@
 ## Geographic Allocation
 | Region | % |
 |---|---|
-| US | 85 |
-| Europe | 8 |
-| China | 2 |
+| US | 90 |
+| Europe | 6 |
+| China | 0 |
 | LatAm | 1 |
-| Rest of World | 4 |
+| Rest of World | 3 |
 
 ## Sector Allocation
 | Sector | % | Key Industries |
