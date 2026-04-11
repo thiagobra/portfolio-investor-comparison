@@ -35,12 +35,12 @@ export function generateSuggestions(deviations, investorName) {
     if (diff > 0) {
       suggestions.push({
         type: 'decrease',
-        text: `Reduce ${key} by ~${Math.abs(diff).toFixed(1)}% to align with ${investorName}`,
+        text: `Reduce ${key} by ~${Math.round(Math.abs(diff))}% to align with ${investorName}`,
       });
     } else {
       suggestions.push({
         type: 'increase',
-        text: `Increase ${key} by ~${Math.abs(diff).toFixed(1)}% to align with ${investorName}`,
+        text: `Increase ${key} by ~${Math.round(Math.abs(diff))}% to align with ${investorName}`,
       });
     }
   }

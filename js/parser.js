@@ -18,7 +18,37 @@ const INPUT_IDS = [
   'input-crypto',
 ];
 
-export { ASSET_CLASSES, INPUT_IDS };
+const SECTORS = [
+  'Technology',
+  'Financials',
+  'Consumer',
+  'Healthcare',
+  'Energy',
+  'Industrials',
+  'Other',
+];
+
+const SECTOR_INPUT_IDS = [
+  'sector-technology',
+  'sector-financials',
+  'sector-consumer',
+  'sector-healthcare',
+  'sector-energy',
+  'sector-industrials',
+  'sector-other',
+];
+
+export { ASSET_CLASSES, INPUT_IDS, SECTORS, SECTOR_INPUT_IDS };
+
+export function readSectorValues() {
+  const result = {};
+  for (let i = 0; i < SECTORS.length; i++) {
+    const el = document.getElementById(SECTOR_INPUT_IDS[i]);
+    if (!el) continue;
+    result[SECTORS[i]] = parseFloat(el.value) || 0;
+  }
+  return result;
+}
 
 export function readFormValues() {
   const result = {};

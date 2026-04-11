@@ -1,6 +1,6 @@
 # Portfolio Investor Comparison
 
-> Compare your portfolio allocation against legendary investors like Buffett, Dalio, and Burry.
+> Compare your portfolio allocation against legendary investors like Buffett, Dalio, Burry, and Lynch.
 
 ## What It Does
 
@@ -21,6 +21,14 @@ You enter your portfolio percentages across 7 asset classes, pick an investor, a
 
 You can also upload a CSV file instead of typing manually. A sample CSV is provided.
 
+### Advanced Mode
+
+Toggle **Advanced Mode** to unlock a per-sector breakdown of your equities. You'll split your stock allocation across 7 sectors (Technology, Financials, Consumer, Healthcare, Energy, Industrials, Other) and get a second similarity score showing how closely your sector mix matches the selected investor.
+
+### Got a suggestion?
+
+Every page has an in-app suggestion box at the bottom. Type a title and description, click submit, and it opens a prefilled GitHub issue tagged `user-suggestion` — no account setup dance.
+
 ## Asset Classes
 
 | Class | Example |
@@ -40,6 +48,7 @@ You can also upload a CSV file instead of typing manually. A sample CSV is provi
 | **Warren Buffett** | Value investing, concentrated long-term bets |
 | **Ray Dalio** | All-Weather, risk-balanced diversification |
 | **Michael Burry** | Contrarian, asymmetric bets with margin of safety |
+| **Peter Lynch** | GARP, invest in what you know, hunt for tenbaggers |
 
 Investor data lives in editable Markdown files under `data/`. You can add or modify investors by following the same format.
 
@@ -85,6 +94,7 @@ finantial-planner/
     warren-buffett.md     -- Buffett profile + allocations
     ray-dalio.md          -- Dalio profile + allocations
     michael-burry.md      -- Burry profile + allocations
+    peter-lynch.md        -- Lynch profile + allocations
   sample-portfolio.csv    -- Example CSV for upload testing
 ```
 

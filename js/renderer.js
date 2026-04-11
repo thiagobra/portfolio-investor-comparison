@@ -41,14 +41,14 @@ export function renderAssetComparison(container, userAllocation, investorAllocat
           <div class="bar-track">
             <div class="bar-fill user" style="width: ${userVal}%"></div>
           </div>
-          <span class="value">${userVal.toFixed(1)}%</span>
+          <span class="value">${Math.round(userVal)}%</span>
         </div>
         <div class="bar-line">
           <span class="tag">${esc(getInitials(investorName))}</span>
           <div class="bar-track">
             <div class="bar-fill investor" style="width: ${investorVal}%"></div>
           </div>
-          <span class="value">${investorVal.toFixed(1)}%</span>
+          <span class="value">${Math.round(investorVal)}%</span>
         </div>
       </div>
     `;
@@ -60,6 +60,45 @@ export function renderScore(score, investorName) {
   document.getElementById('score-value').textContent = `${Math.round(score)}%`;
   document.getElementById('score-investor-name').textContent = investorName;
   document.getElementById('score-bar').style.width = `${score}%`;
+}
+
+export function renderSectorScore(score, investorName) {
+  document.getElementById('sector-score-value').textContent = `${Math.round(score)}%`;
+  document.getElementById('sector-score-investor-name').textContent = investorName;
+  document.getElementById('sector-score-bar').style.width = `${score}%`;
+}
+
+export function renderSectorComparison(container, userSectors, investorSectors, investorName) {
+  container.innerHTML = '';
+  const allKeys = new Set([...Object.keys(userSectors), ...Object.keys(investorSectors)]);
+
+  for (const key of allKeys) {
+    const userVal = userSectors[key] || 0;
+    const investorVal = investorSectors[key] || 0;
+
+    const row = document.createElement('div');
+    row.className = 'comparison-row';
+    row.innerHTML = `
+      <div class="label">${esc(key)}</div>
+      <div class="bar-pair">
+        <div class="bar-line">
+          <span class="tag">You</span>
+          <div class="bar-track">
+            <div class="bar-fill user" style="width: ${userVal}%"></div>
+          </div>
+          <span class="value">${Math.round(userVal)}%</span>
+        </div>
+        <div class="bar-line">
+          <span class="tag">${esc(getInitials(investorName))}</span>
+          <div class="bar-track">
+            <div class="bar-fill investor" style="width: ${investorVal}%"></div>
+          </div>
+          <span class="value">${Math.round(investorVal)}%</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(row);
+  }
 }
 
 export function renderGeoAllocation(container, geoData) {
@@ -76,7 +115,7 @@ export function renderGeoAllocation(container, geoData) {
     segment.className = 'geo-segment';
     segment.style.width = `${pct}%`;
     segment.style.background = GEO_COLORS[region] || 'var(--text-muted)';
-    if (pct >= 8) segment.textContent = `${pct}%`;
+    if (pct >= 8) segment.textContent = `${Math.round(pct)}%`;
     bar.appendChild(segment);
   }
 
@@ -91,7 +130,7 @@ export function renderGeoAllocation(container, geoData) {
     item.className = 'geo-legend-item';
     item.innerHTML = `
       <span class="geo-dot" style="background: ${GEO_COLORS[region] || 'var(--text-muted)'}"></span>
-      ${esc(region)} ${pct}%
+      ${esc(region)} ${Math.round(pct)}%
     `;
     legend.appendChild(item);
   }
@@ -113,7 +152,7 @@ export function renderSectorDrilldown(container, sectorData) {
     row.innerHTML = `
       <div class="sector-header">
         <span class="sector-name">${esc(name)}</span>
-        <span class="sector-pct">${pct}%</span>
+        <span class="sector-pct">${Math.round(pct)}%</span>
       </div>
       <div class="sector-bar-track">
         <div class="sector-bar-fill" style="width: ${pct}%; background: ${color}"></div>

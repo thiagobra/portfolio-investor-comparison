@@ -2,6 +2,7 @@ const INVESTOR_FILES = {
   'warren-buffett': 'data/warren-buffett.md',
   'ray-dalio': 'data/ray-dalio.md',
   'michael-burry': 'data/michael-burry.md',
+  'peter-lynch': 'data/peter-lynch.md',
 };
 
 function parseTable(text, sectionName) {

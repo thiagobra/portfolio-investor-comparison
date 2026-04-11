@@ -19,19 +19,27 @@
 
     <!-- Step 1: Select Investor -->
     <section class="section">
-      <div class="section-title">Choose an Investor</div>
+      <div class="section-title">👤 Choose an Investor</div>
       <div class="investor-cards" id="investor-cards">
         <button class="investor-card" data-investor="warren-buffett">
+          <div class="investor-card-avatar">🦉</div>
           <div class="investor-card-name">Warren Buffett</div>
           <div class="investor-card-style">Value investing &middot; Long-term concentrated bets on moated companies</div>
         </button>
         <button class="investor-card" data-investor="ray-dalio">
+          <div class="investor-card-avatar">🌦️</div>
           <div class="investor-card-name">Ray Dalio</div>
           <div class="investor-card-style">All-Weather &middot; Risk-balanced across economic environments</div>
         </button>
         <button class="investor-card" data-investor="michael-burry">
+          <div class="investor-card-avatar">🧭</div>
           <div class="investor-card-name">Michael Burry</div>
           <div class="investor-card-style">Contrarian &middot; Asymmetric bets with deep margin of safety</div>
+        </button>
+        <button class="investor-card" data-investor="peter-lynch">
+          <div class="investor-card-avatar">🔎</div>
+          <div class="investor-card-name">Peter Lynch</div>
+          <div class="investor-card-style">GARP &middot; Invest in what you know, hunt for tenbaggers</div>
         </button>
       </div>
       <input type="hidden" id="investor-select" value="">
@@ -39,42 +47,49 @@
 
     <!-- Step 2: Your Portfolio -->
     <section class="section">
-      <div class="section-title">Your Portfolio</div>
+      <div class="section-title-row">
+        <div class="section-title">💼 Your Portfolio</div>
+        <label class="toggle-switch" title="Enable per-sector breakdown of your equities">
+          <input type="checkbox" id="advanced-mode-toggle">
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">Advanced Mode</span>
+        </label>
+      </div>
       <div class="card">
         <div class="grid-2" id="portfolio-form">
           <div class="input-group">
-            <label for="input-fixed-income">Fixed income (bonds)</label>
-            <input type="number" id="input-fixed-income" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-fixed-income">📜 Fixed income (bonds)</label>
+            <input type="number" id="input-fixed-income" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-equities">Equities (stocks)</label>
-            <input type="number" id="input-equities" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-equities">📈 Equities (stocks)</label>
+            <input type="number" id="input-equities" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-cash">Cash and Savings</label>
-            <input type="number" id="input-cash" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-cash">💵 Cash and Savings</label>
+            <input type="number" id="input-cash" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-real-estate">Real estate</label>
-            <input type="number" id="input-real-estate" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-real-estate">🏠 Real estate</label>
+            <input type="number" id="input-real-estate" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-pensions">Pensions (priv. &amp; gov.)</label>
-            <input type="number" id="input-pensions" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-pensions">🏛️ Pensions (priv. &amp; gov.)</label>
+            <input type="number" id="input-pensions" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-gold">Gold</label>
-            <input type="number" id="input-gold" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-gold">🥇 Gold</label>
+            <input type="number" id="input-gold" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
           <div class="input-group">
-            <label for="input-crypto">Crypto</label>
-            <input type="number" id="input-crypto" min="0" max="100" step="0.1" value="" placeholder="0">
+            <label for="input-crypto">🪙 Crypto</label>
+            <input type="number" id="input-crypto" min="0" max="100" step="1" value="" placeholder="0">
             <span class="suffix">%</span>
           </div>
         </div>
@@ -92,12 +107,60 @@
       </div>
     </section>
 
+    <!-- Step 2b: Sector breakdown (Advanced Mode only) -->
+    <section class="section hidden" id="sector-section">
+      <div class="section-title">🔬 Equities Sector Breakdown</div>
+      <p class="section-hint">Required in Advanced Mode. Split your equities across sectors (sum to 100%). This unlocks a sector-level similarity score.</p>
+      <div class="card">
+        <div class="grid-2" id="sector-form">
+          <div class="input-group">
+            <label for="sector-technology">Technology</label>
+            <input type="number" id="sector-technology" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-financials">Financials</label>
+            <input type="number" id="sector-financials" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-consumer">Consumer</label>
+            <input type="number" id="sector-consumer" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-healthcare">Healthcare</label>
+            <input type="number" id="sector-healthcare" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-energy">Energy</label>
+            <input type="number" id="sector-energy" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-industrials">Industrials</label>
+            <input type="number" id="sector-industrials" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+          <div class="input-group">
+            <label for="sector-other">Other</label>
+            <input type="number" id="sector-other" min="0" max="100" step="1" value="" placeholder="0">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="total-row">
+          <span class="total-value" id="sector-total-display">Sectors: 0%</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Results (hidden until comparison) -->
     <div id="results" class="hidden">
 
       <!-- Similarity Score -->
       <section class="section">
-        <div class="section-title">Similarity Score</div>
+        <div class="section-title">📊 Similarity Score</div>
         <div class="card">
           <div class="score-container">
             <div class="score-number" id="score-value">0%</div>
@@ -111,35 +174,63 @@
 
       <!-- Asset Allocation Comparison -->
       <section class="section">
-        <div class="section-title">Asset Allocation Comparison</div>
+        <div class="section-title">⚖️ Asset Allocation Comparison</div>
         <div class="card" id="asset-comparison"></div>
       </section>
 
       <!-- Geographic Allocation -->
       <section class="section">
-        <div class="section-title">Geographic Allocation</div>
+        <div class="section-title">🌍 Geographic Allocation</div>
         <div class="card" id="geo-allocation"></div>
       </section>
 
       <!-- Sector Drilldown -->
       <section class="section">
-        <div class="section-title">Sector Drilldown (within Equities)</div>
+        <div class="section-title">🏭 Sector Drilldown (within Equities)</div>
         <div class="card" id="sector-drilldown"></div>
+      </section>
+
+      <!-- Sector Fit (Advanced Mode only) -->
+      <section class="section hidden" id="sector-fit-section">
+        <div class="section-title">🎯 Your Sector Fit</div>
+        <div class="card">
+          <div class="score-container">
+            <div class="score-number" id="sector-score-value">0%</div>
+            <div class="score-label">sector alignment with <span id="sector-score-investor-name"></span></div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="sector-score-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div id="sector-comparison"></div>
+        </div>
       </section>
 
       <!-- Suggestions -->
       <section class="section">
-        <div class="section-title">Suggestions</div>
+        <div class="section-title">✨ Suggestions</div>
         <div class="card" id="suggestions"></div>
       </section>
 
       <!-- Investor Philosophy -->
       <section class="section">
-        <div class="section-title">Investor Philosophy</div>
+        <div class="section-title">📖 Investor Philosophy</div>
         <div class="card" id="philosophy"></div>
       </section>
 
     </div>
+
+    <!-- Suggestion box: opens GitHub issue prefilled -->
+    <section class="section">
+      <div class="section-title">💡 Got a Suggestion?</div>
+      <div class="card">
+        <p class="section-hint">Ideas make this project better. Send yours straight to the GitHub issue tracker — no account juggling, just type and submit.</p>
+        <div class="suggestion-form">
+          <input type="text" id="suggestion-title" placeholder="Short title (e.g. 'Add dark-light toggle')" maxlength="80">
+          <textarea id="suggestion-body" rows="4" placeholder="What should we build or fix? Be as specific as you can." maxlength="2000"></textarea>
+          <button class="btn btn-primary" id="btn-submit-suggestion">📤 Open on GitHub</button>
+        </div>
+      </div>
+    </section>
 
   </div>
 
