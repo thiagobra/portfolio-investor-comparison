@@ -34,7 +34,23 @@ const SECTOR_INPUT_IDS = [
   'sector-other',
 ];
 
-export { ASSET_CLASSES, INPUT_IDS, SECTORS, SECTOR_INPUT_IDS };
+const GEO_REGIONS = [
+  'US',
+  'Europe',
+  'China',
+  'LatAm',
+  'Rest of World',
+];
+
+const GEO_INPUT_IDS = [
+  'geo-us',
+  'geo-europe',
+  'geo-china',
+  'geo-latam',
+  'geo-row',
+];
+
+export { ASSET_CLASSES, INPUT_IDS, SECTORS, SECTOR_INPUT_IDS, GEO_REGIONS, GEO_INPUT_IDS };
 
 export function readSectorValues() {
   const result = {};
@@ -42,6 +58,16 @@ export function readSectorValues() {
     const el = document.getElementById(SECTOR_INPUT_IDS[i]);
     if (!el) continue;
     result[SECTORS[i]] = parseFloat(el.value) || 0;
+  }
+  return result;
+}
+
+export function readGeoValues() {
+  const result = {};
+  for (let i = 0; i < GEO_REGIONS.length; i++) {
+    const el = document.getElementById(GEO_INPUT_IDS[i]);
+    if (!el) continue;
+    result[GEO_REGIONS[i]] = parseFloat(el.value) || 0;
   }
   return result;
 }

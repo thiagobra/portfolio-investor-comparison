@@ -6,8 +6,10 @@ import {
   parseCSV,
   generateSampleCSV,
   readSectorValues,
+  readGeoValues,
   INPUT_IDS,
   SECTOR_INPUT_IDS,
+  GEO_INPUT_IDS,
 } from './parser.js';
 import { calculateDeviation, generateSuggestions } from './engine.js';
 import {
@@ -24,18 +26,17 @@ import {
 const GITHUB_REPO = 'dennyscottjupiter-spec/portfolio-investor-comparison';
 
 let selectedInvestorId = '';
-let advancedMode = false;
+let cachedInvestor = null;
 
 const totalDisplay = document.getElementById('total-display');
 const sectorTotalDisplay = document.getElementById('sector-total-display');
+const geoTotalDisplay = document.getElementById('geo-total-display');
 const btnDownload = document.getElementById('btn-download-sample');
 const csvUpload = document.getElementById('csv-upload');
 const investorSelect = document.getElementById('investor-select');
 const investorCards = document.querySelectorAll('.investor-card');
 const resultsSection = document.getElementById('results');
-const sectorSection = document.getElementById('sector-section');
-const sectorFitSection = document.getElementById('sector-fit-section');
-const advancedToggle = document.getElementById('advanced-mode-toggle');
+const sectorFitPanel = document.getElementById('sector-fit-panel');
 
 for (const id of INPUT_IDS) {
   document.getElementById(id).addEventListener('input', updateTotal);
@@ -43,15 +44,13 @@ for (const id of INPUT_IDS) {
 
 for (const id of SECTOR_INPUT_IDS) {
   const el = document.getElementById(id);
-  if (el) el.addEventListener('input', updateSectorTotal);
+  if (el) el.addEventListener('input', onSectorInput);
 }
 
-advancedToggle.addEventListener('change', () => {
-  advancedMode = advancedToggle.checked;
-  sectorSection.classList.toggle('hidden', !advancedMode);
-  if (!advancedMode) sectorFitSection.classList.add('hidden');
-  tryAutoCompare();
-});
+for (const id of GEO_INPUT_IDS) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', onGeoInput);
+}
 
 function updateTotal() {
   const values = readFormValues();
@@ -67,13 +66,40 @@ function updateTotal() {
   }
 }
 
-function updateSectorTotal() {
+function updateSectorTotalDisplay() {
   const values = readSectorValues();
   const total = Object.values(values).reduce((s, v) => s + v, 0);
-  sectorTotalDisplay.textContent = `Sectors: ${Math.round(total)}%`;
-  sectorTotalDisplay.className =
-    Math.abs(total - 100) < 0.5 ? 'total-value valid' : 'total-value invalid';
-  tryAutoCompare();
+  sectorTotalDisplay.textContent = `Total: ${Math.round(total)}%`;
+  if (total === 0) {
+    sectorTotalDisplay.className = 'total-value';
+  } else {
+    sectorTotalDisplay.className =
+      Math.abs(total - 100) < 0.5 ? 'total-value valid' : 'total-value invalid';
+  }
+  return total;
+}
+
+function updateGeoTotalDisplay() {
+  const values = readGeoValues();
+  const total = Object.values(values).reduce((s, v) => s + v, 0);
+  geoTotalDisplay.textContent = `Total: ${Math.round(total)}%`;
+  if (total === 0) {
+    geoTotalDisplay.className = 'total-value';
+  } else {
+    geoTotalDisplay.className =
+      Math.abs(total - 100) < 0.5 ? 'total-value valid' : 'total-value invalid';
+  }
+  return total;
+}
+
+function onSectorInput() {
+  updateSectorTotalDisplay();
+  renderSectorSection();
+}
+
+function onGeoInput() {
+  updateGeoTotalDisplay();
+  renderGeoSection();
 }
 
 for (const card of investorCards) {
@@ -92,12 +118,6 @@ function tryAutoCompare() {
   const values = readFormValues();
   const total = getTotal(values);
   if (Math.abs(total - 100) >= 0.5) return;
-
-  if (advancedMode) {
-    const sectorValues = readSectorValues();
-    const sectorTotal = Object.values(sectorValues).reduce((s, v) => s + v, 0);
-    if (Math.abs(sectorTotal - 100) >= 0.5) return;
-  }
 
   runComparison(selectedInvestorId);
 }
@@ -150,9 +170,60 @@ btnSuggestion.addEventListener('click', () => {
   suggestionBody.value = '';
 });
 
+function renderGeoSection() {
+  if (!cachedInvestor) return;
+  const userGeo = readGeoValues();
+  const userTotal = Object.values(userGeo).reduce((s, v) => s + v, 0);
+  renderGeoAllocation(
+    document.getElementById('geo-allocation'),
+    cachedInvestor.geographicAllocation,
+    userTotal > 0 ? userGeo : null,
+    cachedInvestor.name
+  );
+  document.getElementById('geo-investor-label').textContent = cachedInvestor.name;
+}
+
+function renderSectorSection() {
+  if (!cachedInvestor) return;
+
+  document.getElementById('sector-investor-label').textContent = cachedInvestor.name;
+  document.getElementById('sector-drilldown-investor-label').textContent = cachedInvestor.name;
+
+  renderSectorDrilldown(
+    document.getElementById('sector-drilldown'),
+    cachedInvestor.sectorAllocation
+  );
+
+  const userSectors = readSectorValues();
+  const userTotal = Object.values(userSectors).reduce((s, v) => s + v, 0);
+  const showFit = Math.abs(userTotal - 100) < 0.5 && userTotal > 0;
+
+  if (showFit) {
+    const investorSectorPcts = {};
+    for (const [name, data] of Object.entries(cachedInvestor.sectorAllocation)) {
+      investorSectorPcts[name] = data.pct;
+    }
+    const { similarityScore: sectorScore } = calculateDeviation(
+      userSectors,
+      investorSectorPcts
+    );
+    renderSectorScore(sectorScore, cachedInvestor.name);
+    renderSectorComparison(
+      document.getElementById('sector-comparison'),
+      userSectors,
+      investorSectorPcts,
+      cachedInvestor.name
+    );
+    sectorFitPanel.classList.remove('hidden');
+  } else {
+    sectorFitPanel.classList.add('hidden');
+  }
+}
+
 async function runComparison(investorId) {
   try {
     const investor = await loadInvestor(investorId);
+    cachedInvestor = investor;
     const userAllocation = readFormValues();
 
     const { deviations, similarityScore } = calculateDeviation(
@@ -169,42 +240,13 @@ async function runComparison(investorId) {
       investor.name
     );
 
-    renderGeoAllocation(
-      document.getElementById('geo-allocation'),
-      investor.geographicAllocation
-    );
-
-    renderSectorDrilldown(
-      document.getElementById('sector-drilldown'),
-      investor.sectorAllocation
-    );
-
     const suggestions = generateSuggestions(deviations, investor.name);
     renderSuggestions(document.getElementById('suggestions'), suggestions);
 
     renderPhilosophy(document.getElementById('philosophy'), investor);
 
-    if (advancedMode) {
-      const userSectors = readSectorValues();
-      const investorSectorPcts = {};
-      for (const [name, data] of Object.entries(investor.sectorAllocation)) {
-        investorSectorPcts[name] = data.pct;
-      }
-      const { similarityScore: sectorScore } = calculateDeviation(
-        userSectors,
-        investorSectorPcts
-      );
-      renderSectorScore(sectorScore, investor.name);
-      renderSectorComparison(
-        document.getElementById('sector-comparison'),
-        userSectors,
-        investorSectorPcts,
-        investor.name
-      );
-      sectorFitSection.classList.remove('hidden');
-    } else {
-      sectorFitSection.classList.add('hidden');
-    }
+    renderGeoSection();
+    renderSectorSection();
 
     resultsSection.classList.remove('hidden');
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });

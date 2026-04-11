@@ -571,6 +571,59 @@
   }
 }
 
+/* ── Geo comparison blocks ── */
+.geo-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.geo-block + .geo-block {
+  margin-top: var(--space-md);
+}
+
+.geo-block-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+.geo-compare {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Sector panels (drilldown + fit) ── */
+.sector-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.sector-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.sector-panel-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+.investor-name-inline {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
 /* ── Suggestion form ── */
 .suggestion-form {
   display: flex;

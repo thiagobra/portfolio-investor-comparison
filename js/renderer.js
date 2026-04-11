@@ -101,12 +101,9 @@ export function renderSectorComparison(container, userSectors, investorSectors, 
   }
 }
 
-export function renderGeoAllocation(container, geoData) {
-  container.innerHTML = '';
-
+function buildGeoStack(geoData) {
   const entries = Object.entries(geoData).filter(([, v]) => v > 0);
 
-  // Stacked bar
   const bar = document.createElement('div');
   bar.className = 'geo-bar';
 
@@ -119,9 +116,6 @@ export function renderGeoAllocation(container, geoData) {
     bar.appendChild(segment);
   }
 
-  container.appendChild(bar);
-
-  // Legend
   const legend = document.createElement('div');
   legend.className = 'geo-legend';
 
@@ -135,7 +129,40 @@ export function renderGeoAllocation(container, geoData) {
     legend.appendChild(item);
   }
 
-  container.appendChild(legend);
+  const wrap = document.createElement('div');
+  wrap.appendChild(bar);
+  wrap.appendChild(legend);
+  return wrap;
+}
+
+export function renderGeoAllocation(container, investorGeo, userGeo, investorName) {
+  container.innerHTML = '';
+
+  const userTotal = userGeo
+    ? Object.values(userGeo).reduce((s, v) => s + v, 0)
+    : 0;
+  const showUser = userGeo && Math.abs(userTotal - 100) < 0.5;
+
+  const makeBlock = (title, data) => {
+    const block = document.createElement('div');
+    block.className = 'geo-block';
+    const heading = document.createElement('div');
+    heading.className = 'geo-block-title';
+    heading.textContent = title;
+    block.appendChild(heading);
+    block.appendChild(buildGeoStack(data));
+    return block;
+  };
+
+  if (showUser) {
+    const wrap = document.createElement('div');
+    wrap.className = 'geo-compare';
+    wrap.appendChild(makeBlock('You', userGeo));
+    wrap.appendChild(makeBlock(`${investorName}`, investorGeo));
+    container.appendChild(wrap);
+  } else {
+    container.appendChild(makeBlock(`${investorName}'s geographic allocation`, investorGeo));
+  }
 }
 
 export function renderSectorDrilldown(container, sectorData) {

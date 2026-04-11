@@ -47,14 +47,7 @@
 
     <!-- Step 2: Your Portfolio -->
     <section class="section">
-      <div class="section-title-row">
-        <div class="section-title">💼 Your Portfolio</div>
-        <label class="toggle-switch" title="Enable per-sector breakdown of your equities">
-          <input type="checkbox" id="advanced-mode-toggle">
-          <span class="toggle-slider"></span>
-          <span class="toggle-label">Advanced Mode</span>
-        </label>
-      </div>
+      <div class="section-title">💼 Your Portfolio</div>
       <div class="card">
         <div class="grid-2" id="portfolio-form">
           <div class="input-group">
@@ -97,54 +90,6 @@
       </div>
     </section>
 
-    <!-- Step 2b: Sector breakdown (Advanced Mode only) -->
-    <section class="section hidden" id="sector-section">
-      <div class="section-title">🔬 Equities Sector Breakdown</div>
-      <p class="section-hint">Required in Advanced Mode. Split your equities across sectors (sum to 100%). This unlocks a sector-level similarity score.</p>
-      <div class="card">
-        <div class="grid-2" id="sector-form">
-          <div class="input-group">
-            <label for="sector-technology">Technology</label>
-            <input type="number" id="sector-technology" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-financials">Financials</label>
-            <input type="number" id="sector-financials" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-consumer">Consumer</label>
-            <input type="number" id="sector-consumer" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-healthcare">Healthcare</label>
-            <input type="number" id="sector-healthcare" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-energy">Energy</label>
-            <input type="number" id="sector-energy" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-industrials">Industrials</label>
-            <input type="number" id="sector-industrials" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-          <div class="input-group">
-            <label for="sector-other">Other</label>
-            <input type="number" id="sector-other" min="0" max="100" step="1" value="" placeholder="0">
-            <span class="suffix">%</span>
-          </div>
-        </div>
-        <div class="total-row">
-          <span class="total-value" id="sector-total-display">Sectors: 0%</span>
-        </div>
-      </div>
-    </section>
-
     <!-- Results (hidden until comparison) -->
     <div id="results" class="hidden">
 
@@ -168,33 +113,6 @@
         <div class="card" id="asset-comparison"></div>
       </section>
 
-      <!-- Geographic Allocation -->
-      <section class="section">
-        <div class="section-title">🌍 Geographic Allocation</div>
-        <div class="card" id="geo-allocation"></div>
-      </section>
-
-      <!-- Sector Drilldown -->
-      <section class="section">
-        <div class="section-title">🏭 Sector Drilldown (within Equities)</div>
-        <div class="card" id="sector-drilldown"></div>
-      </section>
-
-      <!-- Sector Fit (Advanced Mode only) -->
-      <section class="section hidden" id="sector-fit-section">
-        <div class="section-title">🎯 Your Sector Fit</div>
-        <div class="card">
-          <div class="score-container">
-            <div class="score-number" id="sector-score-value">0%</div>
-            <div class="score-label">sector alignment with <span id="sector-score-investor-name"></span></div>
-            <div class="score-bar-track">
-              <div class="score-bar-fill" id="sector-score-bar" style="width: 0%"></div>
-            </div>
-          </div>
-          <div id="sector-comparison"></div>
-        </div>
-      </section>
-
       <!-- Suggestions -->
       <section class="section">
         <div class="section-title">✨ Suggestions</div>
@@ -205,6 +123,113 @@
       <section class="section">
         <div class="section-title">📖 Investor Philosophy</div>
         <div class="card" id="philosophy"></div>
+      </section>
+
+      <!-- Geographic Allocation (optional user input vs investor) -->
+      <section class="section">
+        <div class="section-title">🌍 Geographic Allocation</div>
+        <p class="section-hint">Optional. Fill in your own geographic split (sum to 100%) to compare. If left blank, we'll just show <span class="investor-name-inline" id="geo-investor-label"></span>'s allocation.</p>
+        <div class="card">
+          <div class="grid-2" id="geo-form">
+            <div class="input-group">
+              <label for="geo-us">🇺🇸 US</label>
+              <input type="number" id="geo-us" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="geo-europe">🇪🇺 Europe</label>
+              <input type="number" id="geo-europe" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="geo-china">🇨🇳 China</label>
+              <input type="number" id="geo-china" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="geo-latam">🌎 LatAm</label>
+              <input type="number" id="geo-latam" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="geo-row">🌍 Rest of World</label>
+              <input type="number" id="geo-row" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="total-row">
+            <span class="total-value" id="geo-total-display">Total: 0%</span>
+          </div>
+          <div id="geo-allocation"></div>
+        </div>
+      </section>
+
+      <!-- Sector Allocation (optional user input vs investor) -->
+      <section class="section">
+        <div class="section-title">🏭 Sector Allocation (within Equities)</div>
+        <p class="section-hint">Optional. Split your equities across sectors (sum to 100%) to unlock a sector-level similarity score. If left blank, we'll just show <span class="investor-name-inline" id="sector-investor-label"></span>'s drilldown.</p>
+        <div class="card">
+          <div class="grid-2" id="sector-form">
+            <div class="input-group">
+              <label for="sector-technology">Technology</label>
+              <input type="number" id="sector-technology" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-financials">Financials</label>
+              <input type="number" id="sector-financials" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-consumer">Consumer</label>
+              <input type="number" id="sector-consumer" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-healthcare">Healthcare</label>
+              <input type="number" id="sector-healthcare" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-energy">Energy</label>
+              <input type="number" id="sector-energy" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-industrials">Industrials</label>
+              <input type="number" id="sector-industrials" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+            <div class="input-group">
+              <label for="sector-other">Other</label>
+              <input type="number" id="sector-other" min="0" max="100" step="1" value="" placeholder="0">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="total-row">
+            <span class="total-value" id="sector-total-display">Total: 0%</span>
+          </div>
+        </div>
+
+        <div class="sector-grid">
+          <div class="sector-panel">
+            <div class="sector-panel-title">🏭 <span id="sector-drilldown-investor-label"></span>'s Sector Drilldown</div>
+            <div class="card" id="sector-drilldown"></div>
+          </div>
+          <div class="sector-panel hidden" id="sector-fit-panel">
+            <div class="sector-panel-title">🎯 Your Sector Fit</div>
+            <div class="card">
+              <div class="score-container">
+                <div class="score-number" id="sector-score-value">0%</div>
+                <div class="score-label">sector alignment with <span id="sector-score-investor-name"></span></div>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill" id="sector-score-bar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div id="sector-comparison"></div>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>
