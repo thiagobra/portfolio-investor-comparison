@@ -31,6 +31,20 @@
 | Industrials | 12 | Manufacturing, Infrastructure |
 | Other | 10 | — |
 
+## Industry Allocation
+| Industry | % |
+|---|---|
+| Broad Market Index ETFs | 35 |
+| Software & IT Services | 12 |
+| Pharmaceuticals | 10 |
+| Retail | 8 |
+| Household Products | 7 |
+| Banks | 6 |
+| Semiconductors | 5 |
+| Food Products | 5 |
+| Asset Management | 4 |
+| Other | 8 |
+
 ## Key Principles
 - Risk parity: balance risk, not dollar amounts
 - Diversify across asset classes and geographies

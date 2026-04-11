@@ -31,6 +31,19 @@
 | Industrials | 0 | — |
 | Other | 19 | Puts, Hedges |
 
+## Industry Allocation
+| Industry | % |
+|---|---|
+| Software & Data Analytics | 65 |
+| Semiconductors | 14 |
+| Pharmaceuticals | 11 |
+| Oil & Gas Services | 4 |
+| Managed Care | 2 |
+| Apparel Retail | 1 |
+| Consumer Finance | 1 |
+| Scientific Instruments | 1 |
+| Other | 1 |
+
 ## Key Principles
 - Deep value: buy far below intrinsic value
 - Concentrated, high-conviction contrarian bets

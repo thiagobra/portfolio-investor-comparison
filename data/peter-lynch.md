@@ -31,6 +31,20 @@
 | Industrials | 12 | Auto, Manufacturing |
 | Other | 7 | — |
 
+## Industry Allocation
+| Industry | % |
+|---|---|
+| Banking & Thrifts | 15 |
+| Consumer Discretionary | 15 |
+| Automotive | 10 |
+| Restaurants | 10 |
+| Software | 8 |
+| Insurance | 8 |
+| Telecommunications | 7 |
+| Pharmaceuticals | 6 |
+| Oil & Gas | 5 |
+| Other | 16 |
+
 ## Key Principles
 - Invest in what you know and understand
 - Look for GARP: Growth At a Reasonable Price

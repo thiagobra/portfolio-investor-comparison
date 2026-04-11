@@ -31,6 +31,20 @@
 | Industrials | 2 | Railroads, Aerospace |
 | Other | 7 | — |
 
+## Industry Allocation
+| Industry | % |
+|---|---|
+| Consumer Electronics | 23 |
+| Financial Services | 19 |
+| Commercial Banks | 11 |
+| Beverages | 11 |
+| Petroleum Refining | 7 |
+| Insurance | 6 |
+| Food Products | 4 |
+| Credit Services | 3 |
+| Railroads | 2 |
+| Other | 14 |
+
 ## Key Principles
 - Concentrated positions in high-conviction ideas
 - Long-term holding periods (decades)
