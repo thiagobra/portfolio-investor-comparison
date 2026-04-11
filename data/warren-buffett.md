@@ -14,21 +14,21 @@
 ## Geographic Allocation
 | Region | % |
 |---|---|
-| US | 82 |
-| Europe | 5 |
-| China | 5 |
+| US | 95 |
+| Europe | 0 |
+| China | 0 |
 | LatAm | 1 |
-| Rest of World | 7 |
+| Rest of World | 4 |
 
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 24 | Software, Consumer Electronics |
-| Financials | 30 | Banking, Insurance, Payments |
-| Consumer | 16 | Food & Beverage, Retail |
-| Healthcare | 6 | Pharma, Medical Devices |
-| Energy | 12 | Oil & Gas, Pipelines |
-| Industrials | 5 | Aerospace, Railroads |
+| Technology | 26 | Consumer Electronics, Software |
+| Financials | 40 | Banking, Insurance, Payments |
+| Consumer | 13 | Food & Beverage, Retail |
+| Healthcare | 1 | Managed Care |
+| Energy | 11 | Oil & Gas, Pipelines |
+| Industrials | 2 | Railroads, Aerospace |
 | Other | 7 | — |
 
 ## Key Principles
