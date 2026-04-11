@@ -1,17 +1,17 @@
 const ASSET_CLASSES = [
-  'Fixed income (bonds)',
   'Equities (stocks)',
   'Cash and Savings',
-  'Gold',
+  'Fixed income (bonds)',
   'Crypto',
+  'Gold',
 ];
 
 const INPUT_IDS = [
-  'input-fixed-income',
   'input-equities',
   'input-cash',
-  'input-gold',
+  'input-fixed-income',
   'input-crypto',
+  'input-gold',
 ];
 
 const SECTORS = [
