@@ -6,12 +6,10 @@
 | Asset Class | % |
 |---|---|
 | Equities (stocks) | 90 |
-| Fixed income (bonds) | 2 |
 | Cash and Savings | 8 |
-| Real estate | 0 |
-| Pensions (priv. & gov.) | 0 |
-| Gold | 0 |
+| Fixed income (bonds) | 2 |
 | Crypto | 0 |
+| Gold | 0 |
 
 ## Geographic Allocation
 | Region | % |

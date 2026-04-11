@@ -2,8 +2,6 @@ const ASSET_CLASSES = [
   'Fixed income (bonds)',
   'Equities (stocks)',
   'Cash and Savings',
-  'Real estate',
-  'Pensions (priv. & gov.)',
   'Gold',
   'Crypto',
 ];
@@ -12,8 +10,6 @@ const INPUT_IDS = [
   'input-fixed-income',
   'input-equities',
   'input-cash',
-  'input-real-estate',
-  'input-pensions',
   'input-gold',
   'input-crypto',
 ];
@@ -109,8 +105,6 @@ function matchAssetClass(input) {
     [/fixed\s*income|bonds?/i, 'Fixed income (bonds)'],
     [/equit|stocks?/i, 'Equities (stocks)'],
     [/cash|saving/i, 'Cash and Savings'],
-    [/real\s*estate/i, 'Real estate'],
-    [/pension/i, 'Pensions (priv. & gov.)'],
     [/gold/i, 'Gold'],
     [/crypto/i, 'Crypto'],
   ];
@@ -124,12 +118,10 @@ function matchAssetClass(input) {
 
 export function generateSampleCSV() {
   let csv = 'Asset Class,Percentage\n';
-  csv += 'Fixed income (bonds),19\n';
-  csv += 'Equities (stocks),36\n';
-  csv += 'Cash and Savings,27\n';
-  csv += 'Real estate,12\n';
-  csv += 'Pensions (priv. & gov.),3\n';
-  csv += 'Gold,0\n';
+  csv += 'Equities (stocks),55\n';
+  csv += 'Cash and Savings,25\n';
+  csv += 'Fixed income (bonds),15\n';
   csv += 'Crypto,3\n';
+  csv += 'Gold,2\n';
   return csv;
 }

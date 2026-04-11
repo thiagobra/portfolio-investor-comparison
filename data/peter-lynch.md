@@ -5,13 +5,11 @@
 ## Asset Allocation
 | Asset Class | % |
 |---|---|
-| Equities (stocks) | 85 |
-| Fixed income (bonds) | 5 |
+| Equities (stocks) | 90 |
 | Cash and Savings | 5 |
-| Real estate | 5 |
-| Pensions (priv. & gov.) | 0 |
-| Gold | 0 |
+| Fixed income (bonds) | 5 |
 | Crypto | 0 |
+| Gold | 0 |
 
 ## Geographic Allocation
 | Region | % |
