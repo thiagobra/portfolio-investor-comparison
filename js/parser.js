@@ -50,7 +50,35 @@ const GEO_INPUT_IDS = [
   'geo-row',
 ];
 
-export { ASSET_CLASSES, INPUT_IDS, SECTORS, SECTOR_INPUT_IDS, GEO_REGIONS, GEO_INPUT_IDS };
+const INDUSTRIES = [
+  'Semiconductors',
+  'Pharmaceuticals',
+  'Finance',
+  'Software',
+  'Internet/Software Services',
+  'Medical Specialties',
+  'Banks',
+  'Telecom Equipment',
+  'Industrial Machinery',
+  'Biotechnology',
+  'Other',
+];
+
+const INDUSTRY_INPUT_IDS = [
+  'industry-semiconductors',
+  'industry-pharmaceuticals',
+  'industry-finance',
+  'industry-software',
+  'industry-internet-software',
+  'industry-medical-specialties',
+  'industry-banks',
+  'industry-telecom-equipment',
+  'industry-industrial-machinery',
+  'industry-biotechnology',
+  'industry-other',
+];
+
+export { ASSET_CLASSES, INPUT_IDS, SECTORS, SECTOR_INPUT_IDS, GEO_REGIONS, GEO_INPUT_IDS, INDUSTRIES, INDUSTRY_INPUT_IDS };
 
 export function readSectorValues() {
   const result = {};
@@ -68,6 +96,16 @@ export function readGeoValues() {
     const el = document.getElementById(GEO_INPUT_IDS[i]);
     if (!el) continue;
     result[GEO_REGIONS[i]] = parseFloat(el.value) || 0;
+  }
+  return result;
+}
+
+export function readIndustryValues() {
+  const result = {};
+  for (let i = 0; i < INDUSTRIES.length; i++) {
+    const el = document.getElementById(INDUSTRY_INPUT_IDS[i]);
+    if (!el) continue;
+    result[INDUSTRIES[i]] = parseFloat(el.value) || 0;
   }
   return result;
 }

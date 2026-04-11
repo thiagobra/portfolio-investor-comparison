@@ -7,9 +7,11 @@ import {
   generateSampleCSV,
   readSectorValues,
   readGeoValues,
+  readIndustryValues,
   INPUT_IDS,
   SECTOR_INPUT_IDS,
   GEO_INPUT_IDS,
+  INDUSTRY_INPUT_IDS,
 } from './parser.js';
 import { calculateDeviation, generateSuggestions } from './engine.js';
 import {
@@ -21,6 +23,7 @@ import {
   renderPhilosophy,
   renderSectorComparison,
   renderSectorScore,
+  renderIndustryAllocation,
 } from './renderer.js';
 
 const GITHUB_REPO = 'dennyscottjupiter-spec/portfolio-investor-comparison';
@@ -31,6 +34,7 @@ let cachedInvestor = null;
 const totalDisplay = document.getElementById('total-display');
 const sectorTotalDisplay = document.getElementById('sector-total-display');
 const geoTotalDisplay = document.getElementById('geo-total-display');
+const industryTotalDisplay = document.getElementById('industry-total-display');
 const btnDownload = document.getElementById('btn-download-sample');
 const csvUpload = document.getElementById('csv-upload');
 const investorSelect = document.getElementById('investor-select');
@@ -50,6 +54,11 @@ for (const id of SECTOR_INPUT_IDS) {
 for (const id of GEO_INPUT_IDS) {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', onGeoInput);
+}
+
+for (const id of INDUSTRY_INPUT_IDS) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', onIndustryInput);
 }
 
 function updateTotal() {
@@ -100,6 +109,37 @@ function onSectorInput() {
 function onGeoInput() {
   updateGeoTotalDisplay();
   renderGeoSection();
+}
+
+function updateIndustryTotalDisplay() {
+  const values = readIndustryValues();
+  const total = Object.values(values).reduce((s, v) => s + v, 0);
+  industryTotalDisplay.textContent = `Total: ${Math.round(total)}%`;
+  if (total === 0) {
+    industryTotalDisplay.className = 'total-value';
+  } else {
+    industryTotalDisplay.className =
+      Math.abs(total - 100) < 0.5 ? 'total-value valid' : 'total-value invalid';
+  }
+  return total;
+}
+
+function onIndustryInput() {
+  updateIndustryTotalDisplay();
+  renderIndustrySection();
+}
+
+function renderIndustrySection() {
+  if (!cachedInvestor) return;
+  document.getElementById('industry-investor-label').textContent = cachedInvestor.name;
+  const userIndustries = readIndustryValues();
+  const userTotal = Object.values(userIndustries).reduce((s, v) => s + v, 0);
+  renderIndustryAllocation(
+    document.getElementById('industry-allocation'),
+    cachedInvestor.industryAllocation,
+    userTotal > 0 ? userIndustries : null,
+    cachedInvestor.name
+  );
 }
 
 for (const card of investorCards) {
@@ -247,6 +287,7 @@ async function runComparison(investorId) {
 
     renderGeoSection();
     renderSectorSection();
+    renderIndustrySection();
 
     resultsSection.classList.remove('hidden');
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });

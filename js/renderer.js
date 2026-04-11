@@ -234,3 +234,82 @@ export function renderPhilosophy(container, investor) {
 function getInitials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase();
 }
+
+export function renderIndustryAllocation(container, investorIndustries, userIndustries, investorName) {
+  container.innerHTML = '';
+  if (!investorIndustries || Object.keys(investorIndustries).length === 0) return;
+
+  const userTotal = userIndustries
+    ? Object.values(userIndustries).reduce((s, v) => s + v, 0)
+    : 0;
+  const showCompare = userIndustries && Math.abs(userTotal - 100) < 0.5;
+
+  if (!showCompare) {
+    const heading = document.createElement('div');
+    heading.className = 'geo-block-title';
+    heading.textContent = `${investorName}'s industry breakdown`;
+    container.appendChild(heading);
+    container.appendChild(buildIndustryList(investorIndustries));
+    return;
+  }
+
+  const allKeys = new Set([
+    ...Object.keys(userIndustries).filter(k => userIndustries[k] > 0),
+    ...Object.keys(investorIndustries).filter(k => investorIndustries[k] > 0),
+  ]);
+
+  const sorted = [...allKeys].sort((a, b) => {
+    const aMax = Math.max(userIndustries[a] || 0, investorIndustries[a] || 0);
+    const bMax = Math.max(userIndustries[b] || 0, investorIndustries[b] || 0);
+    return bMax - aMax;
+  });
+
+  for (const key of sorted) {
+    const userVal = userIndustries[key] || 0;
+    const investorVal = investorIndustries[key] || 0;
+    const row = document.createElement('div');
+    row.className = 'comparison-row';
+    row.innerHTML = `
+      <div class="label">${esc(key)}</div>
+      <div class="bar-pair">
+        <div class="bar-line">
+          <span class="tag">You</span>
+          <div class="bar-track">
+            <div class="bar-fill user" style="width: ${userVal}%"></div>
+          </div>
+          <span class="value">${Math.round(userVal)}%</span>
+        </div>
+        <div class="bar-line">
+          <span class="tag">${esc(getInitials(investorName))}</span>
+          <div class="bar-track">
+            <div class="bar-fill investor" style="width: ${investorVal}%"></div>
+          </div>
+          <span class="value">${Math.round(investorVal)}%</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+}
+
+function buildIndustryList(industries) {
+  const wrap = document.createElement('div');
+  const sorted = Object.entries(industries)
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1]);
+  for (const [name, pct] of sorted) {
+    const row = document.createElement('div');
+    row.className = 'sector-row';
+    row.innerHTML = `
+      <div class="sector-header">
+        <span class="sector-name">${esc(name)}</span>
+        <span class="sector-pct">${Math.round(pct)}%</span>
+      </div>
+      <div class="sector-bar-track">
+        <div class="sector-bar-fill" style="width: ${pct}%; background: var(--accent)"></div>
+      </div>
+    `;
+    wrap.appendChild(row);
+  }
+  return wrap;
+}

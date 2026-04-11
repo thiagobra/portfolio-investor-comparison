@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Quick Start
+
+1. **Serve locally** — Run `npx serve .` or `python -m http.server 8000`
+2. **Open browser** — Navigate to `http://localhost:3000` (or port reported)
+3. **Edit files** — Changes in `.js`, `.css`, `.html` reload immediately; `.md` data files fetch on investor select
+4. **Test manually** — Fill portfolio form, select investor, verify bars and score render
+
 ## Overview
 
 **Portfolio Investor Comparison** is a zero-dependency, static ES modules app that lets users compare their portfolio allocation against legendary investors (Buffett, Dalio, Burry, Lynch). Investor data lives in Markdown files parsed at runtime.
@@ -53,11 +60,62 @@ Example sources to check:
 
 ### Data Flow
 
-1. **app.js** — Entry point. Listens to form inputs, investor clicks, manages state.
-2. **parser.js** — Reads form inputs (assets, optional geo/sectors); parses CSV; provides helper arrays.
-3. **engine.js** — `calculateDeviation()` computes similarity score; `generateSuggestions()` creates textual tips.
-4. **renderer.js** — DOM rendering. All elements built via JS (bars, comparisons, drilldowns, philosophy).
-5. **investors-loader.js** — Fetches + parses `.md` files. Returns parsed object with `assetAllocation`, `geographicAllocation`, `sectorAllocation`, `philosophy`, `principles`.
+```
+User Input (Form / CSV)
+       ↓
+    parser.js (readFormValues, parseCSV)
+       ↓
+    investors-loader.js (loadInvestor)
+       ↓
+    engine.js (calculateDeviation, generateSuggestions)
+       ↓
+    renderer.js (render* functions)
+       ↓
+    DOM (visible to user)
+```
+
+### Module API Reference
+
+**app.js** (entry point)
+- Initializes event listeners for all form inputs
+- Manages selected investor state (`selectedInvestorId`, `cachedInvestor`)
+- Orchestrates flow: form input → load investor → calculate → render
+- Key functions: `updateTotal()`, `tryAutoCompare()`, `renderAssetComparison()` (orchestrator)
+
+**parser.js** (form & CSV handling)
+- Exports: `ASSET_CLASSES`, `INPUT_IDS`, `SECTORS`, `SECTOR_INPUT_IDS`, `GEO_REGIONS`, `GEO_INPUT_IDS`
+- `readFormValues()` — Returns dict of asset allocations from form (e.g., `{'Equities (stocks)': 60, ...}`)
+- `readSectorValues()` — Returns dict of sector allocations (empty if all zero)
+- `readGeoValues()` — Returns dict of geographic allocations (empty if all zero)
+- `setFormValues(dict)` — Populates form inputs from dict
+- `parseCSV(text)` — Parses CSV/TSV; returns array of dicts matching asset classes
+- `getTotal(dict)` — Sums values; used to validate form total ≈ 100%
+- `generateSampleCSV()` — Returns CSV template for download
+
+**engine.js** (calculations)
+- `calculateDeviation(userAlloc, investorAlloc)` — Returns `{deviations, similarityScore}`
+  - `similarityScore` ranges 0–100 (100 = identical allocation)
+  - Uses formula: `100 - (sum of absolute differences / 2)`
+- `generateSuggestions(deviations, investorName)` — Returns array of actionable suggestions
+  - Filters by threshold (3%+) to avoid noise
+  - Sorted by largest deviation first
+
+**renderer.js** (DOM rendering)
+- `renderAssetComparison(userAlloc, investorAlloc, investorName)` — Renders side-by-side bars
+- `renderScore(score, investorName)` — Renders similarity score + progress bar
+- `renderSuggestions(suggestions)` — Renders bullet-point recommendation list
+- `renderPhilosophy(quote, principles)` — Renders investor philosophy + key principles
+- `renderGeoAllocation(userGeo, investorGeo, investorName)` — Renders geographic comparison (or investor-only if user geo empty)
+- `renderSectorDrilldown(sectorAlloc)` — Renders sector table with key industries
+- `renderSectorComparison(userSectors, investorSectors)` — Side-by-side sector bars
+- `renderSectorScore(score, investorName)` — Sector-level similarity score
+
+**investors-loader.js** (data loading & parsing)
+- `loadInvestor(id)` — Async fetch + parse `.md` file for investor
+  - Returns: `{name, philosophy, assetAllocation, geographicAllocation, sectorAllocation, principles}`
+  - Caches result in `investorCache` to avoid re-fetching
+  - Throws error if investor ID unknown or fetch fails
+- `getInvestorIds()` — Returns array of available investor IDs (keys from `INVESTOR_FILES`)
 
 ### Form & Validation
 
@@ -68,25 +126,74 @@ Example sources to check:
 
 ### Investor Data Format
 
-Each `.md` file under `data/` has:
-```
-# Name
-> Philosophy quote
+Each `.md` file under `data/` has strict formatting requirements (regex-based parser in `investors-loader.js`):
+
+```markdown
+# Warren Buffett
+> Investment philosophy quote goes here, max 1 line
+
 ## Asset Allocation
 | Asset Class | % |
-...
+|---|---|
+| Equities (stocks) | 87.5 |
+| Cash and Savings | 12.5 |
+| Fixed income (bonds) | 0 |
+| Crypto | 0 |
+| Gold | 0 |
+
 ## Geographic Allocation
-...
+| Region | % |
+|---|---|
+| US | 75.0 |
+| Europe | 15.0 |
+| China | 5.0 |
+| LatAm | 5.0 |
+| Rest of World | 0 |
+
 ## Sector Allocation
-...
+| Sector | % | Key Industries |
+|---|---|---|
+| Financials | 30.0 | Insurance, Banks |
+| Technology | 25.0 | Software, Hardware |
+| Consumer | 20.0 | Retail, Food |
+| Healthcare | 15.0 | Pharma, Medical Devices |
+| Energy | 5.0 | Oil & Gas |
+| Industrials | 5.0 | Machinery, Aerospace |
+| Other | 0 | — |
+
 ## Key Principles
-- Bullet point
+- Invest only in what you understand
+- Buy quality companies at fair prices
+- Think long-term (decades, not quarters)
+- Circle of competence matters most
 ```
 
-Parser extracts via regex. To add an investor:
-1. Create `data/your-investor.md` (match format exactly)
-2. Add to `INVESTOR_FILES` dict in `investors-loader.js`
-3. Add `<button class="investor-card" data-investor="id">` in `index.html`
+**Critical format rules** (parser is strict, will return `{}` if not exact):
+- Headings must be `## Section Name` (exactly 2 hashes)
+- Table header row must have `|` at both ends: `| Col1 | Col2 |`
+- Divider row **required**: `|---|---|` (at least one `---` per column)
+- All percentages must be valid floats and **sum to 100%** for each table
+- Sector "Key Industries" in 3rd column: comma-separated string OR `—` for empty
+- Philosophy quote must be single `> Quote` line (no multiline)
+
+**Adding a new investor:**
+1. Create `data/your-investor.md` (match format exactly, use existing files as template)
+2. Verify all percentage totals = 100% for each allocation table
+3. Add investor ID to `INVESTOR_FILES` dict in `investors-loader.js`
+   ```javascript
+   const INVESTOR_FILES = {
+     // ...existing...
+     'your-investor': 'data/your-investor.md',
+   };
+   ```
+4. Add investor button to `index.html` under `<div class="investor-cards" id="investor-cards">`
+   ```html
+   <button class="investor-card" data-investor="your-investor">
+     <div class="investor-card-avatar">🎯</div>
+     <div class="investor-card-name">Your Investor</div>
+     <div class="investor-card-style">Your style tagline</div>
+   </button>
+   ```
 
 ## Git Commit Convention
 
@@ -112,11 +219,38 @@ Examples:
 
 Always use `rtk git` for token-efficient output (see Performance & Bundle).
 
+## CSV Format
+
+Users can upload CSV/TSV files to populate their portfolio form. The parser (`parseCSV()` in `parser.js`) expects:
+- **First row:** header (ignored, can be anything)
+- **Subsequent rows:** `AssetClass, Percentage` pairs (space-trimmed)
+- **Asset class names** must match `ASSET_CLASSES` in `parser.js` exactly (case-sensitive):
+  - `Equities (stocks)`
+  - `Cash and Savings`
+  - `Fixed income (bonds)`
+  - `Crypto`
+  - `Gold`
+
+Example CSV:
+```
+Asset,Allocation
+Equities (stocks),60
+Fixed income (bonds),25
+Cash and Savings,10
+Gold,5
+Crypto,0
+```
+
+TSV and other delimiter-separated formats are supported (parser auto-detects).
+
 ## Common Tasks
 
 ### Modify an Investor's Allocation
 
-Edit `data/{investor}.md`. The regex parser in `investors-loader.js` is strict — keep table format intact (`| Asset | % |` with divider row). Verify totals sum to 100%.
+Edit `data/{investor}.md`. **Follow format rules exactly** (regex parser is strict):
+- Keep table structure: `| Asset | % |` with divider row `|---|---|`
+- Verify all percentage totals = 100%
+- To verify format is correct, temporarily load the page and select that investor; check browser console for any parse errors
 
 ### Change Asset Class Order
 
@@ -200,9 +334,32 @@ No test suite. Feature testing is manual:
 5. Check CSV upload works
 6. Check suggestion box opens GitHub new-issue URL with pre-filled title + body
 
-## Common Pitfalls
+## Debugging
 
-- **Form parsing**: Empty `<input>` reads as `0`, not `NaN`. Division by zero won't happen.
-- **Regex parsing**: Investor `.md` table format must match exactly or parser returns `{}`. Keep divider row `|---|---|---|`.
-- **CSS grid**: `.sector-grid:has(.sector-panel.hidden)` collapses to 1 col when fit panel is hidden. Fallback browsers see 2 cols always.
-- **Module scoping**: All rendering happens in `renderer.js`. All form state in `app.js`. Keep them separate.
+**Browser console is your friend:**
+- Open DevTools (F12) and check for errors when loading investor data
+- Look for `console.error` or uncaught exceptions when parsing `.md` files
+- If investor data renders as `{}` (empty object), the regex parser failed — check MD format against template files
+
+**Common debugging checklist:**
+1. Investor button clicked but no data? Check `investors-loader.js`: is investor ID in `INVESTOR_FILES`?
+2. Data parsed as empty? Copy exact format from an existing investor `.md` file
+3. Form not updating UI? Check that element IDs in `INPUT_IDS` match actual `<input id="...">`
+4. Bars not rendering? Verify `renderer.js` function is called from `app.js`; check CSS colors in `variables.css`
+
+**Test data locally:**
+```javascript
+// In browser console, manually test parsing:
+import { loadInvestor } from './js/investors-loader.js';
+loadInvestor('warren-buffett').then(data => console.log(data));
+```
+
+## Common Pitfalls & Edge Cases
+
+- **Form parsing:** Empty `<input>` reads as `0`, not `NaN`. Division by zero won't happen. Safe to use `||` operator.
+- **Regex parsing:** Investor `.md` table format must match exactly or parser returns `{}` (silent failure). **Always keep divider row** `|---|---|`. Use existing investor files as templates.
+- **Caching:** `investors-loader.js` caches fetched investor data. If you edit a `.md` file and it's already loaded, you must hard-refresh browser (Ctrl+Shift+R) to see changes.
+- **CSS grid:** `.sector-grid:has(.sector-panel.hidden)` uses CSS `:has()` selector (unsupported in older browsers). Fallback: always renders 2-column layout.
+- **Module scoping:** All rendering logic in `renderer.js`, all form state in `app.js`, data loading in `investors-loader.js`. Keep concerns separated to avoid tight coupling.
+- **Optional inputs:** Geo and sector inputs are **optional**. Empty inputs (sum = 0) show investor-only allocation. User-filled inputs (sum ≈ 100%) trigger comparison mode. This logic is in `renderGeoAllocation()` and `renderSectorSection()`.
+- **Similarity calculation:** Uses formula `100 - (totalAbsDeviation / 2)`. The divide-by-2 accounts for every overweight having a matching underweight. Score is clamped to 0–100 range.

@@ -66,6 +66,7 @@ function parseMarkdown(text) {
     assetAllocation: parseTable(text, 'Asset Allocation'),
     geographicAllocation: parseTable(text, 'Geographic Allocation'),
     sectorAllocation: parseSectorTable(text),
+    industryAllocation: parseTable(text, 'Industry Allocation'),
     principles: parsePrinciples(text),
   };
 }
