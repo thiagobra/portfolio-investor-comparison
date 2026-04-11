@@ -596,12 +596,23 @@
   gap: var(--space-md);
 }
 
-/* ── Sector panels (drilldown + fit) ── */
+/* ── Sector panels (drilldown + fit, side-by-side on wide screens) ── */
 .sector-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
   margin-top: var(--space-md);
+  align-items: start;
+}
+
+.sector-grid:has(.sector-panel.hidden) {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 820px) {
+  .sector-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sector-panel {
