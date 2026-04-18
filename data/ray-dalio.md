@@ -34,7 +34,7 @@
 ## Industry Allocation
 | Industry | % |
 |---|---|
-| Broad Market Index ETFs | 35 |
+| Diversified Index Funds | 35 |
 | Software & IT Services | 12 |
 | Pharmaceuticals | 10 |
 | Retail | 8 |

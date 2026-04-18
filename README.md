@@ -4,18 +4,20 @@
 
 ## What It Does
 
-You enter your portfolio percentages across 7 asset classes, pick an investor, and instantly see:
+You enter your portfolio percentages across 5 asset classes, pick an investor, and instantly see:
 
 - **Similarity Score** -- how closely your allocation matches theirs
 - **Side-by-side bars** -- your percentages vs. the investor's
 - **Geographic breakdown** -- where the investor is allocated globally
 - **Sector drilldown** -- their equity split by sector with key industries
+- **Industry allocation** -- top industries breakdown with optional user comparison
 - **Actionable suggestions** -- specific tips to align your portfolio
 - **Investment philosophy** -- their core principles and style
+- **Portfolio snapshots** -- save and restore past portfolios from browser storage
 
 ## How It Works
 
-1. **Pick an investor** -- click one of the three cards at the top
+1. **Pick an investor** -- click one of the four cards at the top
 2. **Enter your allocation** -- type percentages for each asset class (must total 100%)
 3. **See results** -- comparison renders automatically when both are ready
 
@@ -23,7 +25,13 @@ You can also upload a CSV file instead of typing manually. A sample CSV is provi
 
 ### Advanced Mode
 
-Toggle **Advanced Mode** to unlock a per-sector breakdown of your equities. You'll split your stock allocation across 7 sectors (Technology, Financials, Consumer, Healthcare, Energy, Industrials, Other) and get a second similarity score showing how closely your sector mix matches the selected investor.
+Toggle **Advanced Mode** to unlock optional deeper analysis:
+
+- **Sector breakdown** — split your equities across 7 sectors and get a second similarity score
+- **Geographic allocation** — enter your regional exposure and compare it to the investor's
+- **Industry allocation** — break down your holdings into 11 industries for a granular match
+
+All three advanced inputs are optional; leave any blank to see only the investor's data.
 
 ### Got a suggestion?
 
@@ -33,13 +41,11 @@ Every page has an in-app suggestion box at the bottom. Type a title and descript
 
 | Class | Example |
 |---|---|
-| Fixed income (bonds) | Government & corporate bonds |
 | Equities (stocks) | Individual stocks, ETFs |
 | Cash and Savings | Savings accounts, money market |
-| Real estate | REITs, property |
-| Pensions (priv. & gov.) | 401k, social security |
-| Gold | Physical gold, gold ETFs |
+| Fixed income (bonds) | Government & corporate bonds |
 | Crypto | Bitcoin, Ethereum, etc. |
+| Gold | Physical gold, gold ETFs |
 
 ## Available Investors
 

@@ -34,15 +34,15 @@
 ## Industry Allocation
 | Industry | % |
 |---|---|
-| Software & Data Analytics | 65 |
-| Semiconductors | 14 |
-| Pharmaceuticals | 11 |
-| Oil & Gas Services | 4 |
-| Managed Care | 2 |
-| Apparel Retail | 1 |
-| Consumer Finance | 1 |
-| Scientific Instruments | 1 |
-| Other | 1 |
+| Managed Care | 20 |
+| Pharmaceuticals | 10 |
+| Biotech | 5 |
+| Apparel Retail | 15 |
+| Consumer Services | 11 |
+| Financial Services | 12 |
+| Regional Banks | 8 |
+| Puts & Hedges | 10 |
+| Other | 9 |
 
 ## Key Principles
 - Deep value: buy far below intrinsic value

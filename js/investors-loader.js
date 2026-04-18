@@ -84,6 +84,9 @@ export async function loadInvestor(id) {
 
   const text = await response.text();
   const parsed = parseMarkdown(text);
+  if (!parsed.assetAllocation || Object.keys(parsed.assetAllocation).length === 0) {
+    console.warn(`[investors-loader] Asset allocation parsed empty for "${id}" — check Markdown table format`);
+  }
   investorCache[id] = parsed;
   return parsed;
 }
