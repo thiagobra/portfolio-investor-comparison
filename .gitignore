@@ -3,3 +3,8 @@ node_modules/
 Thumbs.db
 *.log
 .env
+
+# Personal financial data - never commit
+private/
+Holdings_*.csv
+*.bak
