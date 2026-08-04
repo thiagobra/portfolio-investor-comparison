@@ -13,7 +13,7 @@ import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
-from server import routes_files, routes_import, routes_chat
+from server import routes_files, routes_import, routes_chat, routes_holdings, routes_snapshots
 from server.safety import ROOT
 
 HOST = "127.0.0.1"
@@ -35,12 +35,18 @@ class Handler(BaseHTTPRequestHandler):
             return routes_chat.handle_health(self)
         if path == "/api/files":
             return routes_files.handle_get(self)
+        if path == "/api/holdings":
+            return routes_holdings.handle_get(self)
+        if path == "/api/snapshots":
+            return routes_snapshots.handle_get(self)
         return self._serve_static(path)
 
     def do_PUT(self):
         path = urlparse(self.path).path
         if path == "/api/files":
             return routes_files.handle_put(self)
+        if path == "/api/snapshots":
+            return routes_snapshots.handle_put(self)
         self.send_error(404)
 
     def do_POST(self):
@@ -49,6 +55,12 @@ class Handler(BaseHTTPRequestHandler):
             return routes_import.handle_post(self)
         if path == "/api/chat":
             return routes_chat.handle_chat(self)
+        self.send_error(404)
+
+    def do_DELETE(self):
+        path = urlparse(self.path).path
+        if path == "/api/snapshots":
+            return routes_snapshots.handle_delete(self)
         self.send_error(404)
 
     def _serve_static(self, path):

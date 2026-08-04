@@ -1,9 +1,10 @@
 """
 @module   server.safety
 @purpose  Exact-match path whitelist, upload filename guard, and size cap shared by every route.
-@exports  ROOT · resolve_safe_path() · safe_upload_filename() · UnsafePathError
+@exports  ROOT · resolve_safe_path() · resolve_in_dir() · safe_upload_filename() · UnsafePathError
 @exports  READABLE_FILES · WRITABLE_FILES · MAX_UPLOAD_BYTES
-@usedby   @server/routes_files.py @server/routes_import.py @serve.py
+@usedby   @server/routes_files.py @server/routes_import.py @server/routes_holdings.py
+@usedby   @server/routes_snapshots.py @serve.py
 """
 
 import os
@@ -60,3 +61,18 @@ def safe_upload_filename(name):
     if not _UPLOAD_NAME_RE.match(base):
         raise UnsafePathError(f"unsafe upload filename: {name!r}")
     return base
+
+
+# Directory-scoped storage: a bare filename matching `pattern`, confined to
+# private/<subdir>/. `pattern` must anchor start/end and forbid path
+# separators — the two callers below only ever pass \w+\.(csv|json).
+def resolve_in_dir(name, subdir, pattern):
+    """Resolve a bare filename inside private/<subdir>/, or raise if it doesn't match `pattern`."""
+    base = os.path.basename(name or "")
+    if not pattern.match(base):
+        raise UnsafePathError(f"unsafe filename: {name!r}")
+    dir_full = os.path.normpath(os.path.join(ROOT, "private", subdir))
+    full = os.path.normpath(os.path.join(dir_full, base))
+    if not full.startswith(dir_full + os.sep):
+        raise UnsafePathError(f"path escapes {subdir}: {name!r}")
+    return full
