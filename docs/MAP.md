@@ -22,6 +22,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/layout.css` — reset, app shell, section, grid, responsive breakpoints, `.sr-only` utility.
 - `css/appbar.css` — sticky app bar: brand `<h1>`, menu bar row, live status rail (`js/appbar-status.js` renders into `#appbar-status`).
 - `css/menubar.css` — menu bar, dropdown menus (icons/edit markers/key hints), and the toast notification widget. Background/border now live on `.appbar` (css/appbar.css), since the menu bar is nested inside it.
+- `css/palette.css` — shared `.overlay-backdrop`/`.overlay-panel` used by both the keyboard cheat-sheet (`js/shortcuts.js`) and the command palette (`js/palette.js`), plus the palette's own input/results styling.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
 - `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
 - `css/editors.css` — select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors). Split out of `forms.css` in task 15 once it passed the 200-line cap.
@@ -55,8 +56,9 @@ hard cap; every other file was checked in task 15's audit and is within it.
 
 ## `js/` (new)
 
-- `js/app.js` — entry point: mounts the menu bar, starts the router, wires the import controller and the app-bar status rail.
+- `js/app.js` — entry point: mounts the menu bar, starts the router, wires the import controller, the app-bar status rail, and global keyboard shortcuts.
 - `js/appbar-status.js` — live status rail rendered into `#appbar-status`: position count + total EUR value (subscribes to `js/store.js`), an advisor heartbeat dot (`checkHealth()`, re-checked on every `route:change`), and the `Ctrl K` hint. With no portfolio imported, shows an "import a CSV" call to action that fires the same `menu-action` event `js/import-controller.js` listens for.
+- `js/shortcuts.js` — global keyboard shortcuts registered once: `Ctrl K` dispatches `open-palette` (js/palette.js owns the UI), `g`-then-letter jumps straight to a screen, `?` shows a cheat-sheet overlay (built from the exported `SHORTCUTS` table — also consumed by `js/views/help/shortcuts.js` so the docs can't drift), `Alt` focuses the menu bar, `Esc` closes the overlay. Ignored while focus is in an input/textarea/select/contenteditable.
 - `js/menu-config.js` — single source of truth for the menu tree (`MENUS`) and the hash route table (`ROUTES`); `menubar.js`, `router.js`, and `js/palette.js` all read from here. Routes not yet backed by a real screen point at `views/placeholder.js`. Top-level menus carry an `icon`; items optionally carry `editable: true` (renders a ✏️ marker) and `key` (a g-jump hint, see `js/shortcuts.js`).
 - `js/router.js` — matches `location.hash` against `ROUTES` (supports `:param` segments), dynamically imports the matched view module, calls its `mount(root, params)`.
 - `js/menubar.js` — ARIA `menubar` widget built from `MENUS`: arrow-key nav between/within menus, Home/End, Esc, type-ahead (matched against `dataset.label`, not `textContent`, so icon/pencil/key markup never breaks it), roving tabindex, click-outside-to-close.

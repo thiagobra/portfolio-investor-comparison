@@ -1,0 +1,50 @@
+/* ── Shared overlay backdrop (keyboard cheat-sheet, command palette) ── */
+.overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+}
+
+.overlay-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: min(640px, 92vw);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  animation: overlay-in 120ms ease;
+  outline: none;
+}
+
+.overlay-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+/* The cheat-sheet's Key/Where/Does text reads better left-aligned and
+   wrapping than .data-table's default (right-aligned, nowrap — built for
+   numeric financial tables). */
+.overlay-panel .data-table th,
+.overlay-panel .data-table td {
+  text-align: left;
+  white-space: normal;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-panel {
+    animation: none;
+  }
+}
