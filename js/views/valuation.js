@@ -3,7 +3,7 @@
  * @purpose  Valuation screen: weighted P/E, dividend yield, beta, market-cap
  *           tilt, and most/least expensive holdings.
  * @exports  mount(root)
- * @reads    @js/store.js @js/analytics/valuation.js @js/analytics/risk.js @js/charts/bars.js
+ * @reads    @js/store.js @js/analytics/valuation.js @js/analytics/risk.js @js/charts/bars.js @js/charts/palette.js
  * @usedby   @js/router.js
  */
 
@@ -12,6 +12,7 @@ import { weightedAverage, marketCapTilt } from '../analytics/valuation.js';
 import { weightedBeta } from '../analytics/risk.js';
 import { fmtNum, fmtPct } from '../lib/format.js';
 import { renderBars } from '../charts/bars.js';
+import { colorForKey } from '../charts/palette.js';
 import { emptyStateHTML } from './shared/empty-state.js';
 
 export async function mount(root) {
@@ -27,9 +28,14 @@ export async function mount(root) {
   const beta = weightedBeta(positions);
   const tilt = marketCapTilt(positions);
 
+  // Select the 5 most/least expensive by P/E, then always render both lists
+  // sorted by bar length descending (largest P/E first) — a "least expensive"
+  // list that reads smallest-to-largest looks broken next to its sibling.
   const priced = positions.filter((p) => p.peRatio != null && p.peRatio > 0);
-  const byPE = (dir) => [...priced].sort((a, b) => dir * (b.peRatio - a.peRatio)).slice(0, 5)
-    .map((p) => ({ label: p.symbol, value: p.peRatio, formattedValue: fmtNum(p.peRatio, 1) }));
+  const byPE = (dir) => [...priced]
+    .sort((a, b) => dir * (b.peRatio - a.peRatio)).slice(0, 5)
+    .sort((a, b) => b.peRatio - a.peRatio)
+    .map((p) => ({ label: p.symbol, value: p.peRatio, formattedValue: fmtNum(p.peRatio, 1), color: colorForKey(p.symbol) }));
 
   root.innerHTML = `
     <section class="section">
@@ -72,6 +78,7 @@ export async function mount(root) {
 
   renderBars(root.querySelector('#tilt-bars'), Object.entries(tilt)
     .filter(([, w]) => w > 0)
+    .sort(([, a], [, b]) => b - a)
     .map(([label, w]) => ({ label, value: w, formattedValue: fmtPct(w, 1), positive: true })));
   renderBars(root.querySelector('#most-expensive'), byPE(1));
   renderBars(root.querySelector('#least-expensive'), byPE(-1));
