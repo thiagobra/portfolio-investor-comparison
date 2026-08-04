@@ -22,12 +22,12 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
 - `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
-- `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
+- `css/forms.css` — inputs, file upload, suggestion form, toggle switch, select + checkbox list (Scenario builder).
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
 - `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
 - `css/stats.css` — stat card grid (Dashboard, and later Valuation/Risk headline numbers).
-- `css/table.css` — sortable data table (Holdings, Closed positions, and later Breakdowns).
+- `css/table.css` — sortable data table (Holdings, Closed positions, Breakdowns) + the color-scaled heatmap table (Risk & Diversification).
 - `css/donut-bars.css` — donut chart + ranked bar list styling (Dashboard, and later Breakdowns/Momentum).
 
 ## `server/`
@@ -61,6 +61,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/lib/fx.js` — loads `data/fx-rates.md`, exposes `convertToEUR(amount, currency)` and `getFxAsOf()`.
 - `js/lib/format.js` — shared `fmtEUR()` / `fmtMoney()` / `fmtPct()` / `fmtNum()` formatters.
 - `js/lib/classification.js` — loads `private/classification.md` via `/api/files` into a `Map<symbol, {sector,industry,region,country,currency,assetClass}>`. `loadClassification()` (resolves to the Map) · `getClassification(symbol)`.
+- `js/lib/risk-reference.js` — loads the sector correlation matrix and volatility table `js/analytics/risk.js`'s `portfolioVolatility()` needs. `loadSectorCorrelations()` · `loadSectorVolatility()`.
 
 ## `js/views/`
 
@@ -72,6 +73,8 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/views/breakdown.js` — Breakdown screen, parameterised by the `:dimension` route param (sector/industry/region/currency/asset-class) — one module backs all five `Analyse` menu routes. Donut + ranked bars + table. Non-currency dimensions bucket unclassified positions into a visible "Unclassified" group with a banner pointing at **Data → Ticker classification**, never silently folding them into a real group.
 - `js/views/valuation.js` — Valuation screen: weighted P/E, dividend yield, beta stat cards, market-cap tilt bars, most/least expensive (by P/E) ranked lists.
 - `js/views/momentum.js` — Momentum screen: technical rating consensus stat card + a color-coded performance table (Daily/1W/1M/YTD/1Y/3Y) — a plain table doubles as the "heatmap" via `.positive`/`.negative` tone classes, no separate chart primitive needed.
+- `js/views/risk.js` — Risk & Diversification screen: concentration + portfolio volatility + weighted beta stat cards, and a sector correlation heatmap (`js/charts/heatmap.js`).
+- `js/views/scenario.js` — What-if builder: sell entire positions (checkboxes) + buy a lump sector exposure (dropdown + % amount), before/after metric table. Simulation only — never touches the stored portfolio.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -91,20 +94,21 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/analytics/breakdown.js` — `breakdownBy(positions, field, classification)`: groups by `currency` (straight off the CSV) or by a `js/lib/classification.js` field, sorted by EUR value descending.
 - `js/analytics/valuation.js` — `weightedAverage(positions, field)` (generic — used for P/E and yield, same renormalised-average convention as `risk.js`'s `weightedBeta()`) · `marketCapTilt(positions)`.
 - `js/analytics/momentum.js` — `ratingConsensus(positions)` (weight-averaged across the 8-point technical rating block) · `consensusLabel(score)`. The performance heatmap itself needs no computation — the view reads `position.perf` directly.
-- `js/analytics/scenario.js` — planned (task 11); before/after recomposition for what-if scenarios.
+- `js/analytics/scenario.js` — `applyScenario(positions, {sellSymbols, buySector, buyWeight})` (pure recomposition: removes sold symbols, appends one synthetic weight-only position for the buy side) · `scenarioMetrics(...)` (runs `risk.js` + `breakdown.js` against a position set — used for both the before and the after side).
 
 ## `js/charts/`
 
 - `js/charts/svg.js` — shared SVG helpers: `svgEl()`, `polarToCartesian()`, `describeArc()`.
 - `js/charts/donut.js` — `renderDonut(container, segments)`, donut + legend.
 - `js/charts/bars.js` — `renderBars(container, items)`, ranked horizontal bars.
-- `js/charts/treemap.js`, `js/charts/heatmap.js` — planned; add when Breakdowns (task 9, treemap) and Momentum/Risk (task 10/11, heatmap) need them.
+- `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
+- `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
 
-Screens still to build (tasks 11–14), each will replace `placeholder.js` for its
+Screens still to build (tasks 12–14), each will replace `placeholder.js` for its
 route in `js/menu-config.js` and get its own `js/views/*.js`:
-`risk.js`, `scenario.js`, `data-editor.js`, `advisor.js`, `help.js`, `about.js`.
+`data-editor.js`, `advisor.js`, `help.js`, `about.js`.
 (`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
-`valuation.js`/`momentum.js`: task 10.)
+`valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 

@@ -58,3 +58,28 @@
 .data-table .positive { color: var(--success); }
 .data-table .negative { color: var(--error); }
 .data-table .muted { color: var(--text-muted); }
+
+/* ── Heatmap table (Risk & Diversification sector correlation) ── */
+.heatmap-table {
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+  margin: 0 auto;
+}
+
+.heatmap-table th,
+.heatmap-table td {
+  padding: var(--space-xs) var(--space-sm);
+  text-align: center;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.heatmap-table th {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.heatmap-table td {
+  font-family: var(--font-mono);
+  color: #fff;
+}
