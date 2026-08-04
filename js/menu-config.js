@@ -14,11 +14,8 @@ export const ROUTES = {
   '/dashboard': { title: 'Dashboard', module: 'dashboard.js' },
   '/holdings': { title: 'Holdings', module: 'holdings.js' },
   '/holdings/closed': { title: 'Closed Positions', module: 'holdings-closed.js' },
-  '/breakdown/sector': { title: 'Sector Breakdown', module: 'placeholder.js' },
-  '/breakdown/industry': { title: 'Industry Breakdown', module: 'placeholder.js' },
-  '/breakdown/region': { title: 'Region Breakdown', module: 'placeholder.js' },
-  '/breakdown/currency': { title: 'Currency Breakdown', module: 'placeholder.js' },
-  '/breakdown/asset-class': { title: 'Asset Class Breakdown', module: 'placeholder.js' },
+  // One parameterised route backs all five breakdown dimensions — see js/views/breakdown.js.
+  '/breakdown/:dimension': { title: 'Breakdown', module: 'breakdown.js' },
   '/valuation': { title: 'Valuation', module: 'placeholder.js' },
   '/momentum': { title: 'Momentum', module: 'placeholder.js' },
   '/risk': { title: 'Risk & Diversification', module: 'placeholder.js' },

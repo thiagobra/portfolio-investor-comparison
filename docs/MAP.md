@@ -60,7 +60,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/lib/md-table.js` — generic `| a | b |` markdown table parser shared by every `data/*.md`/`private/*.md` consumer. `parseMarkdownTables()` (heading-aware) · `tableToDict()` · `tableToMatrix()` · `tableToRows()`.
 - `js/lib/fx.js` — loads `data/fx-rates.md`, exposes `convertToEUR(amount, currency)` and `getFxAsOf()`.
 - `js/lib/format.js` — shared `fmtEUR()` / `fmtMoney()` / `fmtPct()` / `fmtNum()` formatters.
-- `js/lib/classification.js` — planned; not yet built. Add in task 9 (Breakdowns) — loads `private/classification.md` via `/api/files` into a `Map<symbol, {...}>`.
+- `js/lib/classification.js` — loads `private/classification.md` via `/api/files` into a `Map<symbol, {sector,industry,region,country,currency,assetClass}>`. `loadClassification()` (resolves to the Map) · `getClassification(symbol)`.
 
 ## `js/views/`
 
@@ -69,6 +69,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/views/dashboard.js` — Dashboard screen: headline stat cards (total value, day/total P/L, positions), currency-allocation donut, top-movers bars, concentration summary. Builds its own markup inline (no `views/*.html` partial — single-panel screen, unlike Compare).
 - `js/views/holdings.js` — Holdings screen: sortable open-positions table (click a header to sort) with a totals row.
 - `js/views/holdings-closed.js` — Closed positions screen: realized trade history table.
+- `js/views/breakdown.js` — Breakdown screen, parameterised by the `:dimension` route param (sector/industry/region/currency/asset-class) — one module backs all five `Analyse` menu routes. Donut + ranked bars + table. Non-currency dimensions bucket unclassified positions into a visible "Unclassified" group with a banner pointing at **Data → Ticker classification**, never silently folding them into a real group.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -84,8 +85,8 @@ diffs this against the real directory tree. Grouped by directory.
 
 ## `js/analytics/`
 
-- `js/analytics/risk.js` — `concentration()` (HHI, effective N, top-10 weight — built, task 8) · `portfolioVolatility()` / `weightedBeta()` (built, need `js/lib/classification.js` + `data/correlations.md`/`volatility.md` wiring from the caller — task 11 view). See `@docs/metrics.md`.
-- `js/analytics/breakdown.js` — planned (task 9); sector/industry/region/currency/asset-class aggregation, one function parameterised by dimension.
+- `js/analytics/risk.js` — `concentration()` (HHI, effective N, top-10 weight — built, task 8) · `portfolioVolatility()` / `weightedBeta()` (built, need `data/correlations.md`/`volatility.md` wiring from the caller — task 11 view). See `@docs/metrics.md`.
+- `js/analytics/breakdown.js` — `breakdownBy(positions, field, classification)`: groups by `currency` (straight off the CSV) or by a `js/lib/classification.js` field, sorted by EUR value descending.
 - `js/analytics/valuation.js` — planned (task 10); weighted P/E, yield, market-cap tilt.
 - `js/analytics/momentum.js` — planned (task 10); performance heatmap, technical-rating consensus.
 - `js/analytics/scenario.js` — planned (task 11); before/after recomposition for what-if scenarios.
@@ -97,11 +98,11 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/bars.js` — `renderBars(container, items)`, ranked horizontal bars.
 - `js/charts/treemap.js`, `js/charts/heatmap.js` — planned; add when Breakdowns (task 9, treemap) and Momentum/Risk (task 10/11, heatmap) need them.
 
-Screens still to build (tasks 9–14), each will replace `placeholder.js` for its
+Screens still to build (tasks 10–14), each will replace `placeholder.js` for its
 route in `js/menu-config.js` and get its own `js/views/*.js`:
-`breakdown.js`, `valuation.js`, `momentum.js`, `risk.js`, `scenario.js`,
+`valuation.js`, `momentum.js`, `risk.js`, `scenario.js`,
 `data-editor.js`, `advisor.js`, `help.js`, `about.js`. (`dashboard.js` and
-`holdings.js` were built in task 8.)
+`holdings.js` were built in task 8; `breakdown.js` in task 9.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 
@@ -122,7 +123,7 @@ route in `js/menu-config.js` and get its own `js/views/*.js`:
 ## `private/` (gitignored, personal)
 
 - `private/holdings/*.csv` — your Investing.com exports.
-- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class.
+- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification** (task 12).
 - `private/profile.md` — advisor's append-only case notes about you.
 - `private/snapshots/*.json` — saved portfolio snapshots.
 
