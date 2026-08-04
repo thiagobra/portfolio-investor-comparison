@@ -72,16 +72,17 @@ values.**
 
 | # | Header | # | Header |
 |---|---|---|---|
-| 0 | (label) | 10 | Prev. |
-| 1 | Name | 11 | Market Value |
-| 2 | Symbol | 12 | Commission |
-| 3 | Exchange | 13 | Net P/L% |
-| 4 | **Open Date** | 14 | Weight |
-| 5 | Type | 15 | Daily P/L |
-| 6 | Amount | 16 | Daily P/L% |
-| 7 | Open Price | 17 | Net P/L |
-| 8 | Current Price | 18 | Next Earnings Date |
-| 9 | Extended Hours (%) | | |
+| 0 | (label) | 11 | Prev. |
+| 1 | Name | 12 | Market Value |
+| 2 | Symbol | 13 | Commission |
+| 3 | Exchange | 14 | Net P/L% |
+| 4 | **Open Date** | 15 | Weight |
+| 5 | Type | 16 | Daily P/L |
+| 6 | Amount | 17 | Daily P/L% |
+| 7 | Open Price | 18 | Net P/L |
+| 8 | Current Price | 19 | Next Earnings Date |
+| 9 | Extended Hours | | |
+| 10 | Extended Hours (%) | | |
 
 **Known bug (confirmed against a real single-holding export):** `Weight`
 reads `0.41%` for a portfolio that is 100% one position — a genuine
