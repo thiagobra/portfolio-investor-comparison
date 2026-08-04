@@ -24,6 +24,7 @@ READABLE_FILES = {
     "data/peter-lynch.md",
     "private/classification.md",
     "private/profile.md",
+    "private/metrics.md",
 }
 
 # Exact relative paths the web app may overwrite via /api/files.
@@ -34,6 +35,7 @@ WRITABLE_FILES = {
     "data/settings.md",
     "private/classification.md",
     "private/profile.md",
+    "private/metrics.md",
 }
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # a holdings export is a few KB; 5MB is generous headroom

@@ -69,3 +69,10 @@
 .editor-textarea:focus {
   border-color: var(--border-focus);
 }
+
+/* ── Stale-data flag (Metrics editor) ── */
+.stale-flag {
+  color: var(--error);
+  font-weight: 700;
+  cursor: help;
+}

@@ -25,6 +25,7 @@ export const ROUTES = {
   '/advisor/profile': { title: 'My Profile Notes', module: 'data/profile.js' },
   '/advisor/connection': { title: 'Advisor Connection', module: 'data/connection.js' },
   '/data/classification': { title: 'Ticker Classification', module: 'data/classification.js' },
+  '/data/metrics': { title: 'Metrics', module: 'data/metrics.js' },
   '/data/fx-rates': { title: 'FX Rates', module: 'data/fx-rates.js' },
   '/data/correlations': { title: 'Correlations & Volatility', module: 'data/correlations.js' },
   // One parameterised route backs all three Help topics — see js/views/help.js.
@@ -107,6 +108,7 @@ export const MENUS = [
     icon: '🗄️',
     items: [
       { label: 'Ticker classification', route: '/data/classification', editable: true, key: 'g t' },
+      { label: 'Metrics', route: '/data/metrics', editable: true },
       { label: 'FX rates', route: '/data/fx-rates', editable: true },
       { label: 'Correlations & volatility', route: '/data/correlations', editable: true },
       { label: 'Advisor profile', route: '/advisor/profile', editable: true },
