@@ -1,8 +1,9 @@
 /**
  * @module   analytics/scenario
- * @purpose  Pure before/after recomposition for what-if scenarios: sell
- *           specific positions entirely, buy a lump sector exposure with
- *           the proceeds. No new formulas — reuses risk.js/breakdown.js.
+ * @purpose  Pure before/after recomposition for what-if scenarios: partial
+ *           or full sells across any number of positions, buy a specific
+ *           ticker or a lump sector exposure with the proceeds. No new
+ *           formulas — reuses risk.js/breakdown.js.
  * @exports  applyScenario(positions, scenario) · scenarioMetrics(...)
  * @reads    @js/analytics/risk.js @js/analytics/breakdown.js
  * @usedby   @js/views/scenario.js
@@ -12,41 +13,66 @@
 import { concentration, weightedBeta, portfolioVolatility } from './risk.js';
 import { breakdownBy } from './breakdown.js';
 
+const KNOWN_SECTORS = ['Technology', 'Financials', 'Consumer', 'Healthcare', 'Energy', 'Industrials', 'Other'];
+
 /**
- * scenario: {sellSymbols: string[], buySector: string, buyWeight: number}.
- * Returns a new position array: sold symbols removed, plus one synthetic
- * buy position carrying only a weight and sector — no price/beta/P-E data,
- * so it's automatically excluded from those metrics (surfaced as excluded
- * weight) exactly like a real position missing that field would be.
+ * scenario: {sells: {symbol: sellPct}, buyTarget: string, buyWeight: number}.
+ * sellPct is 0-100 (0/absent = keep the position untouched). Returns a new
+ * position array with sold weight reduced proportionally, plus one
+ * synthetic buy line if buyTarget/buyWeight are set. buyTarget matching a
+ * known sector label becomes a sector-only synthetic line (no price/beta);
+ * anything else is treated as a specific ticker, same weight-only shape.
  */
 export function applyScenario(positions, scenario) {
-  const kept = positions.filter((p) => !scenario.sellSymbols.includes(p.symbol));
-  if (scenario.buySector && scenario.buyWeight > 0) {
+  const sells = scenario.sells ?? {};
+  const kept = positions
+    .map((p) => {
+      const pct = Math.min(100, Math.max(0, sells[p.symbol] ?? 0));
+      if (pct === 0) return p;
+      if (pct >= 100) return null;
+      const keepFrac = 1 - pct / 100;
+      return {
+        ...p,
+        amount: p.amount != null ? p.amount * keepFrac : p.amount,
+        weight: p.weight != null ? p.weight * keepFrac : p.weight,
+        marketValue: p.marketValue ? { ...p.marketValue, amount: p.marketValue.amount * keepFrac } : p.marketValue,
+      };
+    })
+    .filter(Boolean);
+
+  if (scenario.buyTarget && scenario.buyWeight > 0) {
+    const isSector = KNOWN_SECTORS.includes(scenario.buyTarget);
     kept.push({
-      symbol: `(new) ${scenario.buySector}`,
-      name: `New ${scenario.buySector} exposure`,
+      symbol: isSector ? `(new) ${scenario.buyTarget}` : scenario.buyTarget,
+      name: isSector ? `New ${scenario.buyTarget} exposure` : `New position: ${scenario.buyTarget}`,
       weight: scenario.buyWeight,
       marketValue: null,
-      _syntheticSector: scenario.buySector,
+      _syntheticSector: isSector ? scenario.buyTarget : null,
     });
   }
   return kept;
 }
 
-/** Full risk metric set for a position set, for before/after comparison. */
-export function scenarioMetrics(positions, classification, correlationMatrix, volatilityBySector) {
-  const conc = concentration(positions);
-  const beta = weightedBeta(positions);
-
-  const lookup = {
+function sectorLookup(positions, classification) {
+  return {
     get: (symbol) => {
       const synthetic = positions.find((p) => p.symbol === symbol && p._syntheticSector);
       return synthetic ? { sector: synthetic._syntheticSector } : classification.get(symbol);
     },
   };
+}
+
+/** Full risk metric set + sector groups for a position set, for before/after comparison. */
+export function scenarioMetrics(positions, classification, correlationMatrix, volatilityBySector) {
+  const conc = concentration(positions);
+  const beta = weightedBeta(positions);
+
+  const lookup = sectorLookup(positions, classification);
   const sectorGroups = breakdownBy(positions, 'sector', lookup);
   const sectorWeights = Object.fromEntries(sectorGroups.map((g) => [g.label, g.weight / 100]));
   const volatility = portfolioVolatility(sectorWeights, correlationMatrix, volatilityBySector);
+
+  const totalValueEUR = positions.reduce((s, p) => s + (p.weight ?? 0), 0); // weight-space proxy, no live FX needed here
 
   return {
     hhi: conc.hhi,
@@ -54,5 +80,7 @@ export function scenarioMetrics(positions, classification, correlationMatrix, vo
     top10Weight: conc.top10Weight,
     beta: beta.beta,
     volatility,
+    sectorGroups,
+    totalWeight: totalValueEUR,
   };
 }

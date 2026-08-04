@@ -20,7 +20,7 @@ export const ROUTES = {
   '/momentum': { title: 'Momentum', module: 'momentum.js' },
   '/risk': { title: 'Risk & Diversification', module: 'risk.js' },
   '/scenarios': { title: 'What-If Scenarios', module: 'scenario.js' },
-  '/scenarios/saved': { title: 'Saved Scenarios', module: 'placeholder.js' },
+  '/scenarios/saved': { title: 'Saved Scenarios', module: 'scenario-saved.js' },
   '/advisor': { title: 'Ask the Advisor', module: 'advisor.js' },
   '/advisor/profile': { title: 'My Profile Notes', module: 'data/profile.js' },
   '/advisor/connection': { title: 'Advisor Connection', module: 'data/connection.js' },
