@@ -16,6 +16,7 @@ import { loadSectorCorrelations, loadSectorVolatility } from '../lib/risk-refere
 import { applyScenario, scenarioMetrics } from '../analytics/scenario.js';
 import { fmtNum } from '../lib/format.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const SECTORS = ['Technology', 'Financials', 'Consumer', 'Healthcare', 'Energy', 'Industrials', 'Other'];
 
@@ -47,7 +48,7 @@ export async function mount(root) {
           <div>
             <label>Sell positions</label>
             <div class="checkbox-list" id="sell-checklist">
-              ${positions.map((p) => `<label><input type="checkbox" value="${p.symbol}"> ${p.symbol} (${fmtNum(p.weight, 1)}%)</label>`).join('')}
+              ${positions.map((p) => `<label><input type="checkbox" value="${escapeHtml(p.symbol)}"> ${escapeHtml(p.symbol)} (${fmtNum(p.weight, 1)}%)</label>`).join('')}
             </div>
           </div>
           <div>

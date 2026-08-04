@@ -14,6 +14,7 @@ import { loadClassification } from '../../lib/classification.js';
 import { suggestFromExchange, parsePastedBlock, applyToSimilar } from '../../import/mapping.js';
 import { SECTORS, ASSET_CLASSES, INDUSTRIES } from '../../parser.js';
 import { showToast } from '../../toast.js';
+import { escapeHtml } from '../../lib/escape.js';
 
 const REGIONS = ['North America', 'Europe', 'Japan', 'Asia Pacific ex Japan', 'Emerging Markets'];
 const FIELDS = ['sector', 'industry', 'region', 'country', 'currency', 'assetClass'];
@@ -70,14 +71,14 @@ export async function mount(root) {
             ${rows.map((r, i) => `
               <tr data-index="${i}">
                 <td><input type="checkbox" class="row-select"></td>
-                <td>${r.symbol}</td>
+                <td>${escapeHtml(r.symbol)}</td>
                 <td><select class="form-select" data-field="sector">${optionsHtml(SECTORS, r.sector)}</select></td>
                 <td><select class="form-select" data-field="industry">${optionsHtml(INDUSTRIES, r.industry)}</select></td>
                 <td><select class="form-select" data-field="region">${optionsHtml(REGIONS, r.region)}</select></td>
-                <td><input type="text" class="form-select" data-field="country" value="${r.country}"></td>
-                <td><input type="text" class="form-select" data-field="currency" value="${r.currency}"></td>
+                <td><input type="text" class="form-select" data-field="country" value="${escapeHtml(r.country)}"></td>
+                <td><input type="text" class="form-select" data-field="currency" value="${escapeHtml(r.currency)}"></td>
                 <td><select class="form-select" data-field="assetClass">${optionsHtml(ASSET_CLASSES, r.assetClass)}</select></td>
-                <td>${exchangeBySymbol.has(r.symbol) ? `<button class="btn btn-secondary btn-suggest" data-symbol="${r.symbol}">Suggest</button>` : ''}</td>
+                <td>${exchangeBySymbol.has(r.symbol) ? `<button class="btn btn-secondary btn-suggest" data-symbol="${escapeHtml(r.symbol)}">Suggest</button>` : ''}</td>
               </tr>
             `).join('')}
           </tbody>

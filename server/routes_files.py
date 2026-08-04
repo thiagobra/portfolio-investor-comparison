@@ -10,7 +10,7 @@ import json
 import shutil
 from urllib.parse import urlparse, parse_qs
 
-from server.safety import READABLE_FILES, WRITABLE_FILES, resolve_safe_path, UnsafePathError
+from server.safety import READABLE_FILES, WRITABLE_FILES, resolve_safe_path, UnsafePathError, MAX_UPLOAD_BYTES
 
 
 def _send_json(handler, status, payload):
@@ -41,6 +41,9 @@ def handle_get(handler):
 
 def handle_put(handler):
     length = int(handler.headers.get("Content-Length", 0))
+    if length > MAX_UPLOAD_BYTES:
+        handler.close_connection = True
+        return _send_json(handler, 413, {"error": "payload too large"})
     raw = handler.rfile.read(length)
     try:
         body = json.loads(raw)

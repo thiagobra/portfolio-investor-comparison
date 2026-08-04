@@ -6,13 +6,15 @@
  * @usedby   @js/views/risk.js
  */
 
+import { escapeHtml } from '../lib/escape.js';
+
 export function renderHeatmap(container, matrix, labels) {
   container.innerHTML = '';
   const table = document.createElement('table');
   table.className = 'heatmap-table';
 
   const thead = document.createElement('thead');
-  thead.innerHTML = `<tr><th></th>${labels.map((l) => `<th>${l}</th>`).join('')}</tr>`;
+  thead.innerHTML = `<tr><th></th>${labels.map((l) => `<th>${escapeHtml(l)}</th>`).join('')}</tr>`;
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
@@ -21,10 +23,10 @@ export function renderHeatmap(container, matrix, labels) {
       const v = matrix[rowLabel]?.[colLabel] ?? (rowLabel === colLabel ? 1 : null);
       const alpha = v == null ? 0 : Math.max(0, Math.min(1, v));
       const text = v != null ? v.toFixed(2) : '—';
-      return `<td style="background: rgba(0,122,204,${alpha})" title="${rowLabel} × ${colLabel}: ${text}">${text}</td>`;
+      return `<td style="background: rgba(0,122,204,${alpha})" title="${escapeHtml(rowLabel)} × ${escapeHtml(colLabel)}: ${text}">${text}</td>`;
     }).join('');
     const tr = document.createElement('tr');
-    tr.innerHTML = `<th>${rowLabel}</th>${cells}`;
+    tr.innerHTML = `<th>${escapeHtml(rowLabel)}</th>${cells}`;
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);

@@ -7,6 +7,7 @@
  */
 
 import { showToast } from '../../toast.js';
+import { escapeHtml } from '../../lib/escape.js';
 
 export async function mountTextEditor(container, { path, title, hint }) {
   const res = await fetch(`/api/files?path=${encodeURIComponent(path)}`);
@@ -18,7 +19,7 @@ export async function mountTextEditor(container, { path, title, hint }) {
       ${hint ? `<p class="section-hint">${hint}</p>` : ''}
       ${!exists ? '<div class="warning-banner">⚠️ This file doesn\'t exist yet — saving will create it.</div>' : ''}
       <div class="card">
-        <textarea class="editor-textarea" spellcheck="false">${content}</textarea>
+        <textarea class="editor-textarea" spellcheck="false">${escapeHtml(content)}</textarea>
         <div class="actions-row" style="margin-top:var(--space-md)">
           <button class="btn btn-primary btn-save">Save</button>
         </div>

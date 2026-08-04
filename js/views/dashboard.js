@@ -15,6 +15,7 @@ import { renderDonut } from '../charts/donut.js';
 import { renderBars } from '../charts/bars.js';
 import { concentration } from '../analytics/risk.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 export async function mount(root) {
   const portfolio = getPortfolio();
@@ -103,7 +104,7 @@ export async function mount(root) {
       </div>
     </section>
 
-    <p class="section-hint">FX as of ${getFxAsOf() ?? 'unknown'}. Imported ${new Date(portfolio.importedAt).toLocaleString()} from ${portfolio.filename ?? 'an unknown file'}.</p>
+    <p class="section-hint">FX as of ${getFxAsOf() ?? 'unknown'}. Imported ${new Date(portfolio.importedAt).toLocaleString()} from ${escapeHtml(portfolio.filename ?? 'an unknown file')}.</p>
   `;
 
   renderDonut(root.querySelector('#currency-donut'), currencySegments);

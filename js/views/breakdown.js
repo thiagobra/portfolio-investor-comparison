@@ -16,6 +16,7 @@ import { fmtEUR, fmtPct } from '../lib/format.js';
 import { renderDonut } from '../charts/donut.js';
 import { renderBars } from '../charts/bars.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const DIMENSIONS = {
   sector: { title: 'Sector', field: 'sector', needsClassification: true },
@@ -67,10 +68,10 @@ export async function mount(root, params) {
           <tbody>
             ${groups.map((g) => `
               <tr>
-                <td>${g.label}</td>
+                <td>${escapeHtml(g.label)}</td>
                 <td>${fmtEUR(g.valueEUR, 2)}</td>
                 <td>${fmtPct(g.weight, 1)}</td>
-                <td class="muted">${g.positions.map((p) => p.symbol).join(', ')}</td>
+                <td class="muted">${g.positions.map((p) => escapeHtml(p.symbol)).join(', ')}</td>
               </tr>
             `).join('')}
           </tbody>

@@ -7,6 +7,7 @@
  */
 
 import { svgEl, describeArc } from './svg.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const PALETTE = ['#569cd6', '#4ec9b0', '#ce9178', '#c586c0', '#dcdcaa', '#d7ba7d', '#6a9955', '#f44747'];
 
@@ -48,7 +49,7 @@ export function renderDonut(container, segments) {
     const pct = ((seg.value / total) * 100).toFixed(1);
     const row = document.createElement('div');
     row.className = 'donut-legend-item';
-    row.innerHTML = `<span class="donut-dot" style="background:${color}"></span>${seg.label} <span class="donut-legend-pct">${pct}%</span>`;
+    row.innerHTML = `<span class="donut-dot" style="background:${color}"></span>${escapeHtml(seg.label)} <span class="donut-legend-pct">${pct}%</span>`;
     legend.appendChild(row);
   });
   container.appendChild(legend);

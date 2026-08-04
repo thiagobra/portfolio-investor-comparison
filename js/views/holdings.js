@@ -10,11 +10,12 @@ import { getPortfolio } from '../store.js';
 import { loadFxRates, convertToEUR } from '../lib/fx.js';
 import { fmtEUR, fmtMoney, fmtPct, fmtNum } from '../lib/format.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const COLUMNS = [
-  { key: 'name', label: 'Name', align: 'left', fmt: (p) => p.name },
-  { key: 'symbol', label: 'Symbol', align: 'left', fmt: (p) => p.symbol },
-  { key: 'exchange', label: 'Exch.', align: 'left', fmt: (p) => p.exchange },
+  { key: 'name', label: 'Name', align: 'left', fmt: (p) => escapeHtml(p.name) },
+  { key: 'symbol', label: 'Symbol', align: 'left', fmt: (p) => escapeHtml(p.symbol) },
+  { key: 'exchange', label: 'Exch.', align: 'left', fmt: (p) => escapeHtml(p.exchange) },
   { key: 'amount', label: 'Qty', fmt: (p) => fmtNum(p.amount, 4) },
   { key: 'avgPrice', label: 'Avg', fmt: (p) => fmtMoney(p.avgPrice, p.marketValue?.currency) },
   { key: 'currentPrice', label: 'Current', fmt: (p) => fmtMoney(p.currentPrice, p.marketValue?.currency) },

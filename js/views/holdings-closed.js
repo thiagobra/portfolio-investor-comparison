@@ -9,6 +9,7 @@
 import { getPortfolio } from '../store.js';
 import { fmtMoney, fmtPct, fmtNum } from '../lib/format.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 function toneClass(v) {
   if (v == null) return '';
@@ -41,9 +42,9 @@ export async function mount(root) {
           <tbody>
             ${sorted.map((p) => `
               <tr>
-                <td>${p.name}</td>
-                <td>${p.symbol}</td>
-                <td>${p.exchange}</td>
+                <td>${escapeHtml(p.name)}</td>
+                <td>${escapeHtml(p.symbol)}</td>
+                <td>${escapeHtml(p.exchange)}</td>
                 <td>${fmtNum(p.amount, 4)}</td>
                 <td>${fmtMoney(p.openPrice, p.netPL?.currency)}</td>
                 <td>${p.openDate ?? '—'}</td>

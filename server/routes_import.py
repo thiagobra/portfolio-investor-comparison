@@ -15,6 +15,7 @@ from server.safety import ROOT, MAX_UPLOAD_BYTES, safe_upload_filename, UnsafePa
 def handle_post(handler):
     length = int(handler.headers.get("Content-Length", 0))
     if length > MAX_UPLOAD_BYTES:
+        handler.close_connection = True
         handler.send_response(413)
         handler.end_headers()
         return

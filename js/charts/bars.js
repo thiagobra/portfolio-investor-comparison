@@ -5,6 +5,8 @@
  * @usedby   @js/views/dashboard.js @js/views/breakdown.js @js/views/momentum.js
  */
 
+import { escapeHtml } from '../lib/escape.js';
+
 /**
  * items: [{label, value, formattedValue, positive?}]. `value` drives bar
  * width relative to the largest |value| in the list.
@@ -23,7 +25,7 @@ export function renderBars(container, items) {
     const pct = (Math.abs(it.value) / max) * 100;
     const tone = it.positive === undefined ? 'neutral' : it.positive ? 'positive' : 'negative';
     row.innerHTML = `
-      <span class="rank-bar-label">${it.label}</span>
+      <span class="rank-bar-label">${escapeHtml(it.label)}</span>
       <span class="rank-bar-track"><span class="rank-bar-fill ${tone}" style="width:${pct}%"></span></span>
       <span class="rank-bar-value ${tone}">${it.formattedValue ?? it.value}</span>
     `;

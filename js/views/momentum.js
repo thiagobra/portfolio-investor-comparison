@@ -11,6 +11,7 @@ import { getPortfolio } from '../store.js';
 import { ratingConsensus, consensusLabel } from '../analytics/momentum.js';
 import { fmtPct } from '../lib/format.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const PERF_COLUMNS = [
   ['daily', 'Daily'], ['week', '1 Week'], ['month', '1 Month'],
@@ -51,7 +52,7 @@ export async function mount(root) {
           <tbody>
             ${positions.map((p) => `
               <tr>
-                <td>${p.symbol}</td>
+                <td>${escapeHtml(p.symbol)}</td>
                 ${PERF_COLUMNS.map(([key]) => `<td class="${toneClass(p.perf?.[key])}">${fmtPct(p.perf?.[key])}</td>`).join('')}
               </tr>
             `).join('')}

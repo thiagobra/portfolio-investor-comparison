@@ -6,17 +6,32 @@
 @usedby   @serve.py
 """
 
+import ipaddress
 import json
 import os
 import re
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
 
-from server.safety import ROOT
+from server.safety import ROOT, MAX_UPLOAD_BYTES
 
 SETTINGS_PATH = os.path.join(ROOT, "data", "settings.md")
 DEFAULT_HOST = "http://127.0.0.1:1234"
 DEFAULT_MODEL = "google/gemma-4-e2b"
+
+
+def _is_loopback_host(host):
+    """Only ever talk to LM Studio on this machine — never an arbitrary network host."""
+    parsed = urlparse(host)
+    if parsed.scheme not in ("http", "https") or not parsed.hostname:
+        return False
+    if parsed.hostname == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(parsed.hostname).is_loopback
+    except ValueError:
+        return False
 
 
 def _read_settings():
@@ -30,6 +45,8 @@ def _read_settings():
     model_match = re.search(r"-\s*model:\s*(\S+)", text)
     host = host_match.group(1) if host_match else DEFAULT_HOST
     model = model_match.group(1) if model_match else DEFAULT_MODEL
+    if not _is_loopback_host(host):
+        host = DEFAULT_HOST
     return host, model
 
 
@@ -56,6 +73,11 @@ def handle_health(handler):
 def handle_chat(handler):
     host, model = _read_settings()
     length = int(handler.headers.get("Content-Length", 0))
+    if length > MAX_UPLOAD_BYTES:
+        handler.close_connection = True
+        handler.send_response(413)
+        handler.end_headers()
+        return
     raw = handler.rfile.read(length)
     try:
         payload = json.loads(raw)

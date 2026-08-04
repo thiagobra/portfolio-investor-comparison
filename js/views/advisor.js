@@ -17,6 +17,7 @@ import { buildPortfolioSummary } from '../analytics/summary.js';
 import { streamChat, checkHealth } from '../api.js';
 import { showToast } from '../toast.js';
 import { emptyStateHTML } from './shared/empty-state.js';
+import { escapeHtml } from '../lib/escape.js';
 
 const CATEGORY_HEADING = {
   FACTS: '## Facts',
@@ -90,7 +91,7 @@ export async function mount(root) {
     root.innerHTML = `
       <section class="section">
         <h2 class="section-title">Ask the Advisor</h2>
-        <div class="warning-banner">⚠️ LM Studio isn't reachable at ${health.host}. Check <strong>Advisor → Connection</strong>.</div>
+        <div class="warning-banner">⚠️ LM Studio isn't reachable at ${escapeHtml(health.host)}. Check <strong>Advisor → Connection</strong>.</div>
       </section>
     `;
     return;
@@ -109,7 +110,7 @@ export async function mount(root) {
   root.innerHTML = `
     <section class="section">
       <h2 class="section-title">Ask the Advisor</h2>
-      <p class="section-hint">Running against <strong>${health.model}</strong> at ${health.host}. Nothing leaves your PC.</p>
+      <p class="section-hint">Running against <strong>${escapeHtml(health.model)}</strong> at ${escapeHtml(health.host)}. Nothing leaves your PC.</p>
       <div class="card">
         <div class="chat-log" id="chat-log"></div>
         <div class="chat-input-row">
