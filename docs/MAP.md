@@ -29,6 +29,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/stats.css` — stat card grid (Dashboard, and later Valuation/Risk headline numbers).
 - `css/table.css` — sortable data table (Holdings, Closed positions, Breakdowns) + the color-scaled heatmap table (Risk & Diversification).
 - `css/donut-bars.css` — donut chart + ranked bar list styling (Dashboard, and later Breakdowns/Momentum).
+- `css/chat.css` — chat bubbles + input row (Ask the Advisor), connection status light (Advisor connection).
 
 ## `server/`
 
@@ -53,7 +54,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/toast.js` — tiny transient notification, used for stub menu actions and save confirmations.
 - `js/store.js` — single source of truth for the imported portfolio; persists to `localStorage` (`portfolio-data` key) so a reload keeps the last import. `getPortfolio()` / `setPortfolio()` / `clearPortfolio()` / `subscribe()`.
 - `js/import-controller.js` — wires the File → "Import Investing.com CSV…" menu action (listens for the `menu-action` event menubar.js dispatches): file picker, client-side parse via `js/import/csv-positions.js`, `store.setPortfolio()`, archives the raw file via `POST /api/import`.
-- `js/api.js` — planned; not yet built. Add when the first view calls `/api/files` for read/write (Data editors, task 12) or `/api/chat` (Advisor, task 13).
+- `js/api.js` — client for the one endpoint worth wrapping: `/api/chat`'s SSE stream. `streamChat(messages, onToken)` (parses `data: {...}` lines, resolves to the full reply) · `checkHealth()`. `/api/files` GET/PUT calls stayed as plain `fetch()` at their two call sites (`views/data/text-editor.js`, `views/data/classification.js`) — not enough duplication yet to justify a wrapper.
 
 ## `js/lib/`
 
@@ -83,6 +84,8 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/views/data/correlations.js` — two stacked text editors: `data/correlations.md` + `data/volatility.md`.
 - `js/views/data/profile.js` — thin wrapper: `private/profile.md` (also reachable from Advisor → My profile notes — same route).
 - `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
+- `js/views/data/connection.js` — Advisor connection screen: a live green/red `/api/health` reachability light, then the raw `data/settings.md` editor (reuses `text-editor.js`) below it.
+- `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/summary.js`'s portfolio digest. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -103,6 +106,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/analytics/valuation.js` — `weightedAverage(positions, field)` (generic — used for P/E and yield, same renormalised-average convention as `risk.js`'s `weightedBeta()`) · `marketCapTilt(positions)`.
 - `js/analytics/momentum.js` — `ratingConsensus(positions)` (weight-averaged across the 8-point technical rating block) · `consensusLabel(score)`. The performance heatmap itself needs no computation — the view reads `position.perf` directly.
 - `js/analytics/scenario.js` — `applyScenario(positions, {sellSymbols, buySector, buyWeight})` (pure recomposition: removes sold symbols, appends one synthetic weight-only position for the buy side) · `scenarioMetrics(...)` (runs `risk.js` + `breakdown.js` against a position set — used for both the before and the after side).
+- `js/analytics/summary.js` — `buildPortfolioSummary(portfolio, classification, correlationMatrix, volatilityBySector)`: the compact plain-text digest (totals, concentration, risk, valuation, momentum, top-10 holdings — ~10 lines) fed to the LM Studio advisor prompt instead of the raw holdings table. Reuses every other `analytics/*.js` module; computes nothing new itself.
 
 ## `js/charts/`
 
@@ -112,14 +116,10 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
 - `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
 
-Screens still to build (tasks 13–14), each will replace `placeholder.js` for its
-route in `js/menu-config.js` and get its own `js/views/*.js`:
-`advisor.js` (`/advisor`), `help.js`/`about.js`.
-`/advisor/connection` is also still a placeholder — task 13 territory (it's
-the LM Studio host/model editor, naturally built alongside the chat screen).
+Screens still to build (task 14): `help.js`/`about.js` (`/help/*`, `/about`).
 (`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
 `valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11;
-`data/*.js`: task 12.)
+`data/*.js`: task 12; `advisor.js`/`data/connection.js`: task 13.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 

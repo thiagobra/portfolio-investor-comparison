@@ -1,0 +1,82 @@
+/* ── Advisor chat (Ask the Advisor) ── */
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: var(--space-md);
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent);
+}
+
+.chat-bubble-assistant {
+  align-self: flex-start;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+}
+
+.chat-bubble-assistant.streaming::after {
+  content: '▍';
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.chat-input-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.chat-input-row textarea {
+  flex: 1;
+  min-height: 44px;
+  max-height: 160px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  padding: var(--space-sm) var(--space-md);
+  outline: none;
+  resize: vertical;
+}
+
+.chat-input-row textarea:focus {
+  border-color: var(--border-focus);
+}
+
+/* ── Connection status light ── */
+.status-light {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.status-dot.ok { background: var(--success); }
+.status-dot.down { background: var(--error); }
