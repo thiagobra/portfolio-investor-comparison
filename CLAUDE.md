@@ -83,10 +83,11 @@ User Input (Form / CSV)
 - Key functions: `updateTotal()`, `tryAutoCompare()`, `renderAssetComparison()` (orchestrator)
 
 **parser.js** (form & CSV handling)
-- Exports: `ASSET_CLASSES`, `INPUT_IDS`, `SECTORS`, `SECTOR_INPUT_IDS`, `GEO_REGIONS`, `GEO_INPUT_IDS`
+- Exports: `ASSET_CLASSES`, `INPUT_IDS`, `SECTORS`, `SECTOR_INPUT_IDS`, `GEO_REGIONS`, `GEO_INPUT_IDS`, `INDUSTRIES`, `INDUSTRY_INPUT_IDS`
 - `readFormValues()` — Returns dict of asset allocations from form (e.g., `{'Equities (stocks)': 60, ...}`)
 - `readSectorValues()` — Returns dict of sector allocations (empty if all zero)
 - `readGeoValues()` — Returns dict of geographic allocations (empty if all zero)
+- `readIndustryValues()` — Returns dict of industry allocations (empty if all zero)
 - `setFormValues(dict)` — Populates form inputs from dict
 - `parseCSV(text)` — Parses CSV/TSV; returns array of dicts matching asset classes
 - `getTotal(dict)` — Sums values; used to validate form total ≈ 100%
@@ -109,10 +110,11 @@ User Input (Form / CSV)
 - `renderSectorDrilldown(sectorAlloc)` — Renders sector table with key industries
 - `renderSectorComparison(userSectors, investorSectors)` — Side-by-side sector bars
 - `renderSectorScore(score, investorName)` — Sector-level similarity score
+- `renderIndustryAllocation(el, investorIndustries, userIndustries, investorName)` — Renders industry bars; `userIndustries` is `null` if user left inputs blank
 
 **investors-loader.js** (data loading & parsing)
 - `loadInvestor(id)` — Async fetch + parse `.md` file for investor
-  - Returns: `{name, philosophy, assetAllocation, geographicAllocation, sectorAllocation, principles}`
+  - Returns: `{name, philosophy, assetAllocation, geographicAllocation, sectorAllocation, industryAllocation, principles}`
   - Caches result in `investorCache` to avoid re-fetching
   - Throws error if investor ID unknown or fetch fails
 - `getInvestorIds()` — Returns array of available investor IDs (keys from `INVESTOR_FILES`)
@@ -122,6 +124,7 @@ User Input (Form / CSV)
 - **Asset inputs** → `readFormValues()` returns dict; `getTotal()` sums to ~100% check
 - **Sector inputs** (optional) → `readSectorValues()` sums to ~100% for "Your Sector Fit" panel
 - **Geo inputs** (optional) → `readGeoValues()` sums to ~100% for "You vs Investor" geo compare
+- **Industry inputs** (optional) → `readIndustryValues()` sums to ~100% for industry comparison panel
 - When user clears an input, empty string `""` reads as `0` via `parseFloat(el.value) || 0`
 
 ### Investor Data Format
@@ -160,6 +163,15 @@ Each `.md` file under `data/` has strict formatting requirements (regex-based pa
 | Energy | 5.0 | Oil & Gas |
 | Industrials | 5.0 | Machinery, Aerospace |
 | Other | 0 | — |
+
+## Industry Allocation
+| Industry | % |
+|---|---|
+| Financial Services | 20.0 |
+| Consumer Electronics | 18.0 |
+| Pharmaceuticals | 10.0 |
+| Software | 8.0 |
+| Other | 44.0 |
 
 ## Key Principles
 - Invest only in what you understand
@@ -290,9 +302,12 @@ Features are tracked and prioritized via GitHub issues:
 
 4. **For data-driven features:** Always cite sources (SEC filings, publications, etc.) in issue and commit
 
-**Current roadmap:**
-- **#17 (data):** Add `## Industry Allocation` section to all investor `.md` files (top 10–15 industries + "Other", must sum to 100%)
-- **#18 (enhancement):** Add user industry allocation input form + side-by-side UI comparison (dependent on #17)
+**Completed features (for context):**
+- #17/#18: Industry allocation — `## Industry Allocation` section in all `.md` files + user input form + comparison UI
+- #19: Investor sector drilldown hidden when user fills sectors
+- #20: Suggestions and Philosophy moved to bottom of results
+- #21: Flag emojis replaced with inline SVG icons
+- #22: Save Portfolio button + snapshot dropdown (localStorage-based historical comparison)
 
 ## Styling & Theme
 
@@ -363,3 +378,4 @@ loadInvestor('warren-buffett').then(data => console.log(data));
 - **Module scoping:** All rendering logic in `renderer.js`, all form state in `app.js`, data loading in `investors-loader.js`. Keep concerns separated to avoid tight coupling.
 - **Optional inputs:** Geo and sector inputs are **optional**. Empty inputs (sum = 0) show investor-only allocation. User-filled inputs (sum ≈ 100%) trigger comparison mode. This logic is in `renderGeoAllocation()` and `renderSectorSection()`.
 - **Similarity calculation:** Uses formula `100 - (totalAbsDeviation / 2)`. The divide-by-2 accounts for every overweight having a matching underweight. Score is clamped to 0–100 range.
+- **Portfolio snapshots:** Stored in `localStorage` under key `portfolio-snapshots` as a JSON array. Snapshots capture all four input dicts (assets, sectors, geo, industries). The dropdown is hidden until at least one snapshot exists. Managed entirely in `app.js` — no server involvement.
