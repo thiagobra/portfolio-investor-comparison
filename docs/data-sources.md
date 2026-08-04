@@ -54,6 +54,17 @@ is seeded from this feed (fetched 2026-08-03) and is editable directly
 from **Data → FX rates** in the app — the file's `as_of` date is what
 drives the staleness indicator shown next to every € total.
 
+## Manual asset-class volatility refresh — Data → Correlations & volatility
+
+Besides the batch `tools/build_reference_data.py` regeneration above, the
+Correlations & volatility screen (`js/views/data/correlations.js`) accepts
+a simple two-column CSV (`Asset Class,Volatility %`) and overwrites the
+matching rows in `data/volatility.md`'s Asset Class Volatility table on
+the spot — for a quick manual update from Damodaran's published annual
+figures without re-running the full pipeline. It does not replicate
+`tools/source_asset_class.py`'s historical-return-to-stdev statistics
+client-side; that logic stays server-side only.
+
 ## Rejected: Stooq
 
 Historically a good free OHLCV source; as of this build it serves a

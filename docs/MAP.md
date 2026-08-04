@@ -31,15 +31,18 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
 - `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
 - `css/stats.css` — stat card grid (Dashboard, and later Valuation/Risk headline numbers).
-- `css/table.css` — sortable data table (Holdings, Closed positions, Breakdowns) + the color-scaled heatmap table (Risk & Diversification).
-- `css/donut-bars.css` — donut chart + ranked bar list styling (Dashboard, and later Breakdowns/Momentum).
+- `css/table.css` — sortable data table (Holdings, Closed positions, Exchanges) + the color-scaled heatmap table (Risk & Diversification).
+- `css/donut-bars.css` — donut chart + ranked bar list styling (Dashboard, Exchanges, Momentum).
 - `css/chat.css` — chat bubbles + input row (Ask the Advisor), connection status light (Advisor connection).
+- `css/metric.css` — verdict-coloured stat card (`.metric-card.tone-{good,warn,bad,neutral}`), the plain-language `.metric-verdict` line, and a hover `.metric-help` tooltip carrying the formula. Pattern feeds off `js/lib/verdict.js`'s `{tone, label, sentence}`. Used by Overview, Risk, and What-if.
 
 ## `server/`
 
-- `server/safety.py` — path whitelist, traversal guard, upload size caps. Exports `resolve_safe_path()`, `MAX_UPLOAD_BYTES`.
+- `server/safety.py` — exact-match path whitelist (`resolve_safe_path()`) plus directory-scoped storage (`resolve_in_dir(name, subdir, pattern)` — basename-strips, regex-gates, verifies containment; used for `private/holdings/` and `private/snapshots/`), upload size caps. Exports `resolve_safe_path()` · `resolve_in_dir()` · `safe_upload_filename()` · `MAX_UPLOAD_BYTES`.
 - `server/routes_files.py` — `GET`/`PUT` whitelisted `data/*.md` and `private/*.md`, `.bak` before overwrite.
-- `server/routes_import.py` — `POST` CSV upload → parsed JSON (delegates the actual parse to the browser; server just stores the file).
+- `server/routes_import.py` — `POST` CSV upload → archives to `private/holdings/` (delegates the actual parse to the browser; server just stores the file).
+- `server/routes_holdings.py` — `GET /api/holdings` lists archived CSV exports in `private/holdings/`; `GET ?name=X` reads one back.
+- `server/routes_snapshots.py` — full `GET`/`PUT`/`DELETE` CRUD for JSON files in `private/snapshots/` — both manual portfolio snapshots (`snapshot_*.json`, `js/backup.js`) and saved what-if scenarios (`js/views/scenario.js` / `scenario-saved.js`) share this directory, distinguished by filename prefix, not by a second endpoint.
 - `server/routes_chat.py` — proxies `/api/chat` to LM Studio; `/api/health` model + reachability check.
 
 ## `js/` (existing, kept as-is — consumed by `js/views/compare/*.js` now, not `app.js`)
@@ -68,6 +71,7 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/import-controller.js` — wires the File → "Import Investing.com CSV…" menu action (listens for the `menu-action` event menubar.js dispatches): file picker, client-side parse via `js/import/csv-positions.js`, `store.setPortfolio()`, archives the raw file via `POST /api/import`.
 - `js/api.js` — client for the one endpoint worth wrapping: `/api/chat`'s SSE stream. `streamChat(messages, onToken)` (parses `data: {...}` lines, resolves to the full reply) · `checkHealth()`. `/api/files` GET/PUT calls stayed as plain `fetch()` at their two call sites (`views/data/text-editor.js`, `views/data/classification.js`) — not enough duplication yet to justify a wrapper.
 - `js/feedback-fab.js` — discreet 36px 💡 button pinned bottom-left (bottom-right is the toast corner, `css/menubar.css`), jumps to `#/feedback` from any screen, hides itself once already there.
+- `js/backup.js` — File menu actions beyond import: `Save snapshot` (writes the in-memory portfolio to `private/snapshots/snapshot_<date>.json`), `Export backup…` (bundles portfolio + classification/profile/metrics/settings + every saved snapshot into one downloaded JSON), `Import backup…` (file picker, `confirm()`, restores everything through `/api/files` + `/api/snapshots`).
 
 ## `js/lib/`
 
@@ -76,7 +80,9 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/lib/format.js` — shared `fmtEUR()` / `fmtMoney()` / `fmtPct()` / `fmtNum()` formatters.
 - `js/lib/classification.js` — loads `private/classification.md` via `/api/files` into a `Map<symbol, {sector,industry,region,country,currency,assetClass}>`. `loadClassification()` (resolves to the Map) · `getClassification(symbol)`.
 - `js/lib/risk-reference.js` — loads the sector correlation matrix and volatility table `js/analytics/risk.js`'s `portfolioVolatility()` needs. `loadSectorCorrelations()` · `loadSectorVolatility()`.
-- `js/lib/escape.js` — `escapeHtml(str)`, applied at every point CSV/import/file-derived text (symbol, name, exchange, label, host, model, file content) gets interpolated into an `innerHTML` template — added in the task 16 security pass.
+- `js/lib/escape.js` — `escapeHtml(str)`, applied at every point CSV/import/file-derived text (symbol, name, exchange, label, host, model, file content) gets interpolated into an `innerHTML` template.
+- `js/lib/verdict.js` — single source of truth turning a raw metric into `{tone, label, sentence}` against a named threshold table in `BANDS` (hhi/effectiveN/top10Weight/volatility/beta/maxDrawdown). `verdict(value, metricKey)`. So Overview/Risk/What-if can never disagree about what a number means.
+- `js/lib/metrics.js` — loads `private/metrics.md` (mirrors `classification.js`'s cached-fetch pattern) into `Map<symbol, {roe,debtEquity,profitMargin,revGrowth,expenseRatio,maxDrawdown,updated}>`. `loadMetrics()` · `getMetrics(symbol)` · `isStale(entry)` (missing or >90 days old).
 
 ## `js/views/`
 
@@ -85,11 +91,14 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/dashboard.js` — Dashboard screen: headline stat cards (total value, day/total P/L, positions), currency-allocation donut, top-movers bars, concentration summary. Builds its own markup inline (no `views/*.html` partial — single-panel screen, unlike Compare).
 - `js/views/holdings.js` — Holdings screen: sortable open-positions table (click a header to sort) with a totals row.
 - `js/views/holdings-closed.js` — Closed positions screen: realized trade history table.
-- `js/views/breakdown.js` — Breakdown screen, parameterised by the `:dimension` route param (sector/industry/region/currency/asset-class) — one module backs all five `Analyse` menu routes. Donut + ranked bars + table. Non-currency dimensions bucket unclassified positions into a visible "Unclassified" group with a banner pointing at **Data → Ticker classification**, never silently folding them into a real group.
-- `js/views/valuation.js` — Valuation screen: weighted P/E, dividend yield, beta stat cards, market-cap tilt bars, most/least expensive (by P/E) ranked lists.
+- `js/views/exchanges.js` — Exchange exposure screen: weight/EUR value/position count grouped by `p.exchange` straight off the CSV (no classification lookup). Donut + ranked bars + table — replaced the old per-dimension breakdown screens in round 4 (sector/region/asset-class/industry are still surfaced elsewhere: Overview's top-3 strip, Risk, What-if — a standalone screen per dimension was pure duplication).
+- `js/views/valuation.js` — Valuation screen: weighted P/E, dividend yield, beta stat cards, market-cap tilt bars, most/least expensive (by P/E) ranked lists, per-company colour via `js/charts/palette.js`.
 - `js/views/momentum.js` — Momentum screen: technical rating consensus stat card + a color-coded performance table (Daily/1W/1M/YTD/1Y/3Y) — a plain table doubles as the "heatmap" via `.positive`/`.negative` tone classes, no separate chart primitive needed.
 - `js/views/risk.js` — Risk & Diversification screen: concentration + portfolio volatility + weighted beta stat cards, and a sector correlation heatmap (`js/charts/heatmap.js`).
-- `js/views/scenario.js` — What-if builder: sell entire positions (checkboxes) + buy a lump sector exposure (dropdown + % amount), before/after metric table. Simulation only — never touches the stored portfolio.
+- `js/views/scenario.js` — What-if builder: partial sells (0-100% per position) + buy a specific ticker or a sector, results as commit-2 verdict cards (HHI/effective holdings/top-10), paired before/after sector bar lists, and risk verdicts (volatility/beta). "Save scenario…" names it and PUTs to `/api/snapshots`. Simulation only — never touches the stored portfolio.
+- `js/views/scenario-saved.js` — `/scenarios/saved`: lists saved what-if scenarios from `GET /api/snapshots` (filters out `snapshot_*` manual portfolio snapshots — same directory, different kind of thing), Load hands the config to `scenario.js` via `sessionStorage` (prefills + auto-runs), Delete removes it.
+- `js/views/progression.js` — `/progression`: multi-file drag-and-drop of `Holdings_*.csv` exports, auto-loads everything already archived via `GET /api/holdings`, dedupes/sorts by date parsed from the filename. Renders `js/analytics/progression.js`'s time-weighted CAGR, detected contributions/withdrawals, and per-position price CAGR.
+- `js/views/cagr.js` — `/cagr`, WIP: simpler single-file per-stock CAGR — `(currentPrice/avgPrice)^(365/daysHeld)-1` using the CSV's Open Date vs file date. No snapshots needed, deliberately cruder than `progression.js`.
 
 ## `js/views/help/`
 
@@ -99,14 +108,15 @@ hard cap; every other file was checked in task 15's audit and is within it.
 
 ## `js/views/data/`
 
-- `js/views/data/text-editor.js` — generic raw-markdown editor wired to `/api/files` (`mountTextEditor(container, {path, title, hint})`). Shared, not a route itself.
-- `js/views/data/fx-rates.js` — thin wrapper: `data/fx-rates.md`.
-- `js/views/data/correlations.js` — two stacked text editors: `data/correlations.md` + `data/volatility.md`.
+- `js/views/data/text-editor.js` — generic raw-markdown editor wired to `/api/files` (`mountTextEditor(container, {path, title, hint, sources})`). `sources` renders an optional clickable footer (`[{label, url}]`). Shared, not a route itself.
+- `js/views/data/fx-rates.js` — thin wrapper: `data/fx-rates.md`, sourced to the ECB.
+- `js/views/data/correlations.js` — two stacked text editors: `data/correlations.md` + `data/volatility.md`, sourced to Ken French / Damodaran, plus a simple CSV importer (`Asset Class,Volatility %`) that overwrites `data/volatility.md`'s asset-class rows on the spot.
 - `js/views/data/profile.js` — thin wrapper: `private/profile.md` (also reachable from Advisor → My profile notes — same route).
+- `js/views/data/metrics.js` — editable grid mirroring `classification.js`'s shape: ROE/debt-equity/margins/growth/expense-ratio/max-drawdown per symbol, red asterisk on any row missing or older than 90 days (`isStale()`). Serializes to `private/metrics.md` on Save.
 - `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
 - `js/views/data/connection.js` — Advisor connection screen: a live green/red `/api/health` reachability light, then the raw `data/settings.md` editor (reuses `text-editor.js`) below it.
-- `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/summary.js`'s portfolio digest. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
-- `js/views/help.js` — Help screen router, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same pattern as `breakdown.js`. Delegates content to `js/views/help/*.js` (split in task 6 once `getting-started` needed real logic, not just prose).
+- `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/advisor-context.js`'s full context (every open position, closed trades, metrics store — budgeted against `data/settings.md`'s `context_tokens`). A staged pipeline status line (Reading holdings → Loading classification → Loading metrics → Building context → Sending → Generating) shows real progress and the real char/token count before the chat appears; a collapsible panel shows the exact system prompt sent. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
+- `js/views/help.js` — Help screen router, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same one-module-many-routes pattern used elsewhere. Delegates content to `js/views/help/*.js` (split in task 6 once `getting-started` needed real logic, not just prose).
 - `js/views/feedback.js` — `/feedback` route: fetches `views/compare/feedback.html` and calls the existing `initFeedback()` — same form Compare uses, no duplicated GitHub URL.
 - `js/views/about.js` — About screen: what the app is, how it's built, where data lives, link to the repo.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
@@ -128,8 +138,9 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/analytics/breakdown.js` — `breakdownBy(positions, field, classification)`: groups by `currency` (straight off the CSV) or by a `js/lib/classification.js` field, sorted by EUR value descending.
 - `js/analytics/valuation.js` — `weightedAverage(positions, field)` (generic — used for P/E and yield, same renormalised-average convention as `risk.js`'s `weightedBeta()`) · `marketCapTilt(positions)`.
 - `js/analytics/momentum.js` — `ratingConsensus(positions)` (weight-averaged across the 8-point technical rating block) · `consensusLabel(score)`. The performance heatmap itself needs no computation — the view reads `position.perf` directly.
-- `js/analytics/scenario.js` — `applyScenario(positions, {sellSymbols, buySector, buyWeight})` (pure recomposition: removes sold symbols, appends one synthetic weight-only position for the buy side) · `scenarioMetrics(...)` (runs `risk.js` + `breakdown.js` against a position set — used for both the before and the after side).
-- `js/analytics/summary.js` — `buildPortfolioSummary(portfolio, classification, correlationMatrix, volatilityBySector)`: the compact plain-text digest (totals, concentration, risk, valuation, momentum, top-10 holdings — ~10 lines) fed to the LM Studio advisor prompt instead of the raw holdings table. Reuses every other `analytics/*.js` module; computes nothing new itself.
+- `js/analytics/scenario.js` — `applyScenario(positions, {sells: {symbol: pct}, buyTarget, buyWeight})` (pure recomposition: proportionally shrinks/removes sold positions, appends one synthetic weight-only position for the buy side — sector or a specific ticker) · `scenarioMetrics(...)` (runs `risk.js` + `breakdown.js` against a position set, returns sector groups too — used for both the before and the after side).
+- `js/analytics/progression.js` — `computeProgression(snapshots)`: time-weighted return chained across consecutive dated snapshots (money added/withdrawn never counts as growth — reported separately as detected contributions), compounded into a CAGR, plus a simple per-symbol price CAGR from first to last appearance. See `@docs/metrics.md`.
+- `js/analytics/advisor-context.js` — `buildAdvisorContext(portfolio, classification, metrics, contextTokens)`: full advisor context (every open position, closed trades, metrics store) — not just a digest. Budgeted against `contextTokens` (from `data/settings.md`); trims to the largest holdings first if it overflows. Replaced `analytics/summary.js` (deleted) in round 4.
 
 ## `js/charts/`
 
@@ -137,17 +148,14 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/charts/donut.js` — `renderDonut(container, segments)`, donut + legend.
 - `js/charts/bars.js` — `renderBars(container, items)`, ranked horizontal bars.
 - `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
-- `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
+- `js/charts/treemap.js` — planned; still unbuilt (the donut + ranked bars cover the same ground for now).
+- `js/charts/palette.js` — categorical colour palette. `colorForIndex(i)` cycles a 16-colour list; `colorForKey(key)` caches a stable colour per label (Map, page lifetime) so the same ticker/currency/sector keeps the same colour across every screen it appears on.
 
-All screens built except `/scenarios/saved` ("Saved scenarios"), still
-`views/placeholder.js` — an explicit scope cut in task 11 (the what-if
-builder itself, `/scenarios`, is the load-bearing part; persisting a
-scenario to disk was never asked for). (`dashboard.js`/`holdings.js`:
-task 8; `breakdown.js`: task 9; `valuation.js`/`momentum.js`: task 10;
-`risk.js`/`scenario.js`: task 11; `data/*.js`: task 12;
-`advisor.js`/`data/connection.js`: task 13; `help.js`/`about.js`: task 14;
-`compare.js` + `compare/*.js`: pre-existing, verified against v3's
-restructuring in task 14.)
+Every route in `ROUTES` is backed by a real view module as of round 4 —
+the only remaining `placeholder.js` consumer is a route not yet added to
+the menu tree. `js/views/cagr.js` and `js/views/data/metrics.js` are
+explicitly marked WIP (🚧, `soon: true` in `menu-config.js`) rather than
+presented as finished.
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 
@@ -167,10 +175,11 @@ restructuring in task 14.)
 
 ## `private/` (gitignored, personal)
 
-- `private/holdings/*.csv` — your Investing.com exports.
-- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification** (built task 12).
-- `private/profile.md` — advisor's append-only case notes about you. Seeded with the `## Facts`/`## Goals`/`## Constraints`/`## Risk appetite`/`## Open questions` section skeleton task 13's auto-append will write under; editable via **Data → Advisor profile** / **Advisor → My profile notes** (editor built task 12, auto-append is task 13).
-- `private/snapshots/*.json` — saved portfolio snapshots.
+- `private/holdings/*.csv` — your Investing.com exports, archived on every import; also the source data for `js/views/progression.js` and `tools/check_holdings_columns.py`.
+- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification**.
+- `private/metrics.md` — ticker → ROE/debt-equity/profit margin/rev growth/expense ratio/max drawdown/updated date. Seeded with an empty table; rows fill in via **Data → Metrics**.
+- `private/profile.md` — advisor's append-only case notes about you. `## Facts`/`## Goals`/`## Constraints`/`## Risk appetite`/`## Open questions` section skeleton the advisor's auto-append writes under; editable via **Data → Advisor profile** / **Advisor → My profile notes**.
+- `private/snapshots/*.json` — two kinds of file share this directory, distinguished by filename: manual portfolio snapshots (`snapshot_<date>.json`, **File → Save snapshot**) and named what-if scenarios (any other name, **Scenarios → What-if builder → Save scenario…**). `js/views/scenario-saved.js` filters to the latter.
 
 ## `tools/`
 
@@ -179,3 +188,4 @@ restructuring in task 14.)
 - `tools/source_industry.py` — Ken French 12 industries → app's 7 sectors.
 - `tools/source_region.py` — Ken French 5 regional factor files → region market-return series.
 - `tools/source_asset_class.py` — Damodaran `histretSP.xls` → equities/bonds/cash/gold/real-estate annual returns. Needs `pip install xlrd` (dev-time only).
+- `tools/check_holdings_columns.py` — verifies every `private/holdings/*.csv` still has a 53-column `Open Positions Summary` header row, positional per `docs/csv-format.md`. Run manually: `python3 -m tools.check_holdings_columns`.
