@@ -16,8 +16,8 @@ export const ROUTES = {
   '/holdings/closed': { title: 'Closed Positions', module: 'holdings-closed.js' },
   // One parameterised route backs all five breakdown dimensions — see js/views/breakdown.js.
   '/breakdown/:dimension': { title: 'Breakdown', module: 'breakdown.js' },
-  '/valuation': { title: 'Valuation', module: 'placeholder.js' },
-  '/momentum': { title: 'Momentum', module: 'placeholder.js' },
+  '/valuation': { title: 'Valuation', module: 'valuation.js' },
+  '/momentum': { title: 'Momentum', module: 'momentum.js' },
   '/risk': { title: 'Risk & Diversification', module: 'placeholder.js' },
   '/scenarios': { title: 'What-If Scenarios', module: 'placeholder.js' },
   '/scenarios/saved': { title: 'Saved Scenarios', module: 'placeholder.js' },

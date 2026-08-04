@@ -5,7 +5,7 @@
  * @exports  buildPortfolio()
  * @reads    @js/import/csv-sections.js @js/import/csv-tokenize.js
  * @usedby   @js/import-controller.js
- * @seealso  @docs/csv-format.md
+ * @seealso  @docs/csv-format.md @docs/metrics.md
  */
 
 import { parseSections } from './csv-sections.js';
@@ -42,6 +42,11 @@ function buildOpenPosition(row, openDateBySymbol) {
       threeYear: coercePercent(row.perf3Year),
     },
     rating: {
+      min5: row.rating5m || null,
+      min15: row.rating15m || null,
+      min30: row.rating30m || null,
+      hourly: row.ratingHourly || null,
+      hours5: row.rating5h || null,
       daily: row.ratingDaily || null,
       weekly: row.ratingWeekly || null,
       monthly: row.ratingMonthly || null,
