@@ -56,7 +56,7 @@ hard cap; every other file was checked in task 15's audit and is within it.
 
 ## `js/` (new)
 
-- `js/app.js` — entry point: mounts the menu bar, starts the router, wires the import controller, the app-bar status rail, global keyboard shortcuts, and the command palette.
+- `js/app.js` — entry point: mounts the menu bar, starts the router, wires the import controller, the app-bar status rail, global keyboard shortcuts, the command palette, and the suggestion FAB.
 - `js/appbar-status.js` — live status rail rendered into `#appbar-status`: position count + total EUR value (subscribes to `js/store.js`), an advisor heartbeat dot (`checkHealth()`, re-checked on every `route:change`), and the `Ctrl K` hint. With no portfolio imported, shows an "import a CSV" call to action that fires the same `menu-action` event `js/import-controller.js` listens for.
 - `js/shortcuts.js` — global keyboard shortcuts registered once: `Ctrl K` dispatches `open-palette` (js/palette.js owns the UI), `g`-then-letter jumps straight to a screen, `?` shows a cheat-sheet overlay (built from the exported `SHORTCUTS` table — also consumed by `js/views/help/shortcuts.js` so the docs can't drift), `Alt` focuses the menu bar, `Esc` closes the overlay. Ignored while focus is in an input/textarea/select/contenteditable.
 - `js/palette.js` — command palette opened by the `open-palette` event: fuzzy-searches every non-separator `MENUS` item (routes and menu actions alike, tickers excluded) and runs the selected one via `menubar.js`'s exported `activate()` — the exact same logic a real menu click uses, so the palette can never diverge from the menu bar. ↑/↓ to move, Enter to run, Esc to close, click a result to run it.
@@ -67,6 +67,7 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/store.js` — single source of truth for the imported portfolio; persists to `localStorage` (`portfolio-data` key) so a reload keeps the last import. `getPortfolio()` / `setPortfolio()` / `clearPortfolio()` / `subscribe()`.
 - `js/import-controller.js` — wires the File → "Import Investing.com CSV…" menu action (listens for the `menu-action` event menubar.js dispatches): file picker, client-side parse via `js/import/csv-positions.js`, `store.setPortfolio()`, archives the raw file via `POST /api/import`.
 - `js/api.js` — client for the one endpoint worth wrapping: `/api/chat`'s SSE stream. `streamChat(messages, onToken)` (parses `data: {...}` lines, resolves to the full reply) · `checkHealth()`. `/api/files` GET/PUT calls stayed as plain `fetch()` at their two call sites (`views/data/text-editor.js`, `views/data/classification.js`) — not enough duplication yet to justify a wrapper.
+- `js/feedback-fab.js` — discreet 36px 💡 button pinned bottom-left (bottom-right is the toast corner, `css/menubar.css`), jumps to `#/feedback` from any screen, hides itself once already there.
 
 ## `js/lib/`
 
@@ -90,6 +91,12 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/risk.js` — Risk & Diversification screen: concentration + portfolio volatility + weighted beta stat cards, and a sector correlation heatmap (`js/charts/heatmap.js`).
 - `js/views/scenario.js` — What-if builder: sell entire positions (checkboxes) + buy a lump sector exposure (dropdown + % amount), before/after metric table. Simulation only — never touches the stored portfolio.
 
+## `js/views/help/`
+
+- `js/views/help/getting-started.js` — Quick tab: a checklist that reads real state (`getPortfolio()`, `loadClassification()` vs imported symbols, `getFxAsOf()` flagged stale past 30 days, `checkHealth()`) — every row is a button to the fix, nothing is shown that isn't derived from live data. Extended tab: full prose walkthrough of every screen in the app. Tabs are in-screen state, not routes.
+- `js/views/help/metrics.js` — "How the numbers are calculated" — static formula reference (unchanged content, relocated in task 6).
+- `js/views/help/shortcuts.js` — "Keyboard shortcuts" table, rendered from `js/shortcuts.js`'s `SHORTCUTS` export so it can't drift from the real bindings.
+
 ## `js/views/data/`
 
 - `js/views/data/text-editor.js` — generic raw-markdown editor wired to `/api/files` (`mountTextEditor(container, {path, title, hint})`). Shared, not a route itself.
@@ -99,7 +106,8 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
 - `js/views/data/connection.js` — Advisor connection screen: a live green/red `/api/health` reachability light, then the raw `data/settings.md` editor (reuses `text-editor.js`) below it.
 - `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/summary.js`'s portfolio digest. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
-- `js/views/help.js` — Help screen, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same pattern as `breakdown.js`. Static content, no data dependency.
+- `js/views/help.js` — Help screen router, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same pattern as `breakdown.js`. Delegates content to `js/views/help/*.js` (split in task 6 once `getting-started` needed real logic, not just prose).
+- `js/views/feedback.js` — `/feedback` route: fetches `views/compare/feedback.html` and calls the existing `initFeedback()` — same form Compare uses, no duplicated GitHub URL.
 - `js/views/about.js` — About screen: what the app is, how it's built, where data lives, link to the repo.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
