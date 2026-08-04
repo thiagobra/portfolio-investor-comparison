@@ -21,7 +21,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
 - `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
 - `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
-- `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
+- `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown, prose (`h3`/`p`/`ol`/`li`/`code`/`kbd`/links inside `.card` — Help/About screens).
 - `css/forms.css` — inputs, file upload, suggestion form, toggle switch, select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors).
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
@@ -86,6 +86,8 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
 - `js/views/data/connection.js` — Advisor connection screen: a live green/red `/api/health` reachability light, then the raw `data/settings.md` editor (reuses `text-editor.js`) below it.
 - `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/summary.js`'s portfolio digest. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
+- `js/views/help.js` — Help screen, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same pattern as `breakdown.js`. Static content, no data dependency.
+- `js/views/about.js` — About screen: what the app is, how it's built, where data lives, link to the repo.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -116,10 +118,11 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
 - `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
 
-Screens still to build (task 14): `help.js`/`about.js` (`/help/*`, `/about`).
-(`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
+All screens built. (`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
 `valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11;
-`data/*.js`: task 12; `advisor.js`/`data/connection.js`: task 13.)
+`data/*.js`: task 12; `advisor.js`/`data/connection.js`: task 13;
+`help.js`/`about.js`: task 14; `compare.js` + `compare/*.js`: pre-existing,
+verified against v3's restructuring in task 14.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 

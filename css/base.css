@@ -145,6 +145,36 @@
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 14'><rect width='20' height='14' fill='%23009b3a'/><polygon points='10,1.5 18,7 10,12.5 2,7' fill='%23fedf00'/><circle cx='10' cy='7' r='2.5' fill='%23002776'/></svg>");
 }
 
+/* ── Prose (Help / About screens) ── */
+.card h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xs);
+}
+.card h3:first-child { margin-top: 0; }
+.card p { margin-bottom: var(--space-sm); line-height: 1.6; }
+.card ol, .card ul { padding-left: var(--space-lg); margin-bottom: var(--space-sm); }
+.card li { margin-bottom: var(--space-xs); line-height: 1.6; }
+.card code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--bg-tertiary);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+}
+.card a { color: var(--accent); }
+.card a:hover { color: var(--accent-hover); }
+kbd {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.5em;
+}
+
 /* ── Snapshot dropdown ── */
 .snapshot-row {
   display: flex;

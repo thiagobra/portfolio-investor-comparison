@@ -27,10 +27,9 @@ export const ROUTES = {
   '/data/classification': { title: 'Ticker Classification', module: 'data/classification.js' },
   '/data/fx-rates': { title: 'FX Rates', module: 'data/fx-rates.js' },
   '/data/correlations': { title: 'Correlations & Volatility', module: 'data/correlations.js' },
-  '/help/getting-started': { title: 'Getting Started', module: 'placeholder.js' },
-  '/help/metrics': { title: 'How the Numbers Are Calculated', module: 'placeholder.js' },
-  '/help/shortcuts': { title: 'Keyboard Shortcuts', module: 'placeholder.js' },
-  '/about': { title: 'About', module: 'placeholder.js' },
+  // One parameterised route backs all three Help topics — see js/views/help.js.
+  '/help/:topic': { title: 'Help', module: 'help.js' },
+  '/about': { title: 'About', module: 'about.js' },
 };
 
 // action: 'stub' items show a "coming soon" toast instead of navigating.
