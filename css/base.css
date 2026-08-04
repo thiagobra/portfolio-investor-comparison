@@ -1,0 +1,176 @@
+/* ── Cards ── */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Total Row ── */
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  margin-top: var(--space-sm);
+  border-top: 1px solid var(--border);
+}
+
+.total-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.total-value.valid {
+  color: var(--success);
+}
+
+.total-value.invalid {
+  color: var(--error);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* ── Warnings ── */
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(220, 220, 170, 0.1);
+  border: 1px solid rgba(220, 220, 170, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--warning);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-lg) 0;
+}
+
+/* ── Section title row (with advanced toggle) ── */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.section-title-row .section-title {
+  margin-bottom: 0;
+}
+
+.section-hint {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+}
+
+/* ── Flag icons (inline SVG, Windows-safe replacements for region emojis) ── */
+.flag-icon {
+  display: inline-block;
+  width: 1.1em;
+  height: 0.8em;
+  vertical-align: -0.05em;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 1px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.flag-us {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 10'><rect width='19' height='10' fill='%23b22234'/><path stroke='%23fff' stroke-width='0.77' d='M0,1.15h19M0,2.69h19M0,4.23h19M0,5.77h19M0,7.31h19M0,8.85h19'/><rect width='8' height='5.39' fill='%233c3b6e'/></svg>");
+}
+.flag-eu {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'><rect width='18' height='12' fill='%23003399'/><g fill='%23ffcc00'><circle cx='9' cy='3' r='0.6'/><circle cx='12' cy='3.8' r='0.6'/><circle cx='13.5' cy='6' r='0.6'/><circle cx='12' cy='8.2' r='0.6'/><circle cx='9' cy='9' r='0.6'/><circle cx='6' cy='8.2' r='0.6'/><circle cx='4.5' cy='6' r='0.6'/><circle cx='6' cy='3.8' r='0.6'/></g></svg>");
+}
+.flag-cn {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><rect width='30' height='20' fill='%23de2910'/><g fill='%23ffde00'><polygon points='5,3 6,5.5 8.5,5.5 6.5,7 7.3,9.5 5,8 2.7,9.5 3.5,7 1.5,5.5 4,5.5'/><circle cx='10' cy='2' r='0.7'/><circle cx='12' cy='4' r='0.7'/><circle cx='12' cy='7' r='0.7'/><circle cx='10' cy='9' r='0.7'/></g></svg>");
+}
+.flag-br {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 14'><rect width='20' height='14' fill='%23009b3a'/><polygon points='10,1.5 18,7 10,12.5 2,7' fill='%23fedf00'/><circle cx='10' cy='7' r='2.5' fill='%23002776'/></svg>");
+}
+
+/* ── Snapshot dropdown ── */
+.snapshot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.snapshot-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.snapshot-select {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+.snapshot-select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}

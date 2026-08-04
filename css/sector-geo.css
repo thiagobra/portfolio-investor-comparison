@@ -1,0 +1,102 @@
+/* ── Sector Drilldown ── */
+.sector-row {
+  margin-bottom: var(--space-md);
+}
+
+.sector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.sector-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sector-pct {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.sector-industries {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.industry-tag {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  padding: 1px var(--space-sm);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ── Geo comparison blocks ── */
+.geo-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.geo-block + .geo-block {
+  margin-top: var(--space-md);
+}
+
+.geo-block-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+.geo-compare {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Sector panels (drilldown + fit, side-by-side on wide screens) ── */
+.sector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  align-items: start;
+}
+
+.sector-grid:has(.sector-panel.hidden) {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 820px) {
+  .sector-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sector-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.sector-panel-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+.investor-name-inline {
+  color: var(--text-primary);
+  font-weight: 500;
+}

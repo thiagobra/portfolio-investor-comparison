@@ -15,6 +15,16 @@ diffs this against the real directory tree. Grouped by directory.
 
 - `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1.
 
+## `css/`
+
+- `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
+- `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
+- `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
+- `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
+- `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
+- `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
+- `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
+
 ## `server/`
 
 - `server/safety.py` — path whitelist, traversal guard, upload size caps. Exports `resolve_safe_path()`, `MAX_UPLOAD_BYTES`.

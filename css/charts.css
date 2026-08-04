@@ -1,0 +1,154 @@
+/* ── Comparison Bars ── */
+.comparison-row {
+  margin-bottom: var(--space-lg);
+}
+
+.comparison-row .label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.bar-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 26px;
+}
+
+.bar-line .tag {
+  width: 36px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--chart-bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-base);
+  min-width: 2px;
+}
+
+.bar-fill.user {
+  background: var(--chart-user);
+}
+
+.bar-fill.investor {
+  background: var(--chart-investor);
+}
+
+.bar-line .value {
+  width: 40px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* ── Similarity Score ── */
+.score-container {
+  text-align: center;
+  padding: var(--space-lg) 0;
+}
+
+.score-number {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.score-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.score-bar-track {
+  height: 8px;
+  background: var(--chart-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width var(--transition-base);
+  background: linear-gradient(90deg, var(--error), var(--warning), var(--success));
+}
+
+/* ── Geographic Allocation ── */
+.geo-bar {
+  display: flex;
+  height: 32px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-sm);
+}
+
+.geo-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: #fff;
+  transition: width var(--transition-base);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.geo-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+}
+
+.geo-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.geo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Sector bars (used by both drilldown and comparison) ── */
+.sector-bar-track {
+  height: 12px;
+  background: var(--chart-bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.sector-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-base);
+}
