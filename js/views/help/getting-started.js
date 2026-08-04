@@ -12,6 +12,7 @@ import { getPortfolio } from '../../store.js';
 import { loadClassification } from '../../lib/classification.js';
 import { loadFxRates, getFxAsOf } from '../../lib/fx.js';
 import { checkHealth } from '../../api.js';
+import { escapeHtml } from '../../lib/escape.js';
 
 const FX_STALE_DAYS = 30;
 
@@ -78,7 +79,7 @@ function quickHTML(state) {
       done: !state.fxStale,
       warn: state.fxStale,
       title: 'Check your FX rates',
-      sub: state.fxAsOf ? `as of ${state.fxAsOf}${state.fxStale ? ' — older than 30 days' : ''}` : 'No as-of date found',
+      sub: state.fxAsOf ? `as of ${escapeHtml(state.fxAsOf)}${state.fxStale ? ' — older than 30 days' : ''}` : 'No as-of date found',
       route: '/data/fx-rates',
     }),
     checklistRow({
