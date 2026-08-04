@@ -76,4 +76,9 @@
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
+
+  /* Chrome (app bar / overlays) */
+  --appbar-h: 48px;
+  --z-appbar: 100;
+  --z-overlay: 200;
 }

@@ -6,6 +6,7 @@
   <title>Portfolio Workstation</title>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/appbar.css">
   <link rel="stylesheet" href="css/menubar.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/forms.css">
@@ -20,13 +21,18 @@
   <link rel="stylesheet" href="css/prose.css">
 </head>
 <body>
-  <nav id="menubar"></nav>
+  <header class="appbar">
+    <div class="appbar-inner">
+      <h1 class="appbar-brand" title="Portfolio Workstation">
+        <span aria-hidden="true">◆ PW</span>
+        <span class="sr-only">Portfolio Workstation</span>
+      </h1>
+      <nav id="menubar"></nav>
+      <div id="appbar-status" class="appbar-status"></div>
+    </div>
+  </header>
 
   <div class="app">
-    <header class="header">
-      <h1 class="header-title">Portfolio <span class="gradient-text">Workstation</span></h1>
-    </header>
-
     <div id="view-root"></div>
   </div>
 

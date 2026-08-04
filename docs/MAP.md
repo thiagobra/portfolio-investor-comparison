@@ -19,8 +19,9 @@ diffs this against the real directory tree. Grouped by directory.
 ## `css/`
 
 - `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
-- `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
-- `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
+- `css/layout.css` — reset, app shell, section, grid, responsive breakpoints, `.sr-only` utility.
+- `css/appbar.css` — sticky app bar: brand `<h1>`, menu bar row, live status rail (`js/appbar-status.js` renders into `#appbar-status`).
+- `css/menubar.css` — menu bar, dropdown menus (icons/edit markers/key hints), and the toast notification widget. Background/border now live on `.appbar` (css/appbar.css), since the menu bar is nested inside it.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
 - `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
 - `css/editors.css` — select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors). Split out of `forms.css` in task 15 once it passed the 200-line cap.

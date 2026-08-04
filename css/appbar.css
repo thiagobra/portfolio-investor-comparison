@@ -1,0 +1,51 @@
+/* ── Sticky app bar: brand + menu bar + live status rail ── */
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-appbar);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.appbar-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0 var(--space-md);
+  min-height: var(--appbar-h);
+}
+
+.appbar-brand {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.menubar {
+  flex: 1;
+  min-width: 0;
+}
+
+.appbar-status {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .appbar-status-detail {
+    display: none;
+  }
+}

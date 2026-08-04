@@ -1,10 +1,7 @@
-/* ── Menu bar ── */
+/* ── Menu bar (lives inside .appbar — see css/appbar.css) ── */
 .menubar {
   display: flex;
   gap: 2px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
-  padding: 0 var(--space-sm);
 }
 
 .menubar-item {
