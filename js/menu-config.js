@@ -29,6 +29,7 @@ export const ROUTES = {
   '/data/correlations': { title: 'Correlations & Volatility', module: 'data/correlations.js' },
   // One parameterised route backs all three Help topics — see js/views/help.js.
   '/help/:topic': { title: 'Help', module: 'help.js' },
+  '/feedback': { title: 'Send a Suggestion', module: 'feedback.js' },
   '/about': { title: 'About', module: 'about.js' },
 };
 
@@ -121,6 +122,7 @@ export const MENUS = [
       { label: 'How the numbers are calculated', route: '/help/metrics' },
       { label: 'Keyboard shortcuts', route: '/help/shortcuts' },
       { separator: true },
+      { label: 'Send a suggestion', route: '/feedback' },
       { label: 'About', route: '/about' },
     ],
   },

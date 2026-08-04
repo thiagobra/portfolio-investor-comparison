@@ -124,3 +124,30 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ── Suggestion FAB (bottom-left — bottom-right is the toast corner) ── */
+.feedback-fab {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: var(--space-lg);
+  z-index: 50;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.feedback-fab:hover,
+.feedback-fab:focus-visible {
+  opacity: 1;
+  transform: scale(1.08);
+  outline: none;
+}

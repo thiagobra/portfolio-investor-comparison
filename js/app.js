@@ -4,6 +4,7 @@
  *           global CSV import controller.
  * @reads    @js/menubar.js @js/router.js @js/import-controller.js
  *           @js/appbar-status.js @js/shortcuts.js @js/palette.js
+ *           @js/feedback-fab.js
  * @seealso  @docs/MAP.md
  */
 
@@ -13,6 +14,7 @@ import { initImportController } from './import-controller.js';
 import { initAppbarStatus } from './appbar-status.js';
 import { initShortcuts } from './shortcuts.js';
 import { initPalette } from './palette.js';
+import { initFeedbackFab } from './feedback-fab.js';
 
 initMenubar(document.getElementById('menubar'));
 startRouter(document.getElementById('view-root'));
@@ -20,3 +22,4 @@ initImportController();
 initAppbarStatus(document.getElementById('appbar-status'));
 initShortcuts();
 initPalette();
+initFeedbackFab();
