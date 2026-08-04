@@ -4,7 +4,7 @@
  *           percentage labelled directly inside each large-enough arc.
  * @exports  renderDonut(container, segments)
  * @reads    @js/charts/svg.js @js/charts/palette.js
- * @usedby   @js/views/dashboard.js @js/views/breakdown.js
+ * @usedby   @js/views/dashboard.js @js/views/exchanges.js
  */
 
 import { svgEl, describeArc, polarToCartesian } from './svg.js';

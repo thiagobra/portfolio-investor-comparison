@@ -3,7 +3,7 @@
  * @purpose  Renders a ranked horizontal bar list (top movers, weight rankings, etc).
  * @exports  renderBars(container, items)
  * @reads    @js/charts/palette.js
- * @usedby   @js/views/dashboard.js @js/views/breakdown.js @js/views/momentum.js @js/views/valuation.js
+ * @usedby   @js/views/dashboard.js @js/views/exchanges.js @js/views/momentum.js @js/views/valuation.js
  */
 
 import { escapeHtml } from '../lib/escape.js';

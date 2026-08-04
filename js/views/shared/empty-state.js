@@ -2,7 +2,7 @@
  * @module   views/shared/empty-state
  * @purpose  Shared "no portfolio imported yet" markup for every portfolio-data screen.
  * @exports  emptyStateHTML(message?)
- * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/breakdown.js
+ * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/exchanges.js
  */
 
 export function emptyStateHTML(message = 'No portfolio imported yet.') {

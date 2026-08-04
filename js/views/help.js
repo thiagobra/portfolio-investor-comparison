@@ -2,7 +2,8 @@
  * @module   views/help
  * @purpose  Help screen, parameterised by the `:topic` route param
  *           (getting-started/metrics/shortcuts) — one module backs all
- *           three Help menu routes, same pattern as views/breakdown.js.
+ *           three Help menu routes, same one-module-many-routes pattern used
+ *           elsewhere (see docs/MAP.md).
  *           Delegates content to js/views/help/*.js so getting-started
  *           can carry real logic (a live checklist) without ballooning
  *           this file past the repo's 200-line cap.

@@ -14,8 +14,7 @@ export const ROUTES = {
   '/dashboard': { title: 'Dashboard', module: 'dashboard.js' },
   '/holdings': { title: 'Holdings', module: 'holdings.js' },
   '/holdings/closed': { title: 'Closed Positions', module: 'holdings-closed.js' },
-  // One parameterised route backs all five breakdown dimensions — see js/views/breakdown.js.
-  '/breakdown/:dimension': { title: 'Breakdown', module: 'breakdown.js' },
+  '/exchanges': { title: 'Exchange Exposure', module: 'exchanges.js' },
   '/valuation': { title: 'Valuation', module: 'valuation.js' },
   '/momentum': { title: 'Momentum', module: 'momentum.js' },
   '/risk': { title: 'Risk & Diversification', module: 'risk.js' },
@@ -63,12 +62,7 @@ export const MENUS = [
     label: 'Analyse',
     icon: '📊',
     items: [
-      { label: 'Sector', route: '/breakdown/sector', key: 'g s' },
-      { label: 'Industry', route: '/breakdown/industry', key: 'g i' },
-      { label: 'Region', route: '/breakdown/region' },
-      { label: 'Currency', route: '/breakdown/currency' },
-      { label: 'Asset class', route: '/breakdown/asset-class' },
-      { separator: true },
+      { label: 'Exchange exposure', route: '/exchanges', key: 'g e' },
       { label: 'Valuation', route: '/valuation', key: 'g v' },
       { label: 'Momentum', route: '/momentum', key: 'g m' },
       { label: 'Risk & Diversification', route: '/risk', key: 'g r' },

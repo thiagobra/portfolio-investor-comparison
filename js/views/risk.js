@@ -72,8 +72,8 @@ export async function mount(root) {
       <p class="section-hint">
         How correlated each sector's returns are historically (Ken French Data Library).
         1.00 = moves in lockstep with itself; lower means better diversification benefit
-        between the two sectors. Feeds the portfolio volatility figure above via
-        <strong>Analyse → Sector</strong>'s weights.
+        between the two sectors. Feeds the portfolio volatility figure above via your
+        sector weights (see <strong>Data → Ticker classification</strong>).
       </p>
       <div class="card" style="overflow-x:auto" id="correlation-heatmap"></div>
     </section>

@@ -3,7 +3,7 @@
  * @purpose  EUR-base currency conversion from data/fx-rates.md, with staleness date.
  * @exports  convertToEUR(amount, currency) · getFxAsOf() · loadFxRates()
  * @reads    @data/fx-rates.md
- * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/analytics/breakdown.js
+ * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/exchanges.js @js/analytics/breakdown.js
  */
 
 import { parseMarkdownTables, tableToDict } from './md-table.js';

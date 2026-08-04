@@ -2,7 +2,7 @@
  * @module   lib/escape
  * @purpose  Escape user- or file-derived strings before interpolating them into innerHTML templates.
  * @exports  escapeHtml(str)
- * @usedby   @js/views/breakdown.js @js/views/advisor.js @js/views/data/classification.js
+ * @usedby   @js/views/exchanges.js @js/views/advisor.js @js/views/data/classification.js
  */
 
 export function escapeHtml(str) {
