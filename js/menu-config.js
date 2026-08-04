@@ -45,9 +45,12 @@ export const MENUS = [
     icon: '📁',
     items: [
       { label: 'Import Investing.com CSV…', action: 'import' },
-      { label: 'Save snapshot', action: 'stub' },
-      { label: 'Export current view', action: 'stub' },
-      { label: 'Reload data files', action: 'stub' },
+      { label: 'Save snapshot', action: 'save-snapshot' },
+      { separator: true },
+      { label: 'Export backup…', action: 'export-backup' },
+      { label: 'Import backup…', action: 'import-backup' },
+      { separator: true },
+      { label: 'Reload data files', action: 'reload' },
     ],
   },
   {
@@ -109,7 +112,7 @@ export const MENUS = [
       { label: 'Correlations & volatility', route: '/data/correlations', editable: true },
       { label: 'Advisor profile', route: '/advisor/profile', editable: true },
       { separator: true },
-      { label: 'Open private folder', action: 'stub' },
+      { label: 'Open private folder', action: 'stub', soon: true },
     ],
   },
   {

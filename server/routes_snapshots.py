@@ -13,7 +13,7 @@ from urllib.parse import urlparse, parse_qs
 
 from server.safety import ROOT, resolve_in_dir, UnsafePathError, MAX_UPLOAD_BYTES
 
-_JSON_NAME = re.compile(r"^\w+\.json$")
+_JSON_NAME = re.compile(r"^[\w\-]+\.json$")
 SNAPSHOTS_DIR = os.path.join(ROOT, "private", "snapshots")
 
 

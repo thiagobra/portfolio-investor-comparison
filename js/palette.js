@@ -60,7 +60,7 @@ function renderResults(list) {
     ? results.map((r, i) => `
         <li role="option" aria-selected="${i === 0}" class="palette-item${i === 0 ? ' palette-item-selected' : ''}" data-index="${i}">
           <span class="palette-item-group">${r.group}</span>
-          <span class="palette-item-label">${r.label}</span>
+          <span class="palette-item-label">${r.label}${r.item.soon ? ' 🚧' : ''}</span>
         </li>
       `).join('')
     : `<li class="palette-empty">No matches</li>`;

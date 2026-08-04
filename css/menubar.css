@@ -76,6 +76,11 @@
   font-size: var(--font-size-xs);
 }
 
+.menuitem-soon {
+  opacity: 0.6;
+  font-size: var(--font-size-xs);
+}
+
 .menuitem-key {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);

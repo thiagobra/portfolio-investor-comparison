@@ -13,7 +13,7 @@ from urllib.parse import urlparse, parse_qs
 
 from server.safety import ROOT, resolve_in_dir, UnsafePathError
 
-_CSV_NAME = re.compile(r"^\w+\.csv$")
+_CSV_NAME = re.compile(r"^[\w\-]+\.csv$")
 HOLDINGS_DIR = os.path.join(ROOT, "private", "holdings")
 
 

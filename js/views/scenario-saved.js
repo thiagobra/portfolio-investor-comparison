@@ -12,7 +12,8 @@ import { escapeHtml } from '../lib/escape.js';
 
 export async function mount(root) {
   const res = await fetch('/api/snapshots');
-  const { files } = await res.json();
+  const { files: allFiles } = await res.json();
+  const files = allFiles.filter((f) => !f.name.startsWith('snapshot_')); // manual File -> Save snapshot bundles, not scenarios
 
   if (files.length === 0) {
     root.innerHTML = `
