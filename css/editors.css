@@ -76,3 +76,17 @@
   font-weight: 700;
   cursor: help;
 }
+
+/* ── Source footer (Data editors) ── */
+.editor-sources {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+.editor-sources a {
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+.editor-sources a:hover {
+  color: var(--text-primary);
+}
