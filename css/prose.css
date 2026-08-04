@@ -27,3 +27,55 @@ kbd {
   border-radius: var(--radius-sm);
   padding: 0.1em 0.5em;
 }
+
+/* ── Help topic tabs (Getting started: Quick / Extended) ── */
+.help-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.help-tab {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+.help-tab:hover { color: var(--text-primary); }
+.help-tab-active {
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+  background: var(--accent-subtle);
+}
+
+/* ── Getting-started Quick checklist ── */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.checklist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.checklist-row:hover, .checklist-row:focus-visible {
+  border-color: var(--border-focus);
+  outline: none;
+}
+.checklist-icon { font-size: var(--font-size-lg); flex-shrink: 0; }
+.checklist-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.checklist-title { font-weight: 600; color: var(--text-primary); }
+.checklist-sub { font-size: var(--font-size-sm); color: var(--text-muted); }
+.checklist-arrow { color: var(--text-muted); flex-shrink: 0; }
