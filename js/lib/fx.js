@@ -32,10 +32,10 @@ export function loadFxRates() {
   return loadingPromise;
 }
 
-/** Converts an amount in `currency` to EUR. Call loadFxRates() first. Returns null if the currency or amount is unknown. */
+/** Converts an amount in `currency` to EUR. Call loadFxRates() first. Returns null if the currency or amount is unknown — never silently assumes EUR. */
 export function convertToEUR(amount, currency) {
-  if (amount == null || !rates) return null;
-  const rate = rates[currency ?? 'EUR'];
+  if (amount == null || !rates || !currency) return null;
+  const rate = rates[currency];
   if (!rate) return null;
   return amount / rate;
 }

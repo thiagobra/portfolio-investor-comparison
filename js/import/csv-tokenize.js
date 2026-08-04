@@ -48,14 +48,25 @@ export function isNullCell(v) {
   return v === undefined || v === '' || v === '--' || v === '-';
 }
 
-const CURRENCY_SYMBOLS = { '€': 'EUR', $: 'USD', '£': 'GBP', '¥': 'JPY' };
+// Longest prefix first — "R$"/"HK$"/"C$"/"A$" must match before the bare "$".
+const CURRENCY_PREFIXES = [
+  ['HK$', 'HKD'], ['R$', 'BRL'], ['C$', 'CAD'], ['A$', 'AUD'], ['CHF', 'CHF'],
+  ['€', 'EUR'], ['£', 'GBP'], ['¥', 'JPY'], ['$', 'USD'],
+];
+
+function detectCurrency(trimmed) {
+  for (const [prefix, code] of CURRENCY_PREFIXES) {
+    if (trimmed.startsWith(prefix)) return code;
+  }
+  return null;
+}
 
 export function coerceMoney(v) {
   if (isNullCell(v)) return null;
   const trimmed = v.trim();
   // Placeholder text Investing.com leaves when no figure has been computed yet.
   if (trimmed === '$ /%' || trimmed === '$ / %' || trimmed === '$') return null;
-  const currency = CURRENCY_SYMBOLS[trimmed[0]] ?? null;
+  const currency = detectCurrency(trimmed);
   const numeric = trimmed.replace(/[^0-9.\-]/g, '');
   const amount = parseFloat(numeric);
   if (Number.isNaN(amount)) return null;
