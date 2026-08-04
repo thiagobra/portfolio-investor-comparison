@@ -14,6 +14,7 @@ export const ROUTES = {
   '/dashboard': { title: 'Dashboard', module: 'dashboard.js' },
   '/holdings': { title: 'Holdings', module: 'holdings.js' },
   '/holdings/closed': { title: 'Closed Positions', module: 'holdings-closed.js' },
+  '/progression': { title: 'Portfolio Progression', module: 'progression.js' },
   '/exchanges': { title: 'Exchange Exposure', module: 'exchanges.js' },
   '/valuation': { title: 'Valuation', module: 'valuation.js' },
   '/momentum': { title: 'Momentum', module: 'momentum.js' },
@@ -56,6 +57,7 @@ export const MENUS = [
       { label: 'Dashboard', route: '/dashboard', key: 'g d' },
       { label: 'Holdings', route: '/holdings', key: 'g h' },
       { label: 'Closed positions', route: '/holdings/closed' },
+      { label: 'Progression / CAGR', route: '/progression' },
     ],
   },
   {
