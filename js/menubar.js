@@ -2,16 +2,17 @@
  * @module   menubar
  * @purpose  ARIA menubar widget: builds DOM from menu-config, handles full
  *           keyboard operation (arrows, Home/End, Esc, type-ahead) and click.
- * @exports  initMenubar(container)
+ * @exports  initMenubar(container) · activate(item)
  * @reads    @js/menu-config.js
- * @usedby   @js/app.js
+ * @usedby   @js/app.js @js/palette.js
  * @seealso  @docs/MAP.md
  */
 
 import { MENUS } from './menu-config.js';
 import { showToast } from './toast.js';
 
-function activate(item) {
+/** Runs a menu-config item: navigates its route, shows a "coming soon" toast for a stub, or dispatches its action event. Shared with js/palette.js. */
+export function activate(item) {
   if (item.route) {
     location.hash = `#${item.route}`;
   } else if (item.action === 'stub') {
