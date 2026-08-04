@@ -55,7 +55,8 @@ hard cap; every other file was checked in task 15's audit and is within it.
 
 ## `js/` (new)
 
-- `js/app.js` — entry point: mounts the menu bar, starts the router. ~12 lines.
+- `js/app.js` — entry point: mounts the menu bar, starts the router, wires the import controller and the app-bar status rail.
+- `js/appbar-status.js` — live status rail rendered into `#appbar-status`: position count + total EUR value (subscribes to `js/store.js`), an advisor heartbeat dot (`checkHealth()`, re-checked on every `route:change`), and the `Ctrl K` hint. With no portfolio imported, shows an "import a CSV" call to action that fires the same `menu-action` event `js/import-controller.js` listens for.
 - `js/menu-config.js` — single source of truth for the menu tree (`MENUS`) and the hash route table (`ROUTES`); both `menubar.js` and `router.js` read from here. Routes not yet backed by a real screen point at `views/placeholder.js`.
 - `js/router.js` — matches `location.hash` against `ROUTES` (supports `:param` segments), dynamically imports the matched view module, calls its `mount(root, params)`.
 - `js/menubar.js` — ARIA `menubar` widget built from `MENUS`: arrow-key nav between/within menus, Home/End, Esc, type-ahead, roving tabindex, click-outside-to-close.
