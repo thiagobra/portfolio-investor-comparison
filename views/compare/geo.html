@@ -1,0 +1,38 @@
+<!-- Geographic Allocation (optional user input vs investor) -->
+<section class="section">
+  <div class="section-title">🌍 Geographic Allocation</div>
+  <p class="section-hint">Optional. Fill in your own geographic split (sum to 100%) to compare. If left blank, we'll just show <span class="investor-name-inline" id="geo-investor-label"></span>'s allocation.</p>
+  <div class="card">
+    <div class="grid-2" id="geo-form">
+      <div class="input-group">
+        <label for="geo-us"><span class="flag-icon flag-us" aria-hidden="true"></span> US</label>
+        <input type="number" id="geo-us" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="geo-europe"><span class="flag-icon flag-eu" aria-hidden="true"></span> Europe</label>
+        <input type="number" id="geo-europe" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="geo-china"><span class="flag-icon flag-cn" aria-hidden="true"></span> China</label>
+        <input type="number" id="geo-china" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="geo-latam"><span class="flag-icon flag-br" aria-hidden="true"></span> LatAm</label>
+        <input type="number" id="geo-latam" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="geo-row">🌍 Rest of World</label>
+        <input type="number" id="geo-row" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <div class="total-row">
+      <span class="total-value" id="geo-total-display">Total: 0%</span>
+    </div>
+    <div id="geo-allocation"></div>
+  </div>
+</section>

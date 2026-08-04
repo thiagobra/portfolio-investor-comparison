@@ -1,0 +1,79 @@
+<!-- Step 1: Select Investor -->
+<section class="section">
+  <div class="section-title">👤 Choose an Investor</div>
+  <div class="investor-cards" id="investor-cards">
+    <button class="investor-card" data-investor="warren-buffett">
+      <div class="investor-card-avatar">🦉</div>
+      <div class="investor-card-name">Warren Buffett</div>
+      <div class="investor-card-style">Value investing &middot; Long-term concentrated bets on moated companies</div>
+    </button>
+    <button class="investor-card" data-investor="ray-dalio">
+      <div class="investor-card-avatar">🌦️</div>
+      <div class="investor-card-name">Ray Dalio</div>
+      <div class="investor-card-style">All-Weather &middot; Risk-balanced across economic environments</div>
+    </button>
+    <button class="investor-card" data-investor="michael-burry">
+      <div class="investor-card-avatar">🧭</div>
+      <div class="investor-card-name">Michael Burry</div>
+      <div class="investor-card-style">Contrarian &middot; Asymmetric bets with deep margin of safety</div>
+    </button>
+    <button class="investor-card" data-investor="peter-lynch">
+      <div class="investor-card-avatar">🔎</div>
+      <div class="investor-card-name">Peter Lynch</div>
+      <div class="investor-card-style">GARP &middot; Invest in what you know, hunt for tenbaggers</div>
+    </button>
+  </div>
+  <input type="hidden" id="investor-select" value="">
+  <div class="snapshot-row" id="snapshot-row" style="display:none;">
+    <label for="snapshot-select" class="snapshot-label">📅 Load saved portfolio:</label>
+    <select id="snapshot-select" class="snapshot-select">
+      <option value="">— Select a saved snapshot —</option>
+    </select>
+  </div>
+</section>
+
+<!-- Step 2: Your Portfolio -->
+<section class="section">
+  <div class="section-title">💼 Your Portfolio</div>
+  <div class="card">
+    <div class="grid-2" id="portfolio-form">
+      <div class="input-group">
+        <label for="input-equities">📈 Equities (stocks)</label>
+        <input type="number" id="input-equities" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="input-cash">💵 Cash and Savings</label>
+        <input type="number" id="input-cash" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="input-fixed-income">📜 Fixed income (bonds)</label>
+        <input type="number" id="input-fixed-income" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="input-crypto">🪙 Crypto</label>
+        <input type="number" id="input-crypto" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+      <div class="input-group">
+        <label for="input-gold">🥇 Gold</label>
+        <input type="number" id="input-gold" min="0" max="100" step="1" value="" placeholder="0">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+
+    <div class="total-row">
+      <span class="total-value" id="total-display">Total: 0%</span>
+      <div class="actions-row">
+        <button class="btn btn-primary" id="btn-save-portfolio">💾 Save Portfolio</button>
+        <label class="file-upload-label">
+          Upload CSV
+          <input type="file" id="csv-upload" accept=".csv,.tsv,.txt">
+        </label>
+        <button class="btn btn-secondary" id="btn-download-sample">Download Sample</button>
+      </div>
+    </div>
+  </div>
+</section>

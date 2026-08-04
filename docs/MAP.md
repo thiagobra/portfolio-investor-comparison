@@ -14,11 +14,13 @@ diffs this against the real directory tree. Grouped by directory.
 ## Root
 
 - `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1.
+- `index.html` — thin shell (~30 lines): `<nav id="menubar">` + `<div id="view-root">`, loads `js/app.js`.
 
 ## `css/`
 
 - `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
 - `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
+- `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
 - `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
@@ -32,20 +34,31 @@ diffs this against the real directory tree. Grouped by directory.
 - `server/routes_import.py` — `POST` CSV upload → parsed JSON (delegates the actual parse to the browser; server just stores the file).
 - `server/routes_chat.py` — proxies `/api/chat` to LM Studio; `/api/health` model + reachability check.
 
-## `js/` (existing, kept as-is)
+## `js/` (existing, kept as-is — consumed by `js/views/compare/*.js` now, not `app.js`)
 
 - `js/engine.js` — `calculateDeviation()`, `generateSuggestions()`.
-- `js/parser.js` — form + simple asset-class CSV reading, `ASSET_CLASSES` etc.
+- `js/parser.js` — form + simple asset-class CSV reading, `ASSET_CLASSES` etc. Reads/writes via `document.getElementById`, so it works regardless of which view module calls it.
 - `js/renderer.js` — DOM rendering for the Compare screen.
 - `js/investors-loader.js` — loads/parses `data/*.md` investor files.
-- `js/app.js` — bootstrap + router wiring (slimmed from the old monolithic entry point).
 
 ## `js/` (new)
 
-- `js/router.js` — hash-route → view module dispatch.
-- `js/store.js` — single in-memory state (portfolio, classification, settings) + change subscription.
-- `js/api.js` — fetch wrapper for `/api/*`.
-- `js/menubar.js` — ARIA `menubar` widget (Alt focus, arrow nav, Esc, type-ahead, focus trap).
+- `js/app.js` — entry point: mounts the menu bar, starts the router. ~12 lines.
+- `js/menu-config.js` — single source of truth for the menu tree (`MENUS`) and the hash route table (`ROUTES`); both `menubar.js` and `router.js` read from here. Routes not yet backed by a real screen point at `views/placeholder.js`.
+- `js/router.js` — matches `location.hash` against `ROUTES` (supports `:param` segments), dynamically imports the matched view module, calls its `mount(root, params)`.
+- `js/menubar.js` — ARIA `menubar` widget built from `MENUS`: arrow-key nav between/within menus, Home/End, Esc, type-ahead, roving tabindex, click-outside-to-close.
+- `js/toast.js` — tiny transient notification, used for stub menu actions and save confirmations.
+- `js/store.js` — planned; not yet built. Add when a screen needs to share portfolio state across views (first needed by Dashboard/Holdings, task 8).
+- `js/api.js` — planned; not yet built. Add when the first view calls `/api/*` (Data editors or Advisor, tasks 12–13).
+
+## `js/views/`
+
+- `js/views/placeholder.js` — generic "🚧 coming soon" screen for any route in `ROUTES` not yet backed by a real module.
+- `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
+- `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
+- `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
+- `js/views/compare/snapshots.js` — save/load portfolio snapshots to `localStorage` (`portfolio-snapshots` key).
+- `js/views/compare/feedback.js` — "Got a Suggestion?" box, opens a prefilled GitHub issue URL.
 
 ## `js/import/`
 
@@ -67,12 +80,18 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/svg.js` — shared SVG helpers (arc, scale, axis).
 - `js/charts/donut.js`, `js/charts/bars.js`, `js/charts/treemap.js`, `js/charts/heatmap.js` — chart primitives, each one geometry, no app logic.
 
-## `js/views/`
-
-One small module per screen, each paired with a `views/*.html` partial:
+Screens still to build (tasks 8–14), each will replace `placeholder.js` for its
+route in `js/menu-config.js` and get its own `js/views/*.js` + `views/*.html`:
 `dashboard.js`, `holdings.js`, `breakdown.js`, `valuation.js`, `momentum.js`,
-`risk.js`, `scenario.js`, `data-editor.js`, `advisor.js`, `compare.js`,
-`help.js`, `about.js`.
+`risk.js`, `scenario.js`, `data-editor.js`, `advisor.js`, `help.js`, `about.js`.
+
+## `views/` (HTML partials, fetched on demand by their view module)
+
+- `views/compare/entry.html` — investor cards, snapshot dropdown, portfolio form.
+- `views/compare/results-top.html` — similarity score + asset comparison containers.
+- `views/compare/geo.html`, `views/compare/sector.html`, `views/compare/industry.html` — the three optional breakdown forms + comparison containers.
+- `views/compare/results-bottom.html` — suggestions + philosophy containers.
+- `views/compare/feedback.html` — "Got a Suggestion?" box.
 
 ## `data/` (committed, non-personal)
 
