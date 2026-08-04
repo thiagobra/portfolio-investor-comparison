@@ -21,8 +21,10 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
 - `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
 - `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
-- `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown, prose (`h3`/`p`/`ol`/`li`/`code`/`kbd`/links inside `.card` — Help/About screens).
-- `css/forms.css` — inputs, file upload, suggestion form, toggle switch, select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors).
+- `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
+- `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
+- `css/editors.css` — select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors). Split out of `forms.css` in task 15 once it passed the 200-line cap.
+- `css/prose.css` — `h3`/`p`/`ol`/`li`/`code`/`a` inside `.card`, plus `kbd` (Help/About screens). Split out of `base.css` in task 15 for the same reason.
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
 - `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
@@ -39,6 +41,11 @@ diffs this against the real directory tree. Grouped by directory.
 - `server/routes_chat.py` — proxies `/api/chat` to LM Studio; `/api/health` model + reachability check.
 
 ## `js/` (existing, kept as-is — consumed by `js/views/compare/*.js` now, not `app.js`)
+
+Predate the size-budget/frontmatter convention below and are deliberately not
+retrofitted — reused unchanged, not rewritten, per the original plan.
+`js/renderer.js` (315 lines) is the one file in the repo over the 200-line
+hard cap; every other file was checked in task 15's audit and is within it.
 
 - `js/engine.js` — `calculateDeviation()`, `generateSuggestions()`.
 - `js/parser.js` — form + simple asset-class CSV reading, `ASSET_CLASSES` etc. Reads/writes via `document.getElementById`, so it works regardless of which view module calls it.
@@ -103,7 +110,7 @@ diffs this against the real directory tree. Grouped by directory.
 
 ## `js/analytics/`
 
-- `js/analytics/risk.js` — `concentration()` (HHI, effective N, top-10 weight — built, task 8) · `portfolioVolatility()` / `weightedBeta()` (built, need `data/correlations.md`/`volatility.md` wiring from the caller — task 11 view). See `@docs/metrics.md`.
+- `js/analytics/risk.js` — `concentration()` (HHI, effective N, top-10 weight — task 8) · `portfolioVolatility()` / `weightedBeta()` (the caller loads `data/correlations.md`/`volatility.md` via `js/lib/risk-reference.js` — wired up in `js/views/risk.js`, task 11). See `@docs/metrics.md`.
 - `js/analytics/breakdown.js` — `breakdownBy(positions, field, classification)`: groups by `currency` (straight off the CSV) or by a `js/lib/classification.js` field, sorted by EUR value descending.
 - `js/analytics/valuation.js` — `weightedAverage(positions, field)` (generic — used for P/E and yield, same renormalised-average convention as `risk.js`'s `weightedBeta()`) · `marketCapTilt(positions)`.
 - `js/analytics/momentum.js` — `ratingConsensus(positions)` (weight-averaged across the 8-point technical rating block) · `consensusLabel(score)`. The performance heatmap itself needs no computation — the view reads `position.perf` directly.
@@ -118,11 +125,15 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
 - `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
 
-All screens built. (`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
-`valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11;
-`data/*.js`: task 12; `advisor.js`/`data/connection.js`: task 13;
-`help.js`/`about.js`: task 14; `compare.js` + `compare/*.js`: pre-existing,
-verified against v3's restructuring in task 14.)
+All screens built except `/scenarios/saved` ("Saved scenarios"), still
+`views/placeholder.js` — an explicit scope cut in task 11 (the what-if
+builder itself, `/scenarios`, is the load-bearing part; persisting a
+scenario to disk was never asked for). (`dashboard.js`/`holdings.js`:
+task 8; `breakdown.js`: task 9; `valuation.js`/`momentum.js`: task 10;
+`risk.js`/`scenario.js`: task 11; `data/*.js`: task 12;
+`advisor.js`/`data/connection.js`: task 13; `help.js`/`about.js`: task 14;
+`compare.js` + `compare/*.js`: pre-existing, verified against v3's
+restructuring in task 14.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 
