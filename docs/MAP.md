@@ -81,4 +81,8 @@ One small module per screen, each paired with a `views/*.html` partial:
 
 ## `tools/`
 
-- `tools/build_reference_data.py` — downloads the 3 sources in `@docs/data-sources.md`, computes correlation/volatility, writes `data/correlations.md` + `data/volatility.md`.
+- `tools/build_reference_data.py` — orchestrator: calls the 3 fetchers below, computes matrices, writes `data/correlations.md` + `data/volatility.md`. Run manually: `python3 -m tools.build_reference_data`.
+- `tools/reference_stats.py` — `correlation_matrix()`, `pct_change_series()` — generic stats, no data-source knowledge.
+- `tools/source_industry.py` — Ken French 12 industries → app's 7 sectors.
+- `tools/source_region.py` — Ken French 5 regional factor files → region market-return series.
+- `tools/source_asset_class.py` — Damodaran `histretSP.xls` → equities/bonds/cash/gold/real-estate annual returns. Needs `pip install xlrd` (dev-time only).
