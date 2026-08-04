@@ -2,7 +2,7 @@
  * @module   lib/format
  * @purpose  Shared number/currency/percent formatters for every portfolio screen.
  * @exports  fmtEUR() · fmtMoney() · fmtPct() · fmtNum()
- * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/breakdown.js
+ * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/exchanges.js
  */
 
 const eur0 = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });

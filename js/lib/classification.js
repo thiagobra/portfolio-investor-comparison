@@ -4,7 +4,7 @@
  *           statically served) into a Map<symbol, {sector,industry,region,country,currency,assetClass}>.
  * @exports  loadClassification() · getClassification(symbol)
  * @reads    @private/classification.md
- * @usedby   @js/views/breakdown.js @js/analytics/risk.js @js/views/data/classification.js
+ * @usedby   @js/views/dashboard.js @js/analytics/risk.js @js/views/data/classification.js
  */
 
 import { parseMarkdownTables, tableToRows } from './md-table.js';

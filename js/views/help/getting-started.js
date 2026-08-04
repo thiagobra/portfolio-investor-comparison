@@ -95,10 +95,10 @@ function quickHTML(state) {
 const EXTENDED_HTML = `
   <h3>Importing your portfolio</h3>
   <p><strong>File → Import Investing.com CSV…</strong> parses the export entirely in your browser — nothing leaves your PC until you archive it via the same action, which the server stores under <code>private/holdings/</code>. The Summary section of the export is the source of truth for open positions; Open Date is joined in from the Open Positions section, and closed trades come from Closed Positions.</p>
-  <p>Classification (sector, industry, region, country, asset class) isn't in the CSV — it's a separate step because Investing.com doesn't export it. Until you classify a ticker, it shows up as "Unclassified" in every breakdown that isn't currency-based.</p>
+  <p>Classification (sector, industry, region, country, asset class) isn't in the CSV — it's a separate step because Investing.com doesn't export it. Until you classify a ticker, it shows up as "Unclassified" wherever the app groups by a classified field (Overview's sector/region strip, Risk's sector correlation, the What-if builder).</p>
 
-  <h3>The five breakdowns</h3>
-  <p><strong>Analyse → Sector / Industry / Region / Currency / Asset class</strong> all use the same donut-plus-ranked-bars layout, grouped a different way each time. Currency comes straight off the CSV; the other four read your classification. Unclassified positions get their own visible bucket with a banner pointing back at <strong>Data → Ticker classification</strong> — they are never silently folded into an existing group.</p>
+  <h3>Exchange exposure</h3>
+  <p><strong>Analyse → Exchange exposure</strong> groups your positions by the listing exchange straight off the CSV — no classification needed. Donut, ranked bars, and a table, same layout the old per-dimension breakdown screens used.</p>
 
   <h3>Valuation, Momentum, and Risk — three different lenses</h3>
   <p><strong>Valuation</strong> answers "am I paying too much?" — weighted P/E, dividend yield, beta, and a market-cap tilt. <strong>Momentum</strong> answers "what's moving right now?" — a technical-rating consensus plus a color-coded performance table across six timeframes. <strong>Risk &amp; Diversification</strong> answers "how exposed am I?" — concentration (HHI, effective holdings, top-10 weight), portfolio volatility from the sector correlation matrix, and weighted beta. All three read the same positions; they just ask different questions of them.</p>

@@ -60,9 +60,9 @@ export function initMenubar(container) {
         const mi = document.createElement('button');
         mi.className = 'menubar-menuitem';
         mi.dataset.label = item.label;
-        mi.innerHTML = `<span class="menuitem-label">${item.label}</span>${item.editable ? '<span class="menuitem-edit" aria-hidden="true">✏️</span>' : ''}${item.key ? `<span class="menuitem-key" aria-hidden="true">${item.key}</span>` : ''}`;
+        mi.innerHTML = `<span class="menuitem-label">${item.label}</span>${item.editable ? '<span class="menuitem-edit" aria-hidden="true">✏️</span>' : ''}${item.soon ? '<span class="menuitem-soon" aria-hidden="true">🚧</span>' : ''}${item.key ? `<span class="menuitem-key" aria-hidden="true">${item.key}</span>` : ''}`;
         mi.setAttribute('role', 'menuitem');
-        mi.setAttribute('aria-label', item.label + (item.editable ? ', editable' : '') + (item.key ? `, shortcut ${item.key}` : ''));
+        mi.setAttribute('aria-label', item.label + (item.editable ? ', editable' : '') + (item.soon ? ', coming soon' : '') + (item.key ? `, shortcut ${item.key}` : ''));
         mi.tabIndex = -1;
         mi.addEventListener('click', () => { activate(item); closeAll(); });
         li.appendChild(mi);

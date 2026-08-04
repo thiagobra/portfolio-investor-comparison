@@ -2,14 +2,14 @@
  * @module   views/data/text-editor
  * @purpose  Generic raw-markdown editor wired to /api/files: fetch, edit in
  *           a textarea, save (server writes a .bak backup first).
- * @exports  mountTextEditor(container, {path, title, hint})
+ * @exports  mountTextEditor(container, {path, title, hint, sources})
  * @usedby   @js/views/data/fx-rates.js @js/views/data/correlations.js @js/views/data/profile.js
  */
 
 import { showToast } from '../../toast.js';
 import { escapeHtml } from '../../lib/escape.js';
 
-export async function mountTextEditor(container, { path, title, hint }) {
+export async function mountTextEditor(container, { path, title, hint, sources }) {
   const res = await fetch(`/api/files?path=${encodeURIComponent(path)}`);
   const { content, exists } = await res.json();
 
@@ -23,6 +23,7 @@ export async function mountTextEditor(container, { path, title, hint }) {
         <div class="actions-row" style="margin-top:var(--space-md)">
           <button class="btn btn-primary btn-save">Save</button>
         </div>
+        ${sources?.length ? `<p class="editor-sources">Source: ${sources.map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.label)}</a>`).join(' · ')}</p>` : ''}
       </div>
     </section>
   `;

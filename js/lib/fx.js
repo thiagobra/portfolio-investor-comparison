@@ -3,7 +3,7 @@
  * @purpose  EUR-base currency conversion from data/fx-rates.md, with staleness date.
  * @exports  convertToEUR(amount, currency) · getFxAsOf() · loadFxRates()
  * @reads    @data/fx-rates.md
- * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/analytics/breakdown.js
+ * @usedby   @js/views/dashboard.js @js/views/holdings.js @js/views/exchanges.js @js/analytics/breakdown.js
  */
 
 import { parseMarkdownTables, tableToDict } from './md-table.js';
@@ -32,10 +32,10 @@ export function loadFxRates() {
   return loadingPromise;
 }
 
-/** Converts an amount in `currency` to EUR. Call loadFxRates() first. Returns null if the currency or amount is unknown. */
+/** Converts an amount in `currency` to EUR. Call loadFxRates() first. Returns null if the currency or amount is unknown — never silently assumes EUR. */
 export function convertToEUR(amount, currency) {
-  if (amount == null || !rates) return null;
-  const rate = rates[currency ?? 'EUR'];
+  if (amount == null || !rates || !currency) return null;
+  const rate = rates[currency];
   if (!rate) return null;
   return amount / rate;
 }

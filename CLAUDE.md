@@ -24,7 +24,7 @@ Static assets, `/api/files` (read/write a whitelisted set of `data/*.md` + `priv
 
 ## Adding a screen
 
-1. Add the route to `ROUTES` in `js/menu-config.js` (the `module` path resolves relative to `js/views/`; `:param` segments are supported — see `breakdown.js`/`help.js` for the one-module-many-routes pattern).
+1. Add the route to `ROUTES` in `js/menu-config.js` (the `module` path resolves relative to `js/views/`; `:param` segments are supported — see `help.js` for the one-module-many-routes pattern).
 2. Add a menu entry to `MENUS` in the same file if it should be reachable from the menu bar.
 3. Write `js/views/your-screen.js` exporting `mount(root, params)`. Reuse `js/analytics/*.js` for calculations, `js/charts/*.js` for visuals, `js/lib/format.js` for number formatting, `js/api.js` for LM Studio calls — don't recompute something that already has a home.
 

@@ -1,0 +1,65 @@
+/* ── Verdict-coloured stat card (extends .stat-card) ──
+   Left rail colour communicates good/warn/bad at a glance; the plain-language
+   line underneath never leaves a number unexplained. Pattern feeds off
+   js/lib/verdict.js's {tone, label, sentence}. */
+.metric-card {
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+.metric-card.tone-good { border-left-color: var(--success); }
+.metric-card.tone-warn { border-left-color: var(--warning); }
+.metric-card.tone-bad { border-left-color: var(--error); }
+.metric-card.tone-neutral { border-left-color: var(--text-muted); }
+
+.metric-verdict {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin-top: var(--space-sm);
+}
+.metric-verdict.tone-good { color: var(--success); }
+.metric-verdict.tone-warn { color: var(--warning); }
+.metric-verdict.tone-bad { color: var(--error); }
+.metric-verdict.tone-neutral { color: var(--text-secondary); }
+
+/* Hover tooltip carrying the underlying formula — sits next to the stat label. */
+.metric-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: var(--space-xs);
+  border-radius: 50%;
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1;
+  cursor: help;
+  position: relative;
+}
+.metric-help::after {
+  content: attr(data-formula);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 240px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  z-index: var(--z-overlay);
+}
+.metric-help:hover::after,
+.metric-help:focus::after {
+  opacity: 1;
+}

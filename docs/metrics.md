@@ -2,7 +2,7 @@
 title: Metric formulas
 purpose: Exact formula for every computed number in the app, so analytics/*.js has one contract to implement against
 reads: [@data/correlations.md, @data/volatility.md]
-usedby: [@js/analytics/breakdown.js, @js/analytics/risk.js, @js/analytics/valuation.js, @js/analytics/momentum.js, @js/analytics/scenario.js]
+usedby: [@js/analytics/breakdown.js, @js/analytics/risk.js, @js/analytics/valuation.js, @js/analytics/momentum.js, @js/analytics/scenario.js, @js/analytics/progression.js]
 seealso: [@docs/csv-format.md]
 ---
 
@@ -61,7 +61,53 @@ number.
 
 ## Scenario delta (`analytics/scenario.js`)
 
-A scenario is `{sell: [{symbol, weight}], buy: [{sector, weight}]}`.
-Applying it produces a second weight vector; every metric above is
-computed twice (before/after) and the view renders the pair side by
-side. No new formulas — this module is pure recomposition.
+A scenario is `{sells: {symbol: sellPct}, buyTarget, buyWeight}` — any
+number of positions can be partially or fully sold (`sellPct` 0-100),
+proceeds redirected into a specific ticker or a known sector. Applying it
+produces a second position set; every metric above (concentration,
+volatility, beta) plus the sector breakdown is computed twice
+(before/after) and the view renders the pair side by side. No new
+formulas — this module is pure recomposition. Note: HHI/effective
+holdings/top-10 weight are functions of the weight distribution alone, so
+an equal-weight swap (sell X%, buy the same X%) leaves them mathematically
+unchanged — that's correct, not a bug; sector mix and volatility are what
+actually move in that case.
+
+## Exchange exposure (`views/exchanges.js`)
+
+Groups positions by `p.exchange` (column D, straight off the CSV — no
+classification lookup). Same weight/EUR-value/position-count shape as a
+`breakdownBy()` group; not implemented via that helper since exchange
+never needs a classification fallback.
+
+## Portfolio progression / time-weighted CAGR (`analytics/progression.js`)
+
+For each consecutive pair of dated snapshots A→B, over symbols held in
+both: `r = sum(sharesA_i * priceB_i) / sum(sharesA_i * priceA_i) - 1`.
+Money added or withdrawn between snapshots never counts as growth — it's
+computed separately as `sum((sharesB_i - sharesA_i) * priceB_i)` over all
+symbols in B, and reported alongside, never hidden inside the return.
+Periods compound: `CAGR = prod(1 + r_i) ^ (365 / total_days) - 1`.
+**Known simplification:** every snapshot converts to EUR using today's
+`data/fx-rates.md` — no historical FX archive exists, so this is
+directional, not exact, for portfolios with meaningful non-EUR exposure.
+
+## Per-stock CAGR (`views/cagr.js`, WIP)
+
+Deliberately simpler than progression's TWR — single file, no snapshots:
+`CAGR = (currentPrice / avgPrice) ^ (365 / daysHeld) - 1`, where
+`daysHeld` = the CSV's file date (parsed from the `Holdings_MMDDYYYY.csv`
+filename) minus that position's Open Date. Price-only: ignores dividends,
+fees, and multiple buys at different average prices.
+
+## Verdict thresholds (`js/lib/verdict.js`)
+
+Single source of truth for turning a raw metric into a plain-language
+judgement, consumed by Overview, Risk, and What-if so they can never
+disagree. Bands (ascending, first match wins): HHI good <0.15 / warn
+<0.25 / bad above; effective holdings bad <4 / warn <10 / good above;
+top-10 weight good <40% / warn <65% / bad above; volatility good <12% /
+warn <20% / bad above; beta good <0.85 / warn <1.15 / bad above; max
+drawdown good <15% / warn <30% / bad above (drawdown itself isn't
+computed anywhere yet — the band exists for `private/metrics.md`'s Max
+Drawdown % column once populated).
