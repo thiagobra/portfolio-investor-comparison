@@ -33,9 +33,14 @@ export const ROUTES = {
 };
 
 // action: 'stub' items show a "coming soon" toast instead of navigating.
+// Top-level menus carry `icon` (rendered in the app bar). Items carry
+// `editable: true` when they open a screen that writes to disk (renders a
+// ✏️ marker) and `key` when a g-jump shortcut reaches them directly
+// (js/shortcuts.js) — both are read by js/menubar.js.
 export const MENUS = [
   {
     label: 'File',
+    icon: '📁',
     items: [
       { label: 'Import Investing.com CSV…', action: 'import' },
       { label: 'Save snapshot', action: 'stub' },
@@ -45,65 +50,72 @@ export const MENUS = [
   },
   {
     label: 'Portfolio',
+    icon: '💼',
     items: [
-      { label: 'Dashboard', route: '/dashboard' },
-      { label: 'Holdings', route: '/holdings' },
+      { label: 'Dashboard', route: '/dashboard', key: 'g d' },
+      { label: 'Holdings', route: '/holdings', key: 'g h' },
       { label: 'Closed positions', route: '/holdings/closed' },
     ],
   },
   {
     label: 'Analyse',
+    icon: '📊',
     items: [
-      { label: 'Sector', route: '/breakdown/sector' },
-      { label: 'Industry', route: '/breakdown/industry' },
+      { label: 'Sector', route: '/breakdown/sector', key: 'g s' },
+      { label: 'Industry', route: '/breakdown/industry', key: 'g i' },
       { label: 'Region', route: '/breakdown/region' },
       { label: 'Currency', route: '/breakdown/currency' },
       { label: 'Asset class', route: '/breakdown/asset-class' },
       { separator: true },
-      { label: 'Valuation', route: '/valuation' },
-      { label: 'Momentum', route: '/momentum' },
-      { label: 'Risk & Diversification', route: '/risk' },
+      { label: 'Valuation', route: '/valuation', key: 'g v' },
+      { label: 'Momentum', route: '/momentum', key: 'g m' },
+      { label: 'Risk & Diversification', route: '/risk', key: 'g r' },
     ],
   },
   {
     label: 'Compare',
+    icon: '⚖️',
     items: [
       { label: 'Warren Buffett', route: '/compare/warren-buffett' },
       { label: 'Ray Dalio', route: '/compare/ray-dalio' },
       { label: 'Michael Burry', route: '/compare/michael-burry' },
       { label: 'Peter Lynch', route: '/compare/peter-lynch' },
       { separator: true },
-      { label: 'All four at once', route: '/compare' },
+      { label: 'All four at once', route: '/compare', key: 'g p' },
     ],
   },
   {
     label: 'Scenarios',
+    icon: '🔮',
     items: [
-      { label: 'What-if builder', route: '/scenarios' },
+      { label: 'What-if builder', route: '/scenarios', key: 'g w' },
       { label: 'Saved scenarios', route: '/scenarios/saved' },
     ],
   },
   {
     label: 'Advisor',
+    icon: '🤖',
     items: [
-      { label: 'Ask the Advisor', route: '/advisor' },
-      { label: 'My profile notes', route: '/advisor/profile' },
-      { label: 'Connection', route: '/advisor/connection' },
+      { label: 'Ask the Advisor', route: '/advisor', key: 'g a' },
+      { label: 'My profile notes', route: '/advisor/profile', editable: true },
+      { label: 'Connection', route: '/advisor/connection', editable: true },
     ],
   },
   {
     label: 'Data',
+    icon: '🗄️',
     items: [
-      { label: 'Ticker classification', route: '/data/classification' },
-      { label: 'FX rates', route: '/data/fx-rates' },
-      { label: 'Correlations & volatility', route: '/data/correlations' },
-      { label: 'Advisor profile', route: '/advisor/profile' },
+      { label: 'Ticker classification', route: '/data/classification', editable: true, key: 'g t' },
+      { label: 'FX rates', route: '/data/fx-rates', editable: true },
+      { label: 'Correlations & volatility', route: '/data/correlations', editable: true },
+      { label: 'Advisor profile', route: '/advisor/profile', editable: true },
       { separator: true },
       { label: 'Open private folder', action: 'stub' },
     ],
   },
   {
     label: 'Help',
+    icon: '❓',
     items: [
       { label: 'Getting started', route: '/help/getting-started' },
       { label: 'How the numbers are calculated', route: '/help/metrics' },

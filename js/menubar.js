@@ -35,7 +35,7 @@ export function initMenubar(container) {
 
     const btn = document.createElement('button');
     btn.className = 'menubar-button';
-    btn.textContent = menu.label;
+    btn.innerHTML = `<span aria-hidden="true">${menu.icon}</span><span class="menubar-label">${menu.label}</span>`;
     btn.setAttribute('role', 'menuitem');
     btn.setAttribute('aria-haspopup', 'true');
     btn.setAttribute('aria-expanded', 'false');
@@ -58,8 +58,10 @@ export function initMenubar(container) {
         li.setAttribute('role', 'none');
         const mi = document.createElement('button');
         mi.className = 'menubar-menuitem';
-        mi.textContent = item.label;
+        mi.dataset.label = item.label;
+        mi.innerHTML = `<span class="menuitem-label">${item.label}</span>${item.editable ? '<span class="menuitem-edit" aria-hidden="true">✏️</span>' : ''}${item.key ? `<span class="menuitem-key" aria-hidden="true">${item.key}</span>` : ''}`;
         mi.setAttribute('role', 'menuitem');
+        mi.setAttribute('aria-label', item.label + (item.editable ? ', editable' : '') + (item.key ? `, shortcut ${item.key}` : ''));
         mi.tabIndex = -1;
         mi.addEventListener('click', () => { activate(item); closeAll(); });
         li.appendChild(mi);
@@ -79,7 +81,7 @@ export function initMenubar(container) {
 
     function typeAhead(e) {
       const char = e.key.toLowerCase();
-      const match = dropdownItems.find(el => el.textContent.toLowerCase().startsWith(char));
+      const match = dropdownItems.find(el => el.dataset.label.toLowerCase().startsWith(char));
       match?.focus();
     }
 

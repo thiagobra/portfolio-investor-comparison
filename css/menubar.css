@@ -9,14 +9,25 @@
 }
 
 .menubar-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
   background: transparent;
   border: none;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) 12px;
   cursor: pointer;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .menubar-label {
+    display: none;
+  }
 }
 
 .menubar-button:hover,
@@ -45,7 +56,10 @@
 }
 
 .menubar-menuitem {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
   width: 100%;
   text-align: left;
   background: transparent;
@@ -55,6 +69,17 @@
   font-size: var(--font-size-sm);
   padding: var(--space-sm) var(--space-md);
   cursor: pointer;
+}
+
+.menuitem-edit {
+  opacity: 0.6;
+  font-size: var(--font-size-xs);
+}
+
+.menuitem-key {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
 }
 
 .menubar-menuitem:hover,
