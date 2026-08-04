@@ -22,7 +22,7 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/layout.css` — reset, app shell, header, section, grid, responsive breakpoints.
 - `css/menubar.css` — menu bar, dropdown menus, and the toast notification widget.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
-- `css/forms.css` — inputs, file upload, suggestion form, toggle switch, select + checkbox list (Scenario builder).
+- `css/forms.css` — inputs, file upload, suggestion form, toggle switch, select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors).
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
 - `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
@@ -75,6 +75,14 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/views/momentum.js` — Momentum screen: technical rating consensus stat card + a color-coded performance table (Daily/1W/1M/YTD/1Y/3Y) — a plain table doubles as the "heatmap" via `.positive`/`.negative` tone classes, no separate chart primitive needed.
 - `js/views/risk.js` — Risk & Diversification screen: concentration + portfolio volatility + weighted beta stat cards, and a sector correlation heatmap (`js/charts/heatmap.js`).
 - `js/views/scenario.js` — What-if builder: sell entire positions (checkboxes) + buy a lump sector exposure (dropdown + % amount), before/after metric table. Simulation only — never touches the stored portfolio.
+
+## `js/views/data/`
+
+- `js/views/data/text-editor.js` — generic raw-markdown editor wired to `/api/files` (`mountTextEditor(container, {path, title, hint})`). Shared, not a route itself.
+- `js/views/data/fx-rates.js` — thin wrapper: `data/fx-rates.md`.
+- `js/views/data/correlations.js` — two stacked text editors: `data/correlations.md` + `data/volatility.md`.
+- `js/views/data/profile.js` — thin wrapper: `private/profile.md` (also reachable from Advisor → My profile notes — same route).
+- `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -104,11 +112,14 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/charts/heatmap.js` — `renderHeatmap(container, matrix, labels)`, color-scaled NxN table (sector correlation).
 - `js/charts/treemap.js` — planned; add if a future Breakdowns iteration wants it (the donut + ranked bars already built in task 9 cover the same ground for now).
 
-Screens still to build (tasks 12–14), each will replace `placeholder.js` for its
+Screens still to build (tasks 13–14), each will replace `placeholder.js` for its
 route in `js/menu-config.js` and get its own `js/views/*.js`:
-`data-editor.js`, `advisor.js`, `help.js`, `about.js`.
+`advisor.js` (`/advisor`), `help.js`/`about.js`.
+`/advisor/connection` is also still a placeholder — task 13 territory (it's
+the LM Studio host/model editor, naturally built alongside the chat screen).
 (`dashboard.js`/`holdings.js`: task 8; `breakdown.js`: task 9;
-`valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11.)
+`valuation.js`/`momentum.js`: task 10; `risk.js`/`scenario.js`: task 11;
+`data/*.js`: task 12.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 
@@ -129,8 +140,8 @@ route in `js/menu-config.js` and get its own `js/views/*.js`:
 ## `private/` (gitignored, personal)
 
 - `private/holdings/*.csv` — your Investing.com exports.
-- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification** (task 12).
-- `private/profile.md` — advisor's append-only case notes about you.
+- `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification** (built task 12).
+- `private/profile.md` — advisor's append-only case notes about you. Seeded with the `## Facts`/`## Goals`/`## Constraints`/`## Risk appetite`/`## Open questions` section skeleton task 13's auto-append will write under; editable via **Data → Advisor profile** / **Advisor → My profile notes** (editor built task 12, auto-append is task 13).
 - `private/snapshots/*.json` — saved portfolio snapshots.
 
 ## `tools/`

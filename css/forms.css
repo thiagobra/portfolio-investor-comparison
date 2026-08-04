@@ -218,3 +218,23 @@
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
+
+/* ── Raw text editor (Data editors) ── */
+.editor-textarea {
+  width: 100%;
+  min-height: 360px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  padding: var(--space-md);
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.editor-textarea:focus {
+  border-color: var(--border-focus);
+}
