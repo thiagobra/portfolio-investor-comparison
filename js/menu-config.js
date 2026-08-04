@@ -11,9 +11,9 @@
 export const ROUTES = {
   '/compare': { title: 'Compare', module: 'compare.js' },
   '/compare/:investor': { title: 'Compare', module: 'compare.js' },
-  '/dashboard': { title: 'Dashboard', module: 'placeholder.js' },
-  '/holdings': { title: 'Holdings', module: 'placeholder.js' },
-  '/holdings/closed': { title: 'Closed Positions', module: 'placeholder.js' },
+  '/dashboard': { title: 'Dashboard', module: 'dashboard.js' },
+  '/holdings': { title: 'Holdings', module: 'holdings.js' },
+  '/holdings/closed': { title: 'Closed Positions', module: 'holdings-closed.js' },
   '/breakdown/sector': { title: 'Sector Breakdown', module: 'placeholder.js' },
   '/breakdown/industry': { title: 'Industry Breakdown', module: 'placeholder.js' },
   '/breakdown/region': { title: 'Region Breakdown', module: 'placeholder.js' },
@@ -41,7 +41,7 @@ export const MENUS = [
   {
     label: 'File',
     items: [
-      { label: 'Import Investing.com CSV…', action: 'stub' },
+      { label: 'Import Investing.com CSV…', action: 'import' },
       { label: 'Save snapshot', action: 'stub' },
       { label: 'Export current view', action: 'stub' },
       { label: 'Reload data files', action: 'stub' },

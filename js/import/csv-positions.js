@@ -4,7 +4,7 @@
  *           supplies openDate only (its other columns carry a known Investing.com shift bug).
  * @exports  buildPortfolio()
  * @reads    @js/import/csv-sections.js @js/import/csv-tokenize.js
- * @usedby   @js/store.js
+ * @usedby   @js/import-controller.js
  * @seealso  @docs/csv-format.md
  */
 

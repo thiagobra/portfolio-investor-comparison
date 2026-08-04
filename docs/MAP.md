@@ -26,6 +26,9 @@ diffs this against the real directory tree. Grouped by directory.
 - `css/charts.css` — comparison bars, similarity score, geo bar, sector bar primitives.
 - `css/compare.css` — investor cards, suggestions, philosophy/principles (Compare screen).
 - `css/sector-geo.css` — sector drilldown, geo comparison blocks, sector panel grid (Compare screen).
+- `css/stats.css` — stat card grid (Dashboard, and later Valuation/Risk headline numbers).
+- `css/table.css` — sortable data table (Holdings, Closed positions, and later Breakdowns).
+- `css/donut-bars.css` — donut chart + ranked bar list styling (Dashboard, and later Breakdowns/Momentum).
 
 ## `server/`
 
@@ -48,12 +51,24 @@ diffs this against the real directory tree. Grouped by directory.
 - `js/router.js` — matches `location.hash` against `ROUTES` (supports `:param` segments), dynamically imports the matched view module, calls its `mount(root, params)`.
 - `js/menubar.js` — ARIA `menubar` widget built from `MENUS`: arrow-key nav between/within menus, Home/End, Esc, type-ahead, roving tabindex, click-outside-to-close.
 - `js/toast.js` — tiny transient notification, used for stub menu actions and save confirmations.
-- `js/store.js` — planned; not yet built. Add when a screen needs to share portfolio state across views (first needed by Dashboard/Holdings, task 8).
-- `js/api.js` — planned; not yet built. Add when the first view calls `/api/*` (Data editors or Advisor, tasks 12–13).
+- `js/store.js` — single source of truth for the imported portfolio; persists to `localStorage` (`portfolio-data` key) so a reload keeps the last import. `getPortfolio()` / `setPortfolio()` / `clearPortfolio()` / `subscribe()`.
+- `js/import-controller.js` — wires the File → "Import Investing.com CSV…" menu action (listens for the `menu-action` event menubar.js dispatches): file picker, client-side parse via `js/import/csv-positions.js`, `store.setPortfolio()`, archives the raw file via `POST /api/import`.
+- `js/api.js` — planned; not yet built. Add when the first view calls `/api/files` for read/write (Data editors, task 12) or `/api/chat` (Advisor, task 13).
+
+## `js/lib/`
+
+- `js/lib/md-table.js` — generic `| a | b |` markdown table parser shared by every `data/*.md`/`private/*.md` consumer. `parseMarkdownTables()` (heading-aware) · `tableToDict()` · `tableToMatrix()` · `tableToRows()`.
+- `js/lib/fx.js` — loads `data/fx-rates.md`, exposes `convertToEUR(amount, currency)` and `getFxAsOf()`.
+- `js/lib/format.js` — shared `fmtEUR()` / `fmtMoney()` / `fmtPct()` / `fmtNum()` formatters.
+- `js/lib/classification.js` — planned; not yet built. Add in task 9 (Breakdowns) — loads `private/classification.md` via `/api/files` into a `Map<symbol, {...}>`.
 
 ## `js/views/`
 
 - `js/views/placeholder.js` — generic "🚧 coming soon" screen for any route in `ROUTES` not yet backed by a real module.
+- `js/views/shared/empty-state.js` — shared "no portfolio imported yet" markup for every portfolio-data screen (`emptyStateHTML()`).
+- `js/views/dashboard.js` — Dashboard screen: headline stat cards (total value, day/total P/L, positions), currency-allocation donut, top-movers bars, concentration summary. Builds its own markup inline (no `views/*.html` partial — single-panel screen, unlike Compare).
+- `js/views/holdings.js` — Holdings screen: sortable open-positions table (click a header to sort) with a totals row.
+- `js/views/holdings-closed.js` — Closed positions screen: realized trade history table.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
@@ -69,21 +84,24 @@ diffs this against the real directory tree. Grouped by directory.
 
 ## `js/analytics/`
 
-- `js/analytics/breakdown.js` — sector/industry/region/currency/asset-class aggregation, one function parameterised by dimension.
-- `js/analytics/risk.js` — concentration, portfolio volatility, weighted beta. See `@docs/metrics.md`.
-- `js/analytics/valuation.js` — weighted P/E, yield, market-cap tilt.
-- `js/analytics/momentum.js` — performance heatmap, technical-rating consensus.
-- `js/analytics/scenario.js` — before/after recomposition for what-if scenarios.
+- `js/analytics/risk.js` — `concentration()` (HHI, effective N, top-10 weight — built, task 8) · `portfolioVolatility()` / `weightedBeta()` (built, need `js/lib/classification.js` + `data/correlations.md`/`volatility.md` wiring from the caller — task 11 view). See `@docs/metrics.md`.
+- `js/analytics/breakdown.js` — planned (task 9); sector/industry/region/currency/asset-class aggregation, one function parameterised by dimension.
+- `js/analytics/valuation.js` — planned (task 10); weighted P/E, yield, market-cap tilt.
+- `js/analytics/momentum.js` — planned (task 10); performance heatmap, technical-rating consensus.
+- `js/analytics/scenario.js` — planned (task 11); before/after recomposition for what-if scenarios.
 
 ## `js/charts/`
 
-- `js/charts/svg.js` — shared SVG helpers (arc, scale, axis).
-- `js/charts/donut.js`, `js/charts/bars.js`, `js/charts/treemap.js`, `js/charts/heatmap.js` — chart primitives, each one geometry, no app logic.
+- `js/charts/svg.js` — shared SVG helpers: `svgEl()`, `polarToCartesian()`, `describeArc()`.
+- `js/charts/donut.js` — `renderDonut(container, segments)`, donut + legend.
+- `js/charts/bars.js` — `renderBars(container, items)`, ranked horizontal bars.
+- `js/charts/treemap.js`, `js/charts/heatmap.js` — planned; add when Breakdowns (task 9, treemap) and Momentum/Risk (task 10/11, heatmap) need them.
 
-Screens still to build (tasks 8–14), each will replace `placeholder.js` for its
-route in `js/menu-config.js` and get its own `js/views/*.js` + `views/*.html`:
-`dashboard.js`, `holdings.js`, `breakdown.js`, `valuation.js`, `momentum.js`,
-`risk.js`, `scenario.js`, `data-editor.js`, `advisor.js`, `help.js`, `about.js`.
+Screens still to build (tasks 9–14), each will replace `placeholder.js` for its
+route in `js/menu-config.js` and get its own `js/views/*.js`:
+`breakdown.js`, `valuation.js`, `momentum.js`, `risk.js`, `scenario.js`,
+`data-editor.js`, `advisor.js`, `help.js`, `about.js`. (`dashboard.js` and
+`holdings.js` were built in task 8.)
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 

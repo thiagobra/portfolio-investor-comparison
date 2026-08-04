@@ -16,6 +16,8 @@ function activate(item) {
     location.hash = `#${item.route}`;
   } else if (item.action === 'stub') {
     showToast(`🚧 Coming soon — ${item.label}`);
+  } else if (item.action) {
+    document.dispatchEvent(new CustomEvent('menu-action', { detail: item.action }));
   }
 }
 

@@ -1,0 +1,75 @@
+/* ── Donut chart (Dashboard, Breakdowns) ── */
+.donut-chart {
+  width: 160px;
+  height: 160px;
+  display: block;
+  margin: 0 auto var(--space-md);
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.donut-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend-pct {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+/* ── Ranked bars (Dashboard top movers, Breakdowns, Momentum) ── */
+.rank-bar-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 70px;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-sm);
+}
+
+.rank-bar-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-bar-track {
+  height: 14px;
+  background: var(--chart-bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.rank-bar-fill {
+  display: block;
+  height: 100%;
+}
+
+.rank-bar-fill.positive { background: var(--success); }
+.rank-bar-fill.negative { background: var(--error); }
+.rank-bar-fill.neutral { background: var(--chart-user); }
+
+.rank-bar-value {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.rank-bar-value.positive { color: var(--success); }
+.rank-bar-value.negative { color: var(--error); }
