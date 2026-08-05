@@ -14,10 +14,14 @@
  */
 
 import { getPortfolio } from '../store.js';
-import { loadFxRates } from '../lib/fx.js';
+import { loadFxRates, getFxAsOf } from '../lib/fx.js';
 import { loadClassification } from '../lib/classification.js';
 import { loadMetrics } from '../lib/metrics.js';
+import { loadAllocation } from '../lib/allocation.js';
+import { loadTransactions } from '../lib/transactions.js';
+import { loadSectorCorrelations, loadSectorVolatility } from '../lib/risk-reference.js';
 import { buildAdvisorContext } from '../analytics/advisor-context.js';
+import { loadArchivedPortfolios, computeSymbolCagrs } from '../analytics/context-sections.js';
 import { streamChat, checkHealth } from '../api.js';
 import { showToast } from '../toast.js';
 import { emptyStateHTML } from './shared/empty-state.js';
@@ -119,8 +123,20 @@ export async function mount(root) {
   status.textContent = 'Loading metrics…';
   const metrics = await loadMetrics();
 
+  status.textContent = 'Loading allocation…';
+  const [allocation, transactions] = await Promise.all([loadAllocation(), loadTransactions()]);
+
+  status.textContent = 'Loading history…';
+  const progression = await loadArchivedPortfolios();
+  const symbolCagrs = computeSymbolCagrs(portfolio.openPositions, transactions, new Date());
+
+  status.textContent = 'Computing risk…';
+  const [correlationMatrix, volatilityBySector] = await Promise.all([loadSectorCorrelations(), loadSectorVolatility()]);
+
   status.textContent = 'Building context…';
-  const advisorContext = buildAdvisorContext(portfolio, classification, metrics, contextTokens);
+  const advisorContext = buildAdvisorContext(portfolio, classification, metrics, contextTokens, {
+    allocation, correlationMatrix, volatilityBySector, progression, symbolCagrs, fxAsOf: getFxAsOf(),
+  });
   const profileRes = await fetch('/api/files?path=private/profile.md').then((r) => r.json());
 
   const systemPrompt = `You are a thoughtful financial advisor helping a client understand their own portfolio. Be concise and concrete. Never suggest specific trades to execute; discuss tradeoffs and let the client decide.\n\nWhat you know about the client so far:\n${profileRes.content}\n\n${advisorContext.text}`;

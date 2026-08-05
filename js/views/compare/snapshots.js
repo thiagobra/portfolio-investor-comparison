@@ -6,8 +6,9 @@
  * @usedby   @js/views/compare.js
  */
 
-import { readFormValues, setFormValues, readSectorValues, readGeoValues, readIndustryValues, SECTOR_INPUT_IDS, GEO_INPUT_IDS, INDUSTRY_INPUT_IDS, SECTORS, GEO_REGIONS, INDUSTRIES } from '../../parser.js';
+import { readFormValues, setFormValues, readSectorValues, readGeoValues, readIndustryValues, SECTOR_INPUT_IDS, GEO_INPUT_IDS, INDUSTRY_INPUT_IDS, SECTORS, GEO_REGIONS, INDUSTRIES, ASSET_CLASSES, getTotal } from '../../parser.js';
 import { showToast } from '../../toast.js';
+import { loadAllocation } from '../../lib/allocation.js';
 
 const SNAPSHOT_KEY = 'portfolio-snapshots';
 
@@ -53,18 +54,29 @@ export function initSnapshots(root, ctx) {
     });
   }
 
-  btnSave.addEventListener('click', () => {
-    const snap = {
-      timestamp: Date.now(),
-      assets: readFormValues(),
-      sectors: readSectorValues(),
-      geo: readGeoValues(),
-      industries: readIndustryValues(),
-    };
+  btnSave.addEventListener('click', async () => {
+    const assets = readFormValues();
+    const sectors = readSectorValues();
+    const geo = readGeoValues();
+    const industries = readIndustryValues();
+
+    const snap = { timestamp: Date.now(), assets, sectors, geo, industries };
     const snaps = loadSnapshots();
     snaps.push(snap);
     saveSnapshots(snaps);
     refreshDropdown();
+
+    const existing = await loadAllocation();
+    const assetTable = ASSET_CLASSES.map((name) => `| ${name} | ${assets[name] || ''} | ${existing.assetAllocation.get(name)?.eur ?? ''} |`).join('\n');
+    const targetTable = (names, values) => names.map((name) => `| ${name} | ${values[name] || ''} |`).join('\n');
+    const content = '---\ntitle: Whole-wealth allocation\npurpose: Current asset-class split (with optional EUR amounts) and sector/geo/industry targets, so the advisor sees the whole wealth picture, not just the brokerage CSV. Edited via Data -> Allocation (or Compare -> Save Portfolio).\n---\n\n'
+      + '# Whole-wealth allocation\n\n'
+      + `## Asset Allocation\n\n| Asset Class | Percent | EUR |\n|---|---|---|\n${assetTable}\n\n`
+      + `## Sector Targets\n\n| Name | Percent |\n|---|---|\n${targetTable(SECTORS, sectors)}\n\n`
+      + `## Geographic Targets\n\n| Name | Percent |\n|---|---|\n${targetTable(GEO_REGIONS, geo)}\n\n`
+      + `## Industry Targets\n\n| Name | Percent |\n|---|---|\n${targetTable(INDUSTRIES, industries)}\n`;
+    await fetch('/api/files', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'private/allocation.md', content }) });
+
     showToast('💾 Portfolio saved');
   });
 
@@ -89,4 +101,22 @@ export function initSnapshots(root, ctx) {
   });
 
   refreshDropdown();
+}
+
+/** Prefills the portfolio + target forms from private/allocation.md when the form is still empty. */
+export async function prefillFromAllocation(root, ctx) {
+  if (readFormValues && getTotal(readFormValues()) > 0) return;
+  const allocation = await loadAllocation();
+  if (allocation.assetAllocation.size === 0) return;
+
+  const assets = {};
+  for (const [name, entry] of allocation.assetAllocation) assets[name] = entry.percent;
+  setFormValues(assets);
+  applyDict(root, SECTOR_INPUT_IDS, SECTORS, Object.fromEntries(allocation.sectorTargets));
+  applyDict(root, GEO_INPUT_IDS, GEO_REGIONS, Object.fromEntries(allocation.geoTargets));
+  applyDict(root, INDUSTRY_INPUT_IDS, INDUSTRIES, Object.fromEntries(allocation.industryTargets));
+  ctx.updateTotal();
+  ctx.updateSectorTotalDisplay();
+  ctx.updateGeoTotalDisplay();
+  ctx.updateIndustryTotalDisplay();
 }
