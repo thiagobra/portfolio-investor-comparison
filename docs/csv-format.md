@@ -68,7 +68,7 @@ This section reconciles internally (verified: Avg 112.74 → Current 160.80
 horizons. **Treat this section as the only source of truth for position
 values.**
 
-## `Open Positions` — 20 columns (Open Date only, has a shift bug)
+## `Open Positions` — 20 columns (per-buy lots, has a shift bug)
 
 | # | Header | # | Header |
 |---|---|---|---|
@@ -88,8 +88,28 @@ values.**
 reads `0.41%` for a portfolio that is 100% one position — a genuine
 Investing.com export defect, not a parser bug. Downstream fields
 (`Daily P/L`, `Net P/L`) don't reconcile with `Open Positions Summary`
-either. **Use this section for exactly one field: `Open Date`, joined
-onto the Summary section by `Symbol`.** Ignore every other column here.
+either. **Use this section for exactly three fields: `Open Date`,
+`Amount`, `Open Price` — one row per buy, joined onto the Summary
+section by `Symbol`.** Ignore every other column here.
+
+**One row per buy, not per symbol.** A ticker bought in several
+transactions has one `Open Positions` row per purchase; `js/import/
+csv-positions.js` groups rows by `Symbol` into `lotsBySymbol` rather than
+keeping only the last one. Because this section carries known defects
+elsewhere, the importer runs a **reconciliation guard** before trusting
+these lots for per-transaction CAGR: summed lot `Amount` must match the
+Summary's `Amount` (tolerance 0.01 shares) and the share-weighted mean of
+lot `Open Price` must match the Summary's `Avg Price` (tolerance 1%). If
+either check fails, the position is flagged `lotsReliable: false` — the
+lots still display, but per-lot CAGR falls back to the manual ledger
+(`private/transactions.md`) or a single blended-avg-cost estimate,
+visibly marked approximate.
+
+**Observed discrepancy:** `private/holdings/Holdings_08042026.csv`'s
+single VWRL.AS lot already fails this guard — `Open Positions` reports
+`Open Price 156.79` where `Open Positions Summary` reports
+`Avg Price 112.74` for the same one-share position. This is the real-world
+case the guard exists to catch, not a hypothetical.
 
 ## `Closed Positions` — 12 columns
 

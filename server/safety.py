@@ -25,6 +25,8 @@ READABLE_FILES = {
     "private/classification.md",
     "private/profile.md",
     "private/metrics.md",
+    "private/transactions.md",
+    "private/allocation.md",
 }
 
 # Exact relative paths the web app may overwrite via /api/files.
@@ -36,6 +38,8 @@ WRITABLE_FILES = {
     "private/classification.md",
     "private/profile.md",
     "private/metrics.md",
+    "private/transactions.md",
+    "private/allocation.md",
 }
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # a holdings export is a few KB; 5MB is generous headroom

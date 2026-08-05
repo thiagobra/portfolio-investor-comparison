@@ -15,23 +15,31 @@ const INPUT_IDS = [
 ];
 
 const SECTORS = [
-  'Technology',
-  'Financials',
-  'Consumer',
-  'Healthcare',
   'Energy',
+  'Materials',
   'Industrials',
-  'Other',
+  'Consumer Discretionary',
+  'Consumer Staples',
+  'Health Care',
+  'Financials',
+  'Information Technology',
+  'Communication Services',
+  'Utilities',
+  'Real Estate',
 ];
 
 const SECTOR_INPUT_IDS = [
-  'sector-technology',
-  'sector-financials',
-  'sector-consumer',
-  'sector-healthcare',
   'sector-energy',
+  'sector-materials',
   'sector-industrials',
-  'sector-other',
+  'sector-consumer-discretionary',
+  'sector-consumer-staples',
+  'sector-health-care',
+  'sector-financials',
+  'sector-information-technology',
+  'sector-communication-services',
+  'sector-utilities',
+  'sector-real-estate',
 ];
 
 const GEO_REGIONS = [

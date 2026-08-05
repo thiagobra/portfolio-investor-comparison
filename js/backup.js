@@ -13,7 +13,7 @@
 import { getPortfolio, setPortfolio } from './store.js';
 import { showToast } from './toast.js';
 
-const BUNDLE_FILES = ['private/classification.md', 'private/profile.md', 'private/metrics.md', 'data/settings.md'];
+const BUNDLE_FILES = ['private/classification.md', 'private/profile.md', 'private/metrics.md', 'private/transactions.md', 'private/allocation.md', 'data/settings.md'];
 
 async function saveSnapshot() {
   const portfolio = getPortfolio();

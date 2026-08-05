@@ -83,6 +83,8 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/lib/escape.js` — `escapeHtml(str)`, applied at every point CSV/import/file-derived text (symbol, name, exchange, label, host, model, file content) gets interpolated into an `innerHTML` template.
 - `js/lib/verdict.js` — single source of truth turning a raw metric into `{tone, label, sentence}` against a named threshold table in `BANDS` (hhi/effectiveN/top10Weight/volatility/beta/maxDrawdown). `verdict(value, metricKey)`. So Overview/Risk/What-if can never disagree about what a number means.
 - `js/lib/metrics.js` — loads `private/metrics.md` (mirrors `classification.js`'s cached-fetch pattern) into `Map<symbol, {roe,debtEquity,profitMargin,revGrowth,expenseRatio,maxDrawdown,updated}>`. `loadMetrics()` · `getMetrics(symbol)` · `isStale(entry)` (missing or >90 days old).
+- `js/lib/transactions.js` — loads `private/transactions.md` into `Map<symbol, {date,shares,price,currency}[]>` — manual buy lots that override unreliable/missing CSV lot data. `loadTransactions()` · `getTransactions(symbol)`.
+- `js/lib/allocation.js` — loads `private/allocation.md` into `{assetAllocation, sectorTargets, geoTargets, industryTargets}` — the whole-wealth asset-class split (with optional EUR) plus target tables, so screens beyond Compare (the advisor) see cash/crypto/gold/bonds. `loadAllocation()`.
 
 ## `js/views/`
 
@@ -98,7 +100,7 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/scenario.js` — What-if builder: partial sells (0-100% per position) + buy a specific ticker or a sector, results as commit-2 verdict cards (HHI/effective holdings/top-10), paired before/after sector bar lists, and risk verdicts (volatility/beta). "Save scenario…" names it and PUTs to `/api/snapshots`. Simulation only — never touches the stored portfolio.
 - `js/views/scenario-saved.js` — `/scenarios/saved`: lists saved what-if scenarios from `GET /api/snapshots` (filters out `snapshot_*` manual portfolio snapshots — same directory, different kind of thing), Load hands the config to `scenario.js` via `sessionStorage` (prefills + auto-runs), Delete removes it.
 - `js/views/progression.js` — `/progression`: multi-file drag-and-drop of `Holdings_*.csv` exports, auto-loads everything already archived via `GET /api/holdings`, dedupes/sorts by date parsed from the filename. Renders `js/analytics/progression.js`'s time-weighted CAGR, detected contributions/withdrawals, and per-position price CAGR.
-- `js/views/cagr.js` — `/cagr`, WIP: simpler single-file per-stock CAGR — `(currentPrice/avgPrice)^(365/daysHeld)-1` using the CSV's Open Date vs file date. No snapshots needed, deliberately cruder than `progression.js`.
+- `js/views/cagr.js` — `/cagr`: per-transaction CAGR, one row per buy lot grouped by symbol with a value-weighted roll-up (`js/analytics/lot-cagr.js`). Lot source per symbol: manual ledger > reliable CSV lots > flagged blended-avg-cost fallback.
 
 ## `js/views/help/`
 
@@ -113,6 +115,8 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/data/correlations.js` — two stacked text editors: `data/correlations.md` + `data/volatility.md`, sourced to Ken French / Damodaran, plus a simple CSV importer (`Asset Class,Volatility %`) that overwrites `data/volatility.md`'s asset-class rows on the spot.
 - `js/views/data/profile.js` — thin wrapper: `private/profile.md` (also reachable from Advisor → My profile notes — same route).
 - `js/views/data/metrics.js` — editable grid mirroring `classification.js`'s shape: ROE/debt-equity/margins/growth/expense-ratio/max-drawdown per symbol, red asterisk on any row missing or older than 90 days (`isStale()`). Serializes to `private/metrics.md` on Save.
+- `js/views/data/transactions.js` — manual buy-lot ledger editor: free-form rows (symbol/date/shares/price/currency, add/remove), not one row per symbol — a symbol can have many buys. Serializes to `private/transactions.md` on Save; overrides CSV lot data for per-transaction CAGR (`js/views/cagr.js`) when the CSV's own lots are missing or unreliable.
+- `js/views/data/allocation.js` — whole-wealth allocation editor: percent + optional EUR per asset class (live total) plus sector/geo/industry target tables (reusing `SECTORS`/`GEO_REGIONS`/`INDUSTRIES` from `js/parser.js`). Serializes to `private/allocation.md` on Save — the same file Compare → Save Portfolio writes to and the advisor context reads.
 - `js/views/data/classification.js` — the one Data editor that isn't a raw-text wrapper: a grid (one row per known + currently-imported symbol) with `<select>`s for sector/industry/region/asset-class, a paste-from-getquin textarea, a per-row "Suggest" button (drafts country/currency from the exchange suffix via `js/import/mapping.js` — never auto-saves), and "apply first checked row to other checked rows". Serializes the whole grid back to `private/classification.md` on Save.
 - `js/views/data/connection.js` — Advisor connection screen: a live green/red `/api/health` reachability light, then the raw `data/settings.md` editor (reuses `text-editor.js`) below it.
 - `js/views/advisor.js` — Ask the Advisor: a chat screen against the local LM Studio model. System prompt = `private/profile.md` + `js/analytics/advisor-context.js`'s full context (every open position, closed trades, metrics store — budgeted against `data/settings.md`'s `context_tokens`). A staged pipeline status line (Reading holdings → Loading classification → Loading metrics → Building context → Sending → Generating) shows real progress and the real char/token count before the chat appears; a collapsible panel shows the exact system prompt sent. Streams the reply token-by-token via `js/api.js`. After each answer, a second (silent, non-streamed) call asks the model for 0–3 short case-note statements tagged `FACTS`/`GOALS`/`CONSTRAINTS`/`RISK`/`QUESTIONS`; each gets appended — date-stamped, sourced to the question that produced it — under the matching heading in `private/profile.md`, inserted right after that heading's existing bullets so it stays strictly append-only.
@@ -140,7 +144,9 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/analytics/momentum.js` — `ratingConsensus(positions)` (weight-averaged across the 8-point technical rating block) · `consensusLabel(score)`. The performance heatmap itself needs no computation — the view reads `position.perf` directly.
 - `js/analytics/scenario.js` — `applyScenario(positions, {sells: {symbol: pct}, buyTarget, buyWeight})` (pure recomposition: proportionally shrinks/removes sold positions, appends one synthetic weight-only position for the buy side — sector or a specific ticker) · `scenarioMetrics(...)` (runs `risk.js` + `breakdown.js` against a position set, returns sector groups too — used for both the before and the after side).
 - `js/analytics/progression.js` — `computeProgression(snapshots)`: time-weighted return chained across consecutive dated snapshots (money added/withdrawn never counts as growth — reported separately as detected contributions), compounded into a CAGR, plus a simple per-symbol price CAGR from first to last appearance. See `@docs/metrics.md`.
-- `js/analytics/advisor-context.js` — `buildAdvisorContext(portfolio, classification, metrics, contextTokens)`: full advisor context (every open position, closed trades, metrics store) — not just a digest. Budgeted against `contextTokens` (from `data/settings.md`); trims to the largest holdings first if it overflows. Replaced `analytics/summary.js` (deleted) in round 4.
+- `js/analytics/advisor-context.js` — `buildAdvisorContext(portfolio, classification, metrics, contextTokens, extra)`: composes `js/analytics/context-sections.js`'s computed sections (allocation/risk/exposure/return/gaps, always kept whole) with every open position, closed trades, and the metrics store. Budgeted against `contextTokens` (from `data/settings.md`); trims the open-positions list to the largest holdings first if it overflows. Replaced `analytics/summary.js` (deleted) in round 4.
+- `js/analytics/context-sections.js` — section builders for the advisor's whole-wealth context: `allocationSection()` · `riskSection()` · `exposureSection()` · `returnSection()` · `gapsSection()`, each rendered through `js/analytics/risk.js`/`breakdown.js`/`js/lib/verdict.js` so the advisor can never disagree with the Risk/Dashboard screens. `computeSymbolCagrs()` and `loadArchivedPortfolios()` supply the return section's inputs.
+- `js/analytics/lot-cagr.js` — `pickLotSource(position, transactionsMap)` (ledger > reliable CSV lots > flagged blended-avg-cost fallback) · `lotCagr(lots, currentPrice, asOfDate)` (per-lot CAGR + value-weighted symbol roll-up — not an IRR). See `@docs/metrics.md`.
 
 ## `js/charts/`
 
@@ -153,9 +159,10 @@ hard cap; every other file was checked in task 15's audit and is within it.
 
 Every route in `ROUTES` is backed by a real view module as of round 4 —
 the only remaining `placeholder.js` consumer is a route not yet added to
-the menu tree. `js/views/cagr.js` and `js/views/data/metrics.js` are
-explicitly marked WIP (🚧, `soon: true` in `menu-config.js`) rather than
-presented as finished.
+the menu tree. `js/views/data/metrics.js` is explicitly marked WIP (🚧)
+rather than presented as finished; `js/views/cagr.js` lost its WIP marker
+in round 5 once per-transaction CAGR replaced the blended-avg-cost
+approximation.
 
 ## `views/` (HTML partials, fetched on demand by their view module)
 
@@ -178,6 +185,8 @@ presented as finished.
 - `private/holdings/*.csv` — your Investing.com exports, archived on every import; also the source data for `js/views/progression.js` and `tools/check_holdings_columns.py`.
 - `private/classification.md` — ticker → sector/industry/region/country/currency/asset class. Seeded with an empty table (headers only); rows fill in via **Data → Ticker classification**.
 - `private/metrics.md` — ticker → ROE/debt-equity/profit margin/rev growth/expense ratio/max drawdown/updated date. Seeded with an empty table; rows fill in via **Data → Metrics**.
+- `private/transactions.md` — manual buy-lot ledger (Symbol/Date/Shares/Price/Currency), one row per purchase. Seeded with an empty table; rows fill in via **Data → Transactions**. Overrides CSV lot data for per-transaction CAGR when the CSV's own lots are missing or fail the reconciliation guard.
+- `private/allocation.md` — whole-wealth asset-class split (percent + optional EUR) plus sector/geo/industry target tables. Written by **Data → Allocation** and by Compare's **Save Portfolio** button; read by the advisor context (`js/analytics/context-sections.js`) so cash/crypto/gold/bonds are visible alongside the brokerage CSV.
 - `private/profile.md` — advisor's append-only case notes about you. `## Facts`/`## Goals`/`## Constraints`/`## Risk appetite`/`## Open questions` section skeleton the advisor's auto-append writes under; editable via **Data → Advisor profile** / **Advisor → My profile notes**.
 - `private/snapshots/*.json` — two kinds of file share this directory, distinguished by filename: manual portfolio snapshots (`snapshot_<date>.json`, **File → Save snapshot**) and named what-if scenarios (any other name, **Scenarios → What-if builder → Save scenario…**). `js/views/scenario-saved.js` filters to the latter.
 

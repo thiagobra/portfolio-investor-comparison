@@ -1,16 +1,20 @@
 /**
  * @module   analytics/advisor-context
- * @purpose  Full advisor context: every open position, closed trades, and
- *           the metrics store. Budgeted against data/settings.md's context_tokens
- *           (rough estimate: 1 token ≈ 4 chars) by trimming the open
- *           positions list to the largest holdings first if it overflows.
- * @exports  buildAdvisorContext(portfolio, classification, metrics, contextTokens)
- * @reads    @js/lib/fx.js
+ * @purpose  Full advisor context: computed whole-wealth sections (allocation,
+ *           risk, exposure, return, gaps — from js/analytics/context-sections.js)
+ *           first, then every open position, closed trades, and the metrics
+ *           store. Budgeted against data/settings.md's context_tokens (rough
+ *           estimate: 1 token ≈ 4 chars) by trimming the open positions list
+ *           to the largest holdings first if it overflows — the computed
+ *           sections are small and always kept whole.
+ * @exports  buildAdvisorContext(portfolio, classification, metrics, contextTokens, extra)
+ * @reads    @js/lib/fx.js @js/analytics/context-sections.js
  * @usedby   @js/views/advisor.js
  */
 
 import { convertToEUR } from '../lib/fx.js';
 import { fmtEUR } from '../lib/format.js';
+import { allocationSection, riskSection, exposureSection, returnSection, gapsSection } from './context-sections.js';
 
 const CHARS_PER_TOKEN = 4;
 const BUDGET_FRACTION = 0.6; // leave room for the system framing, profile notes, and the conversation itself
@@ -32,13 +36,31 @@ function metricsLine(symbol, m) {
 /**
  * Returns {text, charCount, tokenEstimate, budgetTokens, truncated}.
  * metrics: Map from js/lib/metrics.js. contextTokens: from data/settings.md.
+ * extra: {allocation, correlationMatrix, volatilityBySector, progression, symbolCagrs, fxAsOf} —
+ * everything js/analytics/context-sections.js needs; all optional, sections degrade gracefully.
  */
-export function buildAdvisorContext(portfolio, classification, metrics, contextTokens) {
+export function buildAdvisorContext(portfolio, classification, metrics, contextTokens, extra = {}) {
   const budgetTokens = Math.floor((contextTokens ?? 8192) * BUDGET_FRACTION);
   const budgetChars = budgetTokens * CHARS_PER_TOKEN;
 
   const bySizeDesc = [...portfolio.openPositions].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
   const closed = portfolio.closedPositions.slice(-10);
+
+  const brokerageEUR = portfolio.openPositions
+    .reduce((sum, p) => sum + (convertToEUR(p.marketValue?.amount, p.marketValue?.currency) ?? 0), 0);
+
+  const computedSections = extra.allocation ? [
+    allocationSection(extra.allocation, brokerageEUR),
+    '',
+    riskSection(portfolio.openPositions, classification, extra.correlationMatrix ?? {}, extra.volatilityBySector ?? {}),
+    '',
+    exposureSection(portfolio.openPositions, classification),
+    '',
+    returnSection(extra.progression ?? null, extra.symbolCagrs ?? []),
+    '',
+    gapsSection(portfolio.openPositions, classification, metrics, extra.fxAsOf ?? null),
+    '',
+  ].join('\n') : '';
 
   let truncated = false;
   let positionCount = bySizeDesc.length;
@@ -50,6 +72,7 @@ export function buildAdvisorContext(portfolio, classification, metrics, contextT
       .filter(Boolean);
 
     return [
+      computedSections,
       `Open positions (${positions.length}${count < bySizeDesc.length ? ` of ${bySizeDesc.length}, largest first` : ''}):`,
       ...positions.map((p) => positionLine(p, classification)),
       '',

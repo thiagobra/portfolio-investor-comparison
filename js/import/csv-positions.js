@@ -1,7 +1,7 @@
 /**
  * @module   import/csv-positions
  * @purpose  Build the position model: Open Positions Summary is the source of truth; Open Positions
- *           supplies openDate only (its other columns carry a known Investing.com shift bug).
+ *           supplies per-lot data (openDate/shares/openPrice), reconciled against the Summary row.
  * @exports  buildPortfolio()
  * @reads    @js/import/csv-sections.js @js/import/csv-tokenize.js
  * @usedby   @js/import-controller.js
@@ -11,13 +11,41 @@
 import { parseSections } from './csv-sections.js';
 import { coerceMoney, coercePercent, coerceNumber, coerceDate, isNullCell } from './csv-tokenize.js';
 
-function buildOpenPosition(row, openDateBySymbol) {
+const SHARES_TOLERANCE = 0.01;
+const AVG_PRICE_TOLERANCE_PCT = 0.01; // 1%
+
+/** Groups raw "Open Positions" rows into per-symbol lots and checks them against the Summary. */
+function buildLots(openPositionRows, summaryAmount, summaryAvgPrice) {
+  const lots = openPositionRows.map((r) => ({
+    openDate: coerceDate(r.openDate),
+    shares: coerceNumber(r.amount),
+    openPrice: coerceNumber(r.openPrice),
+  })).filter((l) => l.openDate && l.shares != null && l.openPrice != null);
+
+  if (lots.length === 0) return { lots: [], lotsReliable: false };
+
+  const totalShares = lots.reduce((sum, l) => sum + l.shares, 0);
+  const weightedAvgPrice = lots.reduce((sum, l) => sum + l.shares * l.openPrice, 0) / totalShares;
+
+  const sharesMatch = summaryAmount != null && Math.abs(totalShares - summaryAmount) <= SHARES_TOLERANCE;
+  const avgPriceMatch = summaryAvgPrice != null
+    && Math.abs(weightedAvgPrice - summaryAvgPrice) <= summaryAvgPrice * AVG_PRICE_TOLERANCE_PCT;
+
+  return { lots, lotsReliable: sharesMatch && avgPriceMatch };
+}
+
+function buildOpenPosition(row, lotsBySymbol) {
+  const summaryAmount = coerceNumber(row.amount);
+  const summaryAvgPrice = coerceNumber(row.avgPrice);
+  const { lots, lotsReliable } = buildLots(lotsBySymbol.get(row.symbol) ?? [], summaryAmount, summaryAvgPrice);
+  const earliestDate = lots.length > 0 ? lots.map((l) => l.openDate).sort()[0] : null;
+
   return {
     name: row.name,
     symbol: row.symbol,
     exchange: row.exchange,
-    amount: coerceNumber(row.amount),
-    avgPrice: coerceNumber(row.avgPrice),
+    amount: summaryAmount,
+    avgPrice: summaryAvgPrice,
     currentPrice: coerceNumber(row.currentPrice),
     marketValue: coerceMoney(row.marketValue),
     weight: coercePercent(row.weight),
@@ -25,7 +53,9 @@ function buildOpenPosition(row, openDateBySymbol) {
     dailyPLPct: coercePercent(row.dailyPLPct),
     netPLPct: coercePercent(row.netPLPct),
     netPL: coerceNumber(row.netPL),
-    openDate: openDateBySymbol.get(row.symbol) ?? null,
+    openDate: earliestDate,
+    lots,
+    lotsReliable,
     marketCap: coerceNumber(row.marketCap),
     revenue: coerceNumber(row.revenue),
     eps: isNullCell(row.eps) ? null : parseFloat(row.eps),
@@ -73,13 +103,16 @@ function buildClosedPosition(row) {
 export function buildPortfolio(csvText) {
   const sections = parseSections(csvText);
 
-  const openDateBySymbol = new Map(
-    (sections['Open Positions']?.rows ?? []).map((r) => [r.symbol, coerceDate(r.openDate)])
-  );
+  const lotsBySymbol = new Map();
+  for (const r of sections['Open Positions']?.rows ?? []) {
+    if (!r.symbol) continue;
+    if (!lotsBySymbol.has(r.symbol)) lotsBySymbol.set(r.symbol, []);
+    lotsBySymbol.get(r.symbol).push(r);
+  }
 
   const openPositions = (sections['Open Positions Summary']?.rows ?? [])
     .filter((r) => r.symbol)
-    .map((r) => buildOpenPosition(r, openDateBySymbol));
+    .map((r) => buildOpenPosition(r, lotsBySymbol));
 
   const closedPositions = (sections['Closed Positions']?.rows ?? [])
     .filter((r) => r.symbol)

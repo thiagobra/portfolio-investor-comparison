@@ -2,12 +2,24 @@
  * @module   lib/classification
  * @purpose  Loads private/classification.md (via /api/files, since private/ isn't
  *           statically served) into a Map<symbol, {sector,industry,region,country,currency,assetClass}>.
+ *           Read-side migration: old 7-sector names on disk are translated to
+ *           GICS-11 on load. 'Other' is genuinely ambiguous (could be Utilities
+ *           or Real Estate) so it maps to null, not guessed — the row shows up
+ *           as unclassified until re-picked in Data → Ticker classification,
+ *           and the next Save writes GICS-11 names back to disk.
  * @exports  loadClassification() · getClassification(symbol)
  * @reads    @private/classification.md
  * @usedby   @js/views/dashboard.js @js/analytics/risk.js @js/views/data/classification.js
  */
 
 import { parseMarkdownTables, tableToRows } from './md-table.js';
+
+const SECTOR_MIGRATION = {
+  Technology: 'Information Technology',
+  Consumer: 'Consumer Discretionary',
+  Healthcare: 'Health Care',
+  Other: null,
+};
 
 const FIELD_MAP = {
   Sector: 'sector',
@@ -31,6 +43,7 @@ async function fetchAndParse() {
       if (!row.Symbol) continue;
       const entry = {};
       for (const [header, key] of Object.entries(FIELD_MAP)) entry[key] = row[header] || null;
+      if (entry.sector in SECTOR_MIGRATION) entry.sector = SECTOR_MIGRATION[entry.sector];
       map.set(row.Symbol, entry);
     }
   }

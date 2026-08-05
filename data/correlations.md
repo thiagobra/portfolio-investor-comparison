@@ -1,22 +1,26 @@
 ---
 title: Correlation matrices
 source: Kenneth R. French Data Library (sector, region); Damodaran NYU Stern (asset class)
-as_of: 2026-08-04
+as_of: 2026-08-05
 ---
 
 # Correlations
 
 ## Sector Correlation
 
-| | Consumer | Energy | Financials | Healthcare | Industrials | Other | Technology |
-|---|---|---|---|---|---|---|---|
-| Consumer | 1.00 | 0.62 | 0.86 | 0.74 | 0.90 | 0.85 | 0.84 |
-| Energy | 0.62 | 1.00 | 0.66 | 0.54 | 0.70 | 0.68 | 0.60 |
-| Financials | 0.86 | 0.66 | 1.00 | 0.74 | 0.87 | 0.89 | 0.82 |
-| Healthcare | 0.74 | 0.54 | 0.74 | 1.00 | 0.76 | 0.73 | 0.72 |
-| Industrials | 0.90 | 0.70 | 0.87 | 0.76 | 1.00 | 0.88 | 0.85 |
-| Other | 0.85 | 0.68 | 0.89 | 0.73 | 0.88 | 1.00 | 0.83 |
-| Technology | 0.84 | 0.60 | 0.82 | 0.72 | 0.85 | 0.83 | 1.00 |
+| | Communication Services | Consumer Discretionary | Consumer Staples | Energy | Financials | Health Care | Industrials | Information Technology | Materials | Real Estate | Utilities |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Communication Services | 1.00 | 0.83 | 0.38 | 0.64 | 0.84 | 0.20 | 0.65 | 0.77 | 0.38 | 0.71 | 0.67 |
+| Consumer Discretionary | 0.83 | 1.00 | 0.40 | 0.60 | 0.81 | 0.22 | 0.67 | 0.76 | 0.45 | 0.70 | 0.61 |
+| Consumer Staples | 0.38 | 0.40 | 1.00 | 0.30 | 0.38 | 0.85 | 0.87 | 0.33 | 0.91 | 0.31 | 0.33 |
+| Energy | 0.64 | 0.60 | 0.30 | 1.00 | 0.66 | 0.15 | 0.55 | 0.57 | 0.36 | 0.55 | 0.58 |
+| Financials | 0.84 | 0.81 | 0.38 | 0.66 | 1.00 | 0.20 | 0.65 | 0.74 | 0.37 | 0.69 | 0.73 |
+| Health Care | 0.20 | 0.22 | 0.85 | 0.15 | 0.20 | 1.00 | 0.72 | 0.19 | 0.80 | 0.14 | 0.16 |
+| Industrials | 0.65 | 0.67 | 0.87 | 0.55 | 0.65 | 0.72 | 1.00 | 0.61 | 0.87 | 0.55 | 0.52 |
+| Information Technology | 0.77 | 0.76 | 0.33 | 0.57 | 0.74 | 0.19 | 0.61 | 1.00 | 0.35 | 0.62 | 0.57 |
+| Materials | 0.38 | 0.45 | 0.91 | 0.36 | 0.37 | 0.80 | 0.87 | 0.35 | 1.00 | 0.33 | 0.27 |
+| Real Estate | 0.71 | 0.70 | 0.31 | 0.55 | 0.69 | 0.14 | 0.55 | 0.62 | 0.33 | 1.00 | 0.58 |
+| Utilities | 0.67 | 0.61 | 0.33 | 0.58 | 0.73 | 0.16 | 0.52 | 0.57 | 0.27 | 0.58 | 1.00 |
 
 ## Region Correlation
 

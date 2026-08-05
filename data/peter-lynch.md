@@ -23,13 +23,17 @@
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 15 | Software, Internet |
-| Financials | 12 | Banking, Insurance |
-| Consumer | 35 | Retail, Restaurants, Apparel |
-| Healthcare | 14 | Pharma, Biotech |
-| Energy | 5 | Oil & Gas |
+| Consumer Discretionary | 25 | Retail, Restaurants, Apparel |
 | Industrials | 12 | Auto, Manufacturing |
-| Other | 7 | — |
+| Health Care | 14 | Pharma, Biotech |
+| Financials | 12 | Banking, Insurance |
+| Information Technology | 10 | Software |
+| Consumer Staples | 10 | Food, Household Products |
+| Energy | 5 | Oil & Gas |
+| Communication Services | 5 | Telecommunications |
+| Materials | 3 | — |
+| Real Estate | 2 | — |
+| Utilities | 2 | — |
 
 ## Industry Allocation
 | Industry | % |

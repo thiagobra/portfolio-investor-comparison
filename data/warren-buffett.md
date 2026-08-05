@@ -23,13 +23,17 @@
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 26 | Consumer Electronics, Software |
-| Financials | 40 | Banking, Insurance, Payments |
-| Consumer | 13 | Food & Beverage, Retail |
-| Healthcare | 1 | Managed Care |
-| Energy | 11 | Oil & Gas, Pipelines |
-| Industrials | 2 | Railroads, Aerospace |
-| Other | 7 | — |
+| Information Technology | 22 | Consumer Electronics (Apple) |
+| Financials | 36.2 | Banking (AXP, BAC), Payments, Insurance, Asset Management |
+| Consumer Staples | 16 | Beverages (Coca-Cola), Packaged Foods (Kraft Heinz) |
+| Energy | 12 | Oil & Gas (Chevron, Occidental) |
+| Industrials | 3 | Aerospace, Rail-adjacent |
+| Communication Services | 3 | Telecom, Media (Sirius XM, T-Mobile) |
+| Consumer Discretionary | 2 | Retail |
+| Health Care | 2 | Managed Care (DaVita) |
+| Utilities | 2 | — |
+| Materials | 1 | — |
+| Real Estate | 0.8 | — |
 
 ## Industry Allocation
 | Industry | % |

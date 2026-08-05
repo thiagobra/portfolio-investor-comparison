@@ -14,7 +14,7 @@
  */
 
 import { initPortfolioForm } from './compare/portfolio-form.js';
-import { initSnapshots } from './compare/snapshots.js';
+import { initSnapshots, prefillFromAllocation } from './compare/snapshots.js';
 import { initSections, selectInvestor } from './compare/sections.js';
 import { initFeedback } from './compare/feedback.js';
 
@@ -41,6 +41,7 @@ export async function mount(root, params) {
   initPortfolioForm(root, ctx);
   initSnapshots(root, ctx);
   initFeedback(root);
+  await prefillFromAllocation(root, ctx);
 
   if (params.investor) selectInvestor(root, ctx, params.investor);
 }
