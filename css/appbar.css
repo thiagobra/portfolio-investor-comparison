@@ -11,9 +11,10 @@
   max-width: 960px;
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-md);
-  padding: 0 var(--space-md);
+  gap: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-md);
   min-height: var(--appbar-h);
 }
 
@@ -38,10 +39,18 @@
   color: var(--text-secondary);
   white-space: nowrap;
   flex-shrink: 0;
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .appbar-status {
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .appbar-status-import {
@@ -65,8 +74,3 @@
   color: var(--text-muted);
 }
 
-@media (max-width: 640px) {
-  .appbar-status-detail {
-    display: none;
-  }
-}

@@ -5,6 +5,7 @@ Thumbs.db
 .env
 __pycache__/
 *.pyc
+.playwright-mcp/
 
 # Personal financial data - never commit
 private/

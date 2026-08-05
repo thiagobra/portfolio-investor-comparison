@@ -1,6 +1,7 @@
 /* ── Menu bar (lives inside .appbar — see css/appbar.css) ── */
 .menubar {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
 }
 
