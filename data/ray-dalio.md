@@ -23,13 +23,11 @@
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 20 | Software, Semiconductors |
-| Financials | 15 | Banking, Asset Management |
-| Consumer | 18 | Retail, E-commerce |
-| Healthcare | 15 | Pharma, Biotech |
-| Energy | 10 | Oil & Gas, Renewables |
-| Industrials | 12 | Manufacturing, Infrastructure |
-| Other | 10 | — |
+| Information Technology | 50.07 | Semiconductors (Nvidia, Broadcom, Micron, TSMC), Software |
+| Industrials | 14.88 | Manufacturing, Infrastructure (GE Vernova) |
+| Consumer Discretionary | 13.01 | E-commerce (Amazon) |
+| Financials | 11.62 | Banking, Asset Management |
+| Health Care | 10.42 | Pharma, Biotech |
 
 ## Industry Allocation
 | Industry | % |
