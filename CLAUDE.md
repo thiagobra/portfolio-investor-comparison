@@ -57,6 +57,8 @@ Features are tracked via GitHub issues, labeled `enhancement`/`data`/`user-sugge
 
 No test suite — verify manually. Start the server, import a real CSV, click through the menu bar, confirm the browser console is clean. `docs/csv-format.md`'s worked example (`Holdings_08042026.csv` → €160.80, +42.49%, closed GOOGL +99.87%/$2,539.60) is the parser's de facto regression test — re-check those exact numbers after touching `js/import/*.js`.
 
+When testing the Advisor against LM Studio live: this dev machine is old and slow, so a reply can take minutes — that is this PC, not a regression. Judge Advisor changes on correctness (does the reply/parse/save land right), never on how long the model took.
+
 ## Common pitfalls
 
 - **Investor `.md` format:** the regex parser is strict and fails silently (`{}`, not an error) on a missing divider row (`|---|---|`) or a heading that isn't exactly `## Section Name`. Always diff against an existing file.
