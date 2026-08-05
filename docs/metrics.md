@@ -92,13 +92,49 @@ Periods compound: `CAGR = prod(1 + r_i) ^ (365 / total_days) - 1`.
 `data/fx-rates.md` — no historical FX archive exists, so this is
 directional, not exact, for portfolios with meaningful non-EUR exposure.
 
-## Per-stock CAGR (`views/cagr.js`, WIP)
+## Per-transaction CAGR (`analytics/lot-cagr.js`, `views/cagr.js`)
 
-Deliberately simpler than progression's TWR — single file, no snapshots:
-`CAGR = (currentPrice / avgPrice) ^ (365 / daysHeld) - 1`, where
+Per-lot, not blended: `CAGR_lot = (currentPrice / lot.price) ^ (365 / daysHeld) - 1`,
 `daysHeld` = the CSV's file date (parsed from the `Holdings_MMDDYYYY.csv`
-filename) minus that position's Open Date. Price-only: ignores dividends,
-fees, and multiple buys at different average prices.
+filename) minus that lot's buy date. Lots come from, in precedence order:
+the manual ledger (`private/transactions.md`) if any rows exist for the
+symbol, else the CSV's own `Open Positions` rows if they pass the
+reconciliation guard (`js/import/csv-positions.js`: summed lot shares and
+share-weighted average price must match `Open Positions Summary`'s
+`Amount`/`Avg Price` within tolerance), else a single synthetic lot from
+the blended avg-cost/open-date — flagged `approximate` in the UI, never
+presented as equal to real lot data.
+
+**Symbol roll-up is a value-weighted mean of the lot CAGRs**, weight =
+`lot.shares * currentPrice`: `CAGR_symbol = sum(CAGR_lot * shares_lot * currentPrice) / sum(shares_lot * currentPrice)`.
+This is **not an IRR or money-weighted return** — it says nothing about
+timing of cash flows, just a value-weighted average of each lot's own
+annualised price return. Lots held under 30 days are computed but flagged
+`shortPeriod` (annualising a 5-day move is noise). Price-only throughout:
+ignores dividends, fees, and FX drift.
+
+## Advisor context (`analytics/advisor-context.js`, `analytics/context-sections.js`)
+
+Sections are assembled in this order, computed sections first and always
+kept whole, the open-positions list last and the only thing trimmed under
+the token budget:
+
+1. **Allocation** — whole-wealth asset-class split from
+   `private/allocation.md` (percent + optional EUR), reconciling the
+   brokerage CSV's EUR total against the Equities line.
+2. **Risk** — concentration, portfolio volatility, weighted beta, each
+   rendered through `js/lib/verdict.js` so the advisor's language matches
+   the Risk screen exactly.
+3. **Exposure** — top sector/region/currency groups by EUR value
+   (`analytics/breakdown.js`).
+4. **Return** — time-weighted portfolio CAGR (`analytics/progression.js`,
+   needs 2+ archived Holdings exports) plus per-symbol CAGR from this
+   section, both explicitly labelled realised, never projected.
+5. **Gaps** — unclassified symbols, stale/missing metrics, unreliable lot
+   data, FX staleness — so the advisor can say "I can't judge X" instead
+   of inventing an answer.
+6. Open positions (largest-first, trimmed to fit), recent closed trades,
+   per-ticker metrics on file — unchanged from the original context.
 
 ## Verdict thresholds (`js/lib/verdict.js`)
 

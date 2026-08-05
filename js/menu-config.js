@@ -27,6 +27,8 @@ export const ROUTES = {
   '/advisor/connection': { title: 'Advisor Connection', module: 'data/connection.js' },
   '/data/classification': { title: 'Ticker Classification', module: 'data/classification.js' },
   '/data/metrics': { title: 'Metrics', module: 'data/metrics.js' },
+  '/data/transactions': { title: 'Transactions', module: 'data/transactions.js' },
+  '/data/allocation': { title: 'Allocation', module: 'data/allocation.js' },
   '/data/fx-rates': { title: 'FX Rates', module: 'data/fx-rates.js' },
   '/data/correlations': { title: 'Correlations & Volatility', module: 'data/correlations.js' },
   // One parameterised route backs all three Help topics — see js/views/help.js.
@@ -62,7 +64,7 @@ export const MENUS = [
       { label: 'Holdings', route: '/holdings', key: 'g h' },
       { label: 'Closed positions', route: '/holdings/closed' },
       { label: 'Progression / CAGR', route: '/progression' },
-      { label: 'Per-stock CAGR', route: '/cagr', soon: true },
+      { label: 'Per-stock CAGR', route: '/cagr' },
     ],
   },
   {
@@ -110,6 +112,8 @@ export const MENUS = [
     items: [
       { label: 'Ticker classification', route: '/data/classification', editable: true, key: 'g t' },
       { label: 'Metrics', route: '/data/metrics', editable: true },
+      { label: 'Transactions', route: '/data/transactions', editable: true },
+      { label: 'Allocation', route: '/data/allocation', editable: true },
       { label: 'FX rates', route: '/data/fx-rates', editable: true },
       { label: 'Correlations & volatility', route: '/data/correlations', editable: true },
       { label: 'Advisor profile', route: '/advisor/profile', editable: true },
