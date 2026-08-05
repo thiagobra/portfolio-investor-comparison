@@ -14,14 +14,15 @@ fresher numbers. Nothing in the running app calls out to the network.
 
 ## 1. Industry correlation + volatility — Kenneth R. French Data Library
 
-`https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/12_Industry_Portfolios_CSV.zip`
+`https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_CSV.zip`
 
-Monthly returns for 12 industries, Dartmouth, free, no registration,
-academic standard. Used to build the sector correlation matrix and
-per-sector annualised volatility in `data/correlations.md` /
-`data/volatility.md`. (A 48-industry file exists at the same path with
-`48_` in place of `12_` if a finer split is ever wanted — 12 keeps the
-matrix legible and matches the app's sector taxonomy closely enough.)
+Monthly returns for 48 industries, Dartmouth, free, no registration,
+academic standard. `tools/source_industry.py` maps these 48 onto the
+app's GICS-11 sector taxonomy (`js/parser.js` `SECTORS`) — the finer
+48-way split is what makes Utilities (`Util`) and Real Estate (`RlEst`)
+possible; the older 12-industry file has no dedicated bucket for either.
+Used to build the sector correlation matrix and per-sector annualised
+volatility in `data/correlations.md` / `data/volatility.md`.
 
 ## 2. Region correlation — Ken French regional 3-factor files
 

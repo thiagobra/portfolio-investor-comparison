@@ -66,7 +66,7 @@ def _write_volatility_table(f, title, std_devs, names, annualize, estimated_name
 
 
 def main():
-    print("Fetching sector data (Ken French, 12 industries -> 7 sectors)...")
+    print("Fetching sector data (Ken French, 48 industries -> GICS-11 sectors)...")
     sector_returns = fetch_industry_returns()
     sector_matrix, sector_std = correlation_matrix(sector_returns)
     sector_names = sorted(sector_returns.keys())
