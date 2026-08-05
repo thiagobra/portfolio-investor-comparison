@@ -23,13 +23,9 @@
 ## Sector Allocation
 | Sector | % | Key Industries |
 |---|---|---|
-| Technology | 0 | — |
-| Financials | 20 | Student Loans, Regional Banks |
-| Consumer | 26 | Apparel, Retail |
-| Healthcare | 35 | Managed Care, Pharma, Biotech |
-| Energy | 0 | — |
-| Industrials | 0 | — |
-| Other | 19 | Puts, Hedges |
+| Information Technology | 82.18 | Software/Data Analytics (Palantir), Semiconductors (Nvidia) |
+| Health Care | 13.22 | Pharma (Pfizer), Managed Care (Molina) |
+| Energy | 4.60 | Oilfield Services (Halliburton) |
 
 ## Industry Allocation
 | Industry | % |
