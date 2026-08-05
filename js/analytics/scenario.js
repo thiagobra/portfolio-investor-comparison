@@ -5,15 +5,14 @@
  *           ticker or a lump sector exposure with the proceeds. No new
  *           formulas — reuses risk.js/breakdown.js.
  * @exports  applyScenario(positions, scenario) · scenarioMetrics(...)
- * @reads    @js/analytics/risk.js @js/analytics/breakdown.js
+ * @reads    @js/analytics/risk.js @js/analytics/breakdown.js @js/parser.js
  * @usedby   @js/views/scenario.js
  * @seealso  @docs/metrics.md
  */
 
 import { concentration, weightedBeta, portfolioVolatility } from './risk.js';
 import { breakdownBy } from './breakdown.js';
-
-const KNOWN_SECTORS = ['Technology', 'Financials', 'Consumer', 'Healthcare', 'Energy', 'Industrials', 'Other'];
+import { SECTORS as KNOWN_SECTORS } from '../parser.js';
 
 /**
  * scenario: {sells: {symbol: sellPct}, buyTarget: string, buyWeight: number}.

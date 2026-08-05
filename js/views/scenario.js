@@ -6,7 +6,7 @@
  *           touches the stored portfolio. Scenarios can be named and saved.
  * @exports  mount(root)
  * @reads    @js/store.js @js/lib/classification.js @js/lib/risk-reference.js
- *           @js/lib/verdict.js @js/analytics/scenario.js @js/charts/bars.js
+ *           @js/lib/verdict.js @js/analytics/scenario.js @js/charts/bars.js @js/parser.js
  * @usedby   @js/router.js
  */
 
@@ -21,8 +21,7 @@ import { fmtNum, fmtPct } from '../lib/format.js';
 import { showToast } from '../toast.js';
 import { emptyStateHTML } from './shared/empty-state.js';
 import { escapeHtml } from '../lib/escape.js';
-
-const SECTORS = ['Technology', 'Financials', 'Consumer', 'Healthcare', 'Energy', 'Industrials', 'Other'];
+import { SECTORS } from '../parser.js';
 
 function metricCard(label, value, fmt, tone) {
   return `
@@ -55,25 +54,39 @@ export async function mount(root) {
       </p>
       <div class="card">
         <label>Sell (% of each position)</label>
-        <div class="checkbox-list" id="sell-list" style="max-height:260px">
+        <p class="section-hint">
+          Move a slider to sell part of that holding. 50% on AAPL means you sell half your AAPL —
+          the other half stays. 100% closes the position entirely.
+        </p>
+        <div class="sell-list" id="sell-list" style="max-height:260px;overflow-y:auto">
           ${positions.map((p) => `
-            <label style="justify-content:space-between">
-              <span>${escapeHtml(p.symbol)} (${fmtNum(p.weight, 1)}%)</span>
-              <input type="number" class="form-select" style="width:80px" data-symbol="${escapeHtml(p.symbol)}" value="0" min="0" max="100" step="5">
-            </label>
+            <div class="sell-row" data-symbol-row="${escapeHtml(p.symbol)}">
+              <span class="sell-row-label">${escapeHtml(p.symbol)} <span class="section-hint">(${fmtNum(p.weight, 1)}% of portfolio)</span></span>
+              <input type="range" class="sell-slider" data-symbol="${escapeHtml(p.symbol)}" value="0" min="0" max="100" step="5">
+              <output class="sell-row-output">0%</output>
+            </div>
           `).join('')}
         </div>
         <div class="grid-2" style="margin-top:var(--space-md)">
           <div class="form-field">
             <label for="buy-target">Buy target (ticker or sector)</label>
-            <input type="text" class="form-select" id="buy-target" list="sector-options" placeholder="e.g. NVDA or Technology">
+            <input type="text" class="form-select" id="buy-target" list="sector-options" placeholder="e.g. NVDA or Information Technology">
             <datalist id="sector-options">${SECTORS.map((s) => `<option value="${s}">`).join('')}</datalist>
+            <p class="section-hint" id="buy-target-hint">&nbsp;</p>
           </div>
           <div class="form-field">
-            <label for="buy-weight">Amount to invest (% of portfolio)</label>
+            <label for="buy-weight">New position size (% of portfolio)</label>
             <input type="number" class="form-select" id="buy-weight" value="0" min="0" max="100" step="0.5">
+            <p class="section-hint">
+              How big the new position should be, as a % of the whole portfolio. 5% means the new
+              holding ends up roughly one-twentieth of everything you own — this is not the sale
+              proceeds being reinvested, just a target weight.
+            </p>
           </div>
         </div>
+        <p class="section-hint" style="margin-top:var(--space-sm)">
+          This is a simulation of portfolio weights only — no live prices, no fees, no tax.
+        </p>
         <div class="actions-row" style="margin-top:var(--space-md)">
           <button class="btn btn-primary" id="run-scenario">Run scenario</button>
           <button class="btn btn-secondary" id="save-scenario">Save scenario…</button>
@@ -82,6 +95,20 @@ export async function mount(root) {
     </section>
     <div id="scenario-results"></div>
   `;
+
+  root.querySelectorAll('.sell-slider').forEach((slider) => {
+    const output = slider.nextElementSibling;
+    slider.addEventListener('input', () => { output.textContent = `${slider.value}%`; });
+  });
+
+  const buyTargetInput = root.querySelector('#buy-target');
+  const buyTargetHint = root.querySelector('#buy-target-hint');
+  function updateBuyTargetHint() {
+    const value = buyTargetInput.value.trim();
+    if (!value) { buyTargetHint.innerHTML = '&nbsp;'; return; }
+    buyTargetHint.textContent = SECTORS.includes(value) ? 'Recognised as a sector.' : 'Treated as a ticker.';
+  }
+  buyTargetInput.addEventListener('input', updateBuyTargetHint);
 
   function currentInputs() {
     const sells = {};
@@ -150,9 +177,10 @@ export async function mount(root) {
     const loaded = JSON.parse(pending);
     for (const [symbol, pct] of Object.entries(loaded.sells ?? {})) {
       const input = root.querySelector(`#sell-list input[data-symbol="${CSS.escape(symbol)}"]`);
-      if (input) input.value = pct;
+      if (input) { input.value = pct; input.nextElementSibling.textContent = `${pct}%`; }
     }
-    root.querySelector('#buy-target').value = loaded.buyTarget ?? '';
+    buyTargetInput.value = loaded.buyTarget ?? '';
+    updateBuyTargetHint();
     root.querySelector('#buy-weight').value = loaded.buyWeight ?? 0;
     lastScenario = runScenario(currentInputs());
     showToast(`Loaded scenario "${loaded.name}"`);
