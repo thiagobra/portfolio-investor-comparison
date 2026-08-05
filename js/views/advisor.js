@@ -41,12 +41,35 @@ async function readContextTokens() {
   return m ? parseInt(m[1], 10) : 8192;
 }
 
+const CATEGORY_ALIASES = {
+  FACT: 'FACTS', FACTS: 'FACTS',
+  GOAL: 'GOALS', GOALS: 'GOALS',
+  CONSTRAINT: 'CONSTRAINTS', CONSTRAINTS: 'CONSTRAINTS',
+  RISK: 'RISK', 'RISK APPETITE': 'RISK',
+  QUESTION: 'QUESTIONS', QUESTIONS: 'QUESTIONS', 'OPEN QUESTIONS': 'QUESTIONS',
+};
+
+// Model replies vary (bullets, bold, numbering, preamble) — normalise each
+// line before matching instead of demanding one exact format.
+export function parseNotes(raw) {
+  const notes = [];
+  const lines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
+  for (const line of lines) {
+    const cleaned = line.replace(/^[-*\d.#)\s]+/, '').replace(/\*\*/g, '').trim();
+    const match = cleaned.match(/^([A-Za-z ]+?):\s*(.+)$/);
+    if (!match) continue;
+    const category = CATEGORY_ALIASES[match[1].trim().toUpperCase()];
+    if (category) notes.push({ category, statement: match[2].trim() });
+  }
+  return notes;
+}
+
 function appendNote(content, category, statement, dateStr, question) {
   const heading = CATEGORY_HEADING[category];
-  if (!heading) return content;
+  if (!heading) return { content, ok: false };
   const lines = content.split('\n');
   const headingIdx = lines.findIndex((l) => l.trim() === heading);
-  if (headingIdx === -1) return content;
+  if (headingIdx === -1) return { content, ok: false };
   let insertAt = lines.length;
   for (let i = headingIdx + 1; i < lines.length; i++) {
     if (lines[i].startsWith('## ')) { insertAt = i; break; }
@@ -54,7 +77,7 @@ function appendNote(content, category, statement, dateStr, question) {
   while (insertAt > headingIdx + 1 && lines[insertAt - 1].trim() === '') insertAt--;
   const truncatedQuestion = question.length > 80 ? `${question.slice(0, 80)}…` : question;
   lines.splice(insertAt, 0, `- [${dateStr}] ${statement} (from: "${truncatedQuestion}")`);
-  return lines.join('\n');
+  return { content: lines.join('\n'), ok: true };
 }
 
 async function takeNotes(question, answer) {
@@ -63,20 +86,26 @@ async function takeNotes(question, answer) {
     { role: 'user', content: `Client's question: ${question}\n\nYour answer: ${answer}` },
   ];
   const raw = await streamChat(noteMessages, () => {});
-  const noteLines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
-  const notes = [];
-  for (const line of noteLines) {
-    const match = line.match(/^(FACTS|GOALS|CONSTRAINTS|RISK|QUESTIONS):\s*(.+)$/i);
-    if (match) notes.push({ category: match[1].toUpperCase(), statement: match[2] });
-  }
-  if (notes.length === 0) return 0;
+  const notes = parseNotes(raw);
+  if (notes.length === 0) return { count: 0 };
+
   const res = await fetch('/api/files?path=private/profile.md');
   const { content } = await res.json();
+  const requiredHeadings = Object.values(CATEGORY_HEADING);
+  if (!content || !requiredHeadings.every((h) => content.includes(h))) {
+    throw new Error('private/profile.md is missing its section headings — restore it from private/profile.md.bak before notes can save.');
+  }
+
   const dateStr = new Date().toISOString().slice(0, 10);
   let updated = content;
-  for (const note of notes) updated = appendNote(updated, note.category, note.statement, dateStr, question);
+  let placed = 0;
+  for (const note of notes) {
+    const result = appendNote(updated, note.category, note.statement, dateStr, question);
+    if (result.ok) { updated = result.content; placed++; }
+  }
+  if (updated === content) return { count: 0 };
   await fetch('/api/files', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'private/profile.md', content: updated }) });
-  return notes.length;
+  return { count: placed };
 }
 
 export async function mount(root) {
@@ -193,10 +222,11 @@ export async function mount(root) {
     status.textContent = 'Ready.';
 
     try {
-      const noteCount = await takeNotes(question, answer);
-      if (noteCount > 0) showToast(`📝 Noted ${noteCount} new thing(s) about you — see Advisor → My profile notes`);
-    } catch {
-      // Note-taking is best-effort; a failure here shouldn't disrupt the chat.
+      const { count } = await takeNotes(question, answer);
+      if (count > 0) showToast(`📝 Noted ${count} new thing(s) about you — see Advisor → My profile notes`);
+    } catch (err) {
+      console.error('takeNotes failed:', err);
+      showToast(`⚠️ Couldn't save case notes: ${err.message}`);
     }
   }
 
