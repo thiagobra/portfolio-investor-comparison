@@ -2,11 +2,13 @@
  * @module   views/scenario
  * @purpose  What-if builder: partial sells across any positions, buy a
  *           specific ticker or a sector, see diversification/sector/risk
- *           deltas with plain-language verdicts. Simulation only — never
- *           touches the stored portfolio. Scenarios can be named and saved.
+ *           deltas with plain-language verdicts plus a historical-echo panel.
+ *           Simulation only — never touches the stored portfolio. Scenarios
+ *           can be named and saved.
  * @exports  mount(root)
  * @reads    @js/store.js @js/lib/classification.js @js/lib/risk-reference.js
- *           @js/lib/verdict.js @js/analytics/scenario.js @js/charts/bars.js @js/parser.js
+ *           @js/lib/history-reference.js @js/analytics/scenario.js @js/parser.js
+ *           @js/views/scenario/results.js
  * @usedby   @js/router.js
  */
 
@@ -14,24 +16,14 @@ import { getPortfolio } from '../store.js';
 import { loadFxRates } from '../lib/fx.js';
 import { loadClassification } from '../lib/classification.js';
 import { loadSectorCorrelations, loadSectorVolatility } from '../lib/risk-reference.js';
+import { loadHistoryEpisodes } from '../lib/history-reference.js';
 import { applyScenario, scenarioMetrics } from '../analytics/scenario.js';
-import { verdict } from '../lib/verdict.js';
-import { renderBars } from '../charts/bars.js';
-import { fmtNum, fmtPct } from '../lib/format.js';
+import { fmtNum } from '../lib/format.js';
 import { showToast } from '../toast.js';
 import { emptyStateHTML } from './shared/empty-state.js';
 import { escapeHtml } from '../lib/escape.js';
 import { SECTORS } from '../parser.js';
-
-function metricCard(label, value, fmt, tone) {
-  return `
-    <div class="stat-card metric-card tone-${tone.tone}">
-      <div class="stat-label">${label}</div>
-      <div class="stat-value">${fmt(value)}</div>
-      <div class="metric-verdict tone-${tone.tone}">${tone.sentence}</div>
-    </div>
-  `;
-}
+import { renderResults } from './scenario/results.js';
 
 export async function mount(root) {
   const portfolio = getPortfolio();
@@ -41,8 +33,8 @@ export async function mount(root) {
   }
   const positions = portfolio.openPositions;
 
-  const [, classification, correlationMatrix, volatilityBySector] = await Promise.all([
-    loadFxRates(), loadClassification(), loadSectorCorrelations(), loadSectorVolatility(),
+  const [, classification, correlationMatrix, volatilityBySector, episodes] = await Promise.all([
+    loadFxRates(), loadClassification(), loadSectorCorrelations(), loadSectorVolatility(), loadHistoryEpisodes(),
   ]);
 
   root.innerHTML = `
@@ -127,42 +119,9 @@ export async function mount(root) {
     const before = scenarioMetrics(positions, classification, correlationMatrix, volatilityBySector);
     const afterPositions = applyScenario(positions, scenarioInput);
     const after = scenarioMetrics(afterPositions, classification, correlationMatrix, volatilityBySector);
-
-    const fmtVol = (v) => (v != null ? `${v.toFixed(1)}%` : '—');
-    const beforeSectors = before.sectorGroups.slice(0, 6).map((g) => ({ label: g.label, value: g.weight, formattedValue: fmtPct(g.weight, 1), positive: true }));
-    const afterSectors = after.sectorGroups.slice(0, 6).map((g) => ({ label: g.label, value: g.weight, formattedValue: fmtPct(g.weight, 1), positive: true }));
-
-    root.querySelector('#scenario-results').innerHTML = `
-      <section class="section">
-        <h2 class="section-title">Diversification</h2>
-        <div class="stat-grid">
-          ${metricCard('HHI (after)', after.hhi, (v) => v.toFixed(3), verdict(after.hhi, 'hhi'))}
-          ${metricCard('Effective holdings (after)', after.effectiveN, (v) => v.toFixed(1), verdict(after.effectiveN, 'effectiveN'))}
-          ${metricCard('Top-10 weight (after)', after.top10Weight, (v) => `${v.toFixed(0)}%`, verdict(after.top10Weight, 'top10Weight'))}
-        </div>
-      </section>
-
-      <section class="section">
-        <h2 class="section-title">Sector mix — before vs after</h2>
-        <div class="grid-2">
-          <div><p class="section-hint">Before</p><div class="card" id="sector-before"></div></div>
-          <div><p class="section-hint">After</p><div class="card" id="sector-after"></div></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2 class="section-title">Risk</h2>
-        <div class="stat-grid">
-          ${metricCard('Portfolio volatility (after)', after.volatility, fmtVol, after.volatility != null ? verdict(after.volatility, 'volatility') : { tone: 'neutral', sentence: 'Not enough classified sectors to estimate.' })}
-          ${metricCard('Weighted beta (after)', after.beta, (v) => fmtNum(v, 2), after.beta != null ? verdict(after.beta, 'beta') : { tone: 'neutral', sentence: 'No beta data on the resulting positions.' })}
-        </div>
-        <p class="section-hint" style="margin-top:var(--space-sm)">
-          Volatility before: ${fmtVol(before.volatility)} · Weighted beta before: ${fmtNum(before.beta, 2)}
-        </p>
-      </section>
-    `;
-    renderBars(root.querySelector('#sector-before'), beforeSectors);
-    renderBars(root.querySelector('#sector-after'), afterSectors);
+    renderResults(root.querySelector('#scenario-results'), {
+      before, after, afterPositions, classification, episodes, inputs: scenarioInput,
+    });
     return scenarioInput;
   }
 
