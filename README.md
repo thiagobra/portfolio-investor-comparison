@@ -2,6 +2,24 @@
 
 > A local portfolio workstation that tells you what your numbers *mean* — and what they hide.
 
+## Running Locally
+
+The app ships its own stdlib server (static files + the `/api/*` endpoints — a plain
+static server is not enough, CSV import and the LM Studio proxy need it):
+
+```bash
+python serve.py
+```
+
+Then open `http://127.0.0.1:8420`.
+
+To use another port (e.g. if 8420 is taken):
+
+```bash
+PORT=9000 python serve.py          # macOS / Linux
+$env:PORT=9000; python serve.py    # Windows PowerShell
+```
+
 ## Why this exists
 
 Getquin and Investing.com already do the tracking part well — holdings, P/L, sector splits, and on
@@ -33,21 +51,6 @@ committed, editable reference file (`data/history.md`) — never from a model. A
 nothing leaves the machine) is used only to *interpret* those figures and name the blind spots, and
 is explicitly forbidden from inventing new ones.
 
-## Running Locally
-
-This is a static site using ES modules, so it needs a local server:
-
-```bash
-# Using npx (no install needed)
-npx serve
-
-# Or Python
-python -m http.server 8000
-
-# Or VS Code Live Server extension
-```
-
-Then open `http://localhost:3000` (or whichever port your server uses).
 
 ## What It Does
 
