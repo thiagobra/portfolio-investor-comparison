@@ -31,6 +31,7 @@ export const ROUTES = {
   '/data/allocation': { title: 'Allocation', module: 'data/allocation.js' },
   '/data/fx-rates': { title: 'FX Rates', module: 'data/fx-rates.js' },
   '/data/correlations': { title: 'Correlations & Volatility', module: 'data/correlations.js' },
+  '/data/history': { title: 'History Episodes', module: 'data/history.js' },
   // One parameterised route backs all three Help topics — see js/views/help.js.
   '/help/:topic': { title: 'Help', module: 'help.js' },
   '/feedback': { title: 'Send a Suggestion', module: 'feedback.js' },
@@ -116,6 +117,7 @@ export const MENUS = [
       { label: 'Allocation', route: '/data/allocation', editable: true },
       { label: 'FX rates', route: '/data/fx-rates', editable: true },
       { label: 'Correlations & volatility', route: '/data/correlations', editable: true },
+      { label: 'History episodes', route: '/data/history', editable: true },
       { label: 'Advisor profile', route: '/advisor/profile', editable: true },
       { separator: true },
       { label: 'Open private folder', action: 'stub', soon: true },
