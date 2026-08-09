@@ -1,6 +1,53 @@
 # Portfolio Investor Comparison
 
-> Compare your portfolio allocation against legendary investors like Buffett, Dalio, Burry, and Lynch.
+> A local portfolio workstation that tells you what your numbers *mean* — and what they hide.
+
+## Why this exists
+
+Getquin and Investing.com already do the tracking part well — holdings, P/L, sector splits, and on
+their paid tiers an AI that comments on what you own. What none of them do is tell you **what you
+are not looking at**, and their analytics stop short in three specific places:
+
+- no portfolio-level **volatility, beta or cross-holding correlation** — only per-position data;
+- no **arbitrary what-if simulation** — Getquin's scenarios are retirement projections, not "sell
+  half of everything and go all-in on tech, now recompute my risk";
+- no **historical analogue** — neither ever tells you that the bet you are about to make has been
+  made before, and how it ended.
+
+This app is built for that second job — the overview of the possibilities and scenarios you might be
+missing:
+
+- **Blind spots** — concentration, correlation and currency exposure that no single screen in a
+  broker app puts in front of you.
+- **Untested assumptions** — the belief baked into an allocation ("bonds are the safe half",
+  "defensive sectors don't crash", "my home market is the one I understand").
+- **Preconception and prejudice** — familiarity bias toward your own country, your employer's
+  sector, or the position that already worked.
+- **Scenarios you never considered** — the What-if builder does not just recompute your risk
+  metrics; it holds your simulated portfolio up against real historical episodes. Sell everything
+  into tech and it will tell you, with figures, that the Nasdaq Composite fell **78%** peak-to-trough
+  from March 2000 and took roughly **15 years** to make a new high.
+
+Every number on every screen carries a plain-language verdict. Historical figures come from a
+committed, editable reference file (`data/history.md`) — never from a model. A local LLM (LM Studio,
+nothing leaves the machine) is used only to *interpret* those figures and name the blind spots, and
+is explicitly forbidden from inventing new ones.
+
+## Running Locally
+
+This is a static site using ES modules, so it needs a local server:
+
+```bash
+# Using npx (no install needed)
+npx serve
+
+# Or Python
+python -m http.server 8000
+
+# Or VS Code Live Server extension
+```
+
+Then open `http://localhost:3000` (or whichever port your server uses).
 
 ## What It Does
 
@@ -57,22 +104,6 @@ Every page has an in-app suggestion box at the bottom. Type a title and descript
 | **Peter Lynch** | GARP, invest in what you know, hunt for tenbaggers |
 
 Investor data lives in editable Markdown files under `data/`. You can add or modify investors by following the same format.
-
-## Running Locally
-
-This is a static site using ES modules, so it needs a local server:
-
-```bash
-# Using npx (no install needed)
-npx serve .
-
-# Or Python
-python -m http.server 8000
-
-# Or VS Code Live Server extension
-```
-
-Then open `http://localhost:3000` (or whichever port your server uses).
 
 ## Tech Stack
 
