@@ -2,12 +2,13 @@
  * @module   router
  * @purpose  Hash-based route matching + dynamic view module loading.
  * @exports  startRouter(viewRoot)
- * @reads    @js/menu-config.js
+ * @reads    @js/menu-config.js @js/lib/escape.js
  * @usedby   @js/app.js
  * @seealso  @docs/MAP.md
  */
 
 import { ROUTES } from './menu-config.js';
+import { escapeHtml } from './lib/escape.js';
 
 const DEFAULT_PATH = '/compare';
 
@@ -51,7 +52,7 @@ export function startRouter(viewRoot) {
       await mod.mount(viewRoot, { ...match.params, title: match.meta.title });
     } catch (err) {
       console.error('View failed to load:', match.meta.module, err);
-      viewRoot.innerHTML = `<div class="card">Failed to load this screen. See console for details.</div>`;
+      viewRoot.innerHTML = `<div class="card warning-banner">Failed to load "${escapeHtml(match.meta.module)}": ${escapeHtml(err.message)}</div>`;
     }
   }
 

@@ -28,11 +28,14 @@ function handleFile(file) {
       portfolio = buildPortfolio(text);
     } catch (err) {
       console.error('CSV parse failed:', err);
-      showToast('❌ Could not parse that file — see console for details', 'error');
+      showToast(`❌ Could not parse that file: ${err.message}`, 'error');
       return;
     }
     if (portfolio.openPositions.length === 0 && portfolio.closedPositions.length === 0) {
-      showToast('⚠️ No positions found in that file', 'error');
+      // buildPortfolio() only gets this far when it already found a valid
+      // "Open Positions Summary" header — so this really is a correctly
+      // shaped export with nothing in it, not a wrong-format file.
+      showToast('⚠️ This looks like a valid Investing.com export, but it has 0 open and 0 closed positions', 'error');
       return;
     }
     setPortfolio(portfolio, { filename: file.name });
