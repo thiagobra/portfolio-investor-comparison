@@ -36,6 +36,7 @@ export const ROUTES = {
   '/help/:topic': { title: 'Help', module: 'help.js' },
   '/feedback': { title: 'Send a Suggestion', module: 'feedback.js' },
   '/about': { title: 'About', module: 'about.js' },
+  '/csv-format': { title: 'Investing.com CSV format', module: 'csv-format.js' },
 };
 
 // action: 'stub' items show a "coming soon" toast instead of navigating.
@@ -55,6 +56,8 @@ export const MENUS = [
       { label: 'Import backup…', action: 'import-backup' },
       { separator: true },
       { label: 'Reload data files', action: 'reload' },
+      { separator: true },
+      { label: 'CSV format reference', route: '/csv-format' },
     ],
   },
   {

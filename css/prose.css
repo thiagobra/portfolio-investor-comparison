@@ -18,6 +18,23 @@
 }
 .card a { color: var(--accent); }
 .card a:hover { color: var(--accent-hover); }
+.card pre {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  overflow-x: auto;
+  line-height: 1.5;
+}
+.card pre code { background: none; padding: 0; }
+
+/* ── Left-aligned data table (CSV format field reference — mostly text, not numeric) ── */
+.data-table-left th,
+.data-table-left td {
+  text-align: left;
+}
 kbd {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
