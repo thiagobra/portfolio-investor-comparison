@@ -12,6 +12,26 @@ Source: Investing.com portfolio page → "download watch list". **Not a flat
 CSV** — one file, 8 stacked sections, 53 columns wide, blank-padded.
 Column 0 is a section-label column: non-empty only on a section's first row.
 
+## How to produce this export
+
+Portfolio page → three dots (⋮), upper right → **Download Portfolio**.
+Format is CSV only. A **Download Preferences** dialog then offers three
+options, verbatim: *"All tabs and columns available"* · *"All tabs and
+columns selected"* · *"Current view"* — **you must pick the first one**
+("All tabs and columns available"). The other two silently produce a
+narrower file missing the 53 `Open Positions Summary` columns this app
+depends on, with no error or warning that anything was left out.
+
+Source: Investing.com help centre,
+https://www.investing-support.com/hc/en-us/articles/360000249657
+
+**Caveat:** Investing.com does not publish this exported file's column
+list, section labels, filename pattern, date format, or number format
+anywhere in their official help centre (the whole Portfolio section was
+checked, including the Spanish locale). Everything below this point is
+decoded from a real export, not an official spec, and may change without
+notice.
+
 ## Section layout
 
 ```

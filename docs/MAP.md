@@ -130,11 +130,17 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/views/help.js` — Help screen router, parameterised by the `:topic` route param (getting-started/metrics/shortcuts) — one module backs all three Help menu routes, same one-module-many-routes pattern used elsewhere. Delegates content to `js/views/help/*.js` (split in task 6 once `getting-started` needed real logic, not just prose).
 - `js/views/feedback.js` — `/feedback` route: fetches `views/compare/feedback.html` and calls the existing `initFeedback()` — same form Compare uses, no duplicated GitHub URL.
 - `js/views/about.js` — About screen: what the app is, how it's built, where data lives, link to the repo.
+- `js/views/csv-format.js` — CSV format reference screen (`/csv-format` route, File → "CSV format reference"): how to export from Investing.com, file/section layout, known Investing.com defects, and value-format rules, in-app mirror of `docs/csv-format.md`. Field tables and the example export are built by `js/views/csv-format/`.
 - `js/views/compare.js` — Compare screen orchestrator: fetches `views/compare/*.html` partials, assembles them into `#view-root`, wires the sub-modules below. Supports `/compare/:investor` to preselect a card.
 - `js/views/compare/sections.js` — investor selection, `runComparison()`, and geo/sector/industry section rendering. Wraps the original `engine.js`/`renderer.js` calls.
 - `js/views/compare/portfolio-form.js` — asset input total tracking, CSV upload, sample CSV download.
 - `js/views/compare/snapshots.js` — save/load portfolio snapshots to `localStorage` (`portfolio-snapshots` key).
 - `js/views/compare/feedback.js` — "Got a Suggestion?" box, opens a prefilled GitHub issue URL.
+
+## `js/views/csv-format/`
+
+- `js/views/csv-format/field-tables.js` — `renderFieldTables()`: column-by-column reference tables (index, header, plain-language meaning, example value, whether the app reads it) for the Summary/Open Positions/Closed Positions sections. `js/import/csv-sections.js` is the ground truth these tables must stay in sync with.
+- `js/views/csv-format/example-csv.js` — `EXAMPLE_CSV`: a synthetic Investing.com export in the documented format (invented tickers/figures, never real holdings), verified to parse cleanly through `js/import/csv-positions.js`.
 
 ## `js/import/`
 
