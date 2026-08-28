@@ -1,5 +1,5 @@
 ---
-title: Investing.com "download watch list" CSV format
+title: Investing.com "Download Portfolio" CSV format
 purpose: Decoded, positional spec for the multi-section export js/import parses
 reads: []
 usedby: [@js/import/csv-sections.js, @js/import/csv-positions.js]
@@ -8,8 +8,9 @@ seealso: [@docs/MAP.md]
 
 # Investing.com CSV export format
 
-Source: Investing.com portfolio page → "download watch list". **Not a flat
-CSV** — one file, 8 stacked sections, 53 columns wide, blank-padded.
+Source: Investing.com portfolio page → "Download Portfolio" (see below for
+the exact click path — this app's format is decoded from that export).
+**Not a flat CSV** — one file, 8 stacked sections, 53 columns wide, blank-padded.
 Column 0 is a section-label column: non-empty only on a section's first row.
 
 ## How to produce this export
