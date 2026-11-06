@@ -82,7 +82,8 @@ export async function loadInvestor(id) {
   const response = await fetch(path);
   if (!response.ok) throw new Error(`Failed to load ${path}`);
 
-  const text = await response.text();
+  // core.autocrlf=true checks these out with CRLF; the table regexes only match \n.
+  const text = (await response.text()).replace(/\r\n/g, '\n');
   const parsed = parseMarkdown(text);
   if (!parsed.assetAllocation || Object.keys(parsed.assetAllocation).length === 0) {
     console.warn(`[investors-loader] Asset allocation parsed empty for "${id}" — check Markdown table format`);
