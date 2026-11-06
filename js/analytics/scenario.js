@@ -39,12 +39,26 @@ export function applyScenario(positions, scenario) {
     })
     .filter(Boolean);
 
-  if (scenario.buyTarget && scenario.buyWeight > 0) {
+  // Renormalise so the result sums to 100%: the buy line gets exactly its target
+  // weight and the kept positions share the rest pro rata. Without this, HHI and
+  // effective-N run on weights summing to e.g. 70% and report more "effective
+  // holdings" than positions exist.
+  const hasBuy = Boolean(scenario.buyTarget && scenario.buyWeight > 0);
+  const keptTotal = kept.reduce((s, p) => s + (p.weight ?? 0), 0);
+  const buyWeight = hasBuy ? (keptTotal > 0 ? Math.min(100, scenario.buyWeight) : 100) : 0;
+  const scale = keptTotal > 0 ? (100 - buyWeight) / keptTotal : 0;
+  if (keptTotal > 0 && scale !== 1) {
+    for (let i = 0; i < kept.length; i++) {
+      if (kept[i].weight != null) kept[i] = { ...kept[i], weight: kept[i].weight * scale };
+    }
+  }
+
+  if (hasBuy) {
     const isSector = KNOWN_SECTORS.includes(scenario.buyTarget);
     kept.push({
       symbol: isSector ? `(new) ${scenario.buyTarget}` : scenario.buyTarget,
       name: isSector ? `New ${scenario.buyTarget} exposure` : `New position: ${scenario.buyTarget}`,
-      weight: scenario.buyWeight,
+      weight: buyWeight,
       marketValue: null,
       _syntheticSector: isSector ? scenario.buyTarget : null,
     });
