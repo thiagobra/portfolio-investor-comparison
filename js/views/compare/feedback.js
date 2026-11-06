@@ -5,7 +5,7 @@
  * @usedby   @js/views/compare.js
  */
 
-const GITHUB_REPO = 'dennyscottjupiter-spec/portfolio-investor-comparison';
+const GITHUB_REPO = 'thiagobra/portfolio-investor-comparison';
 
 export function initFeedback(root) {
   const $ = (id) => root.querySelector(`#${id}`);
