@@ -36,7 +36,10 @@ function matchRoute(path) {
 }
 
 export function startRouter(viewRoot) {
+  let current = 0;
+
   async function render() {
+    const token = ++current;
     const rawPath = (location.hash || `#${DEFAULT_PATH}`).slice(1);
     const path = rawPath || DEFAULT_PATH;
     const match = matchRoute(path) || matchRoute(DEFAULT_PATH);
@@ -48,9 +51,14 @@ export function startRouter(viewRoot) {
 
     try {
       const mod = await import(`./views/${match.meta.module}`);
-      viewRoot.innerHTML = '';
-      await mod.mount(viewRoot, { ...match.params, title: match.meta.title });
+      if (token !== current) return;
+      // Fresh container per mount: a slow view still awaiting a fetch after the
+      // user navigated away writes into its own detached node, not the new screen.
+      const container = document.createElement('div');
+      viewRoot.replaceChildren(container);
+      await mod.mount(container, { ...match.params, title: match.meta.title });
     } catch (err) {
+      if (token !== current) return; // a stale screen's late failure must not clobber the current one
       console.error('View failed to load:', match.meta.module, err);
       viewRoot.innerHTML = `<div class="card warning-banner">Failed to load "${escapeHtml(match.meta.module)}": ${escapeHtml(err.message)}</div>`;
     }
