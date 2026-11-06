@@ -6,7 +6,7 @@
  *           from the filename (Holdings_MMDDYYYY.csv), falling back to
  *           file mtime; sorted and deduped by date.
  * @exports  mount(root)
- * @reads    @js/import/csv-positions.js @js/analytics/progression.js @js/lib/fx.js
+ * @reads    @js/import/csv-positions.js @js/analytics/progression.js @js/lib/fx.js @js/import-controller.js
  * @usedby   @js/router.js
  */
 
@@ -16,6 +16,7 @@ import { computeProgression } from '../analytics/progression.js';
 import { fmtEUR, fmtPct } from '../lib/format.js';
 import { showToast } from '../toast.js';
 import { escapeHtml } from '../lib/escape.js';
+import { archive } from '../import-controller.js';
 
 const FILENAME_DATE = /Holdings_(\d{2})(\d{2})(\d{4})/;
 
@@ -40,10 +41,6 @@ async function loadArchivedSnapshots() {
     snapshots.push({ date: dateFromFilename(f.name, f.mtime * 1000), positions: portfolio.openPositions, filename: f.name });
   }
   return snapshots;
-}
-
-async function archiveFile(file, text) {
-  await fetch('/api/import', { method: 'POST', headers: { 'X-Filename': file.name }, body: text }).catch(() => {});
 }
 
 function renderResults(root, progression) {
@@ -127,7 +124,7 @@ export async function mount(root) {
         continue;
       }
       snapshots.push({ date: dateFromFilename(file.name, file.lastModified), positions: portfolio.openPositions, filename: file.name });
-      await archiveFile(file, text);
+      await archive(file, text);
     }
     refresh();
   }

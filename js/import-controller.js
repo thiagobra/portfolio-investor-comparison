@@ -2,9 +2,9 @@
  * @module   import-controller
  * @purpose  Wires the File -> "Import Investing.com CSV…" menu action: file
  *           picker, client-side parse, store update, server-side archive.
- * @exports  initImportController()
+ * @exports  initImportController() · archive(file, text)
  * @reads    @js/import/csv-positions.js @js/store.js @js/toast.js
- * @usedby   @js/app.js
+ * @usedby   @js/app.js @js/views/progression.js
  */
 
 import { buildPortfolio } from './import/csv-positions.js';
@@ -18,7 +18,7 @@ function archiveName(name) {
   return name.replace(/\.csv$/i, '').replace(/[^A-Za-z0-9_-]/g, '_') + '.csv';
 }
 
-function archive(file, text) {
+export function archive(file, text) {
   return fetch('/api/import', {
     method: 'POST',
     headers: { 'X-Filename': archiveName(file.name) },
