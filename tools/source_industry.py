@@ -63,7 +63,17 @@ def fetch_industry_returns():
             continue  # tolerate minor header drift in the upstream file rather than crashing
         sector_series.setdefault(sector, []).append(industry_series[industry])
 
-    return {
-        sector: [sum(month) / len(month) for month in zip(*industries)]
+    # Ken French codes "no data" as -99.99 (industries like Hlth/Softw start decades
+    # after 1926). Averaging that in as a real -99.99% month inflated Health Care's
+    # volatility to 60%. Average only real values, and keep only months where every
+    # sector has at least one, so the series stay date-aligned for correlation.
+    def _avg(month):
+        valid = [v for v in month if v > -99.0]
+        return sum(valid) / len(valid) if valid else None
+
+    by_sector = {
+        sector: [_avg(month) for month in zip(*industries)]
         for sector, industries in sector_series.items()
     }
+    keep = [i for i in range(len(rows)) if all(s[i] is not None for s in by_sector.values())]
+    return {sector: [s[i] for i in keep] for sector, s in by_sector.items()}

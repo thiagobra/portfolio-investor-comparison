@@ -1,7 +1,7 @@
 ---
 title: Annualised volatility
 source: Kenneth R. French Data Library (sector, region); Damodaran NYU Stern (asset class)
-as_of: 2026-08-05
+as_of: 2026-11-06
 ---
 
 # Volatility
@@ -11,14 +11,14 @@ as_of: 2026-08-05
 | | Annualised Volatility % |
 |---|---|
 | Communication Services | 21.9 |
-| Consumer Discretionary | 22.3 |
-| Consumer Staples | 32.4 |
-| Energy | 27.1 |
-| Financials | 23.1 |
-| Health Care | 60.0 |
-| Industrials | 28.7 |
+| Consumer Discretionary | 21.6 |
+| Consumer Staples | 17.2 |
+| Energy | 27.2 |
+| Financials | 23.0 |
+| Health Care | 19.8 |
+| Industrials | 23.0 |
 | Information Technology | 25.1 |
-| Materials | 44.3 |
+| Materials | 23.7 |
 | Real Estate | 33.3 |
 | Utilities | 18.8 |
 
@@ -26,9 +26,9 @@ as_of: 2026-08-05
 
 | | Annualised Volatility % |
 |---|---|
-| North America | 15.2 |
+| North America | 15.1 |
 | Europe | 17.0 |
-| Japan | 18.9 |
+| Japan | 18.8 |
 | Asia Pacific ex Japan | 19.6 |
 | Emerging Markets | 20.5 |
 
