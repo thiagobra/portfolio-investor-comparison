@@ -11,12 +11,22 @@ import { buildPortfolio } from './import/csv-positions.js';
 import { setPortfolio } from './store.js';
 import { showToast } from './toast.js';
 
+// The server only accepts [A-Za-z0-9_-]+.csv; a browser re-download is named
+// "Holdings_08042026 (1).csv", which it rejected with a silent 400 — so the
+// export never reached Progression. Keep the Holdings_MMDDYYYY prefix intact.
+function archiveName(name) {
+  return name.replace(/\.csv$/i, '').replace(/[^A-Za-z0-9_-]/g, '_') + '.csv';
+}
+
 function archive(file, text) {
   return fetch('/api/import', {
     method: 'POST',
-    headers: { 'X-Filename': file.name },
+    headers: { 'X-Filename': archiveName(file.name) },
     body: text,
-  }).catch(() => {}); // archival failure shouldn't block the import itself
+  })
+    .then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); })
+    // Archival failure shouldn't block the import itself, but must not be silent.
+    .catch((err) => showToast(`⚠️ Imported, but archiving the file for Progression failed (${err.message})`, 'error'));
 }
 
 function handleFile(file) {
