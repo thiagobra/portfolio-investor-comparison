@@ -13,6 +13,9 @@ python serve.py
 
 Then open `http://127.0.0.1:8420`.
 
+On Windows, double-click `start.bat` instead: it starts the server in a minimized window
+(only if it isn't already running) and opens the app in your browser. Close that window to stop it.
+
 To use another port (e.g. if 8420 is taken):
 
 ```bash

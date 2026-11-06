@@ -14,6 +14,7 @@ diffs this against the real directory tree. Grouped by directory.
 ## Root
 
 - `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1.
+- `start.bat` — Windows double-click launcher: HTTP-probes 8420, starts `serve.py` minimized only if nothing answers, waits, opens the browser.
 - `index.html` — thin shell (~30 lines): `<nav id="menubar">` + `<div id="view-root">`, loads `js/app.js`.
 
 ## `css/`
