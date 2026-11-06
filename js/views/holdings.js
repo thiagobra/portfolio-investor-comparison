@@ -90,14 +90,15 @@ export async function mount(root) {
   }
 
   const totalValueEUR = rows.reduce((s, p) => s + (p._valueEUR ?? 0), 0);
-  const totalDayPL = rows.reduce((s, p) => s + (p.dailyPL ?? 0), 0);
-  const totalNetPL = rows.reduce((s, p) => s + (p.netPL ?? 0), 0);
+  // P/L cells are in each position's own currency; convert before summing (as Dashboard does).
+  const totalDayPL = rows.reduce((s, p) => s + (convertToEUR(p.dailyPL, p.marketValue?.currency) ?? 0), 0);
+  const totalNetPL = rows.reduce((s, p) => s + (convertToEUR(p.netPL, p.marketValue?.currency) ?? 0), 0);
   tfootRow.innerHTML = `
     <td>Total</td><td></td><td></td><td></td><td></td><td></td>
     <td>${fmtEUR(totalValueEUR, 2)}</td>
     <td>${fmtPct(rows.reduce((s, p) => s + (p.weight ?? 0), 0), 0)}</td>
-    <td class="${toneClass(totalDayPL)}">${fmtNum(totalDayPL, 2)}</td>
-    <td class="${toneClass(totalNetPL)}">${fmtNum(totalNetPL, 2)}</td>
+    <td class="${toneClass(totalDayPL)}">${fmtEUR(totalDayPL, 2)}</td>
+    <td class="${toneClass(totalNetPL)}">${fmtEUR(totalNetPL, 2)}</td>
     <td></td><td></td><td></td><td></td><td></td>
   `;
 
