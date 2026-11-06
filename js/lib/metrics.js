@@ -47,6 +47,9 @@ export function loadMetrics() {
   return loadingPromise;
 }
 
+// Refetch on every screen change so the editor never reopens with pre-Save values.
+window.addEventListener('route:change', () => { loadingPromise = null; });
+
 /** Returns the metrics entry for a symbol, or null if unset/not yet loaded. */
 export function getMetrics(symbol) {
   return cache?.get(symbol) ?? null;

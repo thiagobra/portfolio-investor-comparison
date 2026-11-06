@@ -58,3 +58,6 @@ export function loadAllocation() {
   if (!loadingPromise) loadingPromise = fetchAndParse();
   return loadingPromise;
 }
+
+// Refetch on every screen change so the editor never reopens with pre-Save values.
+window.addEventListener('route:change', () => { loadingPromise = null; });

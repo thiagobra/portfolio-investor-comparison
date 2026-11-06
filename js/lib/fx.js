@@ -32,6 +32,9 @@ export function loadFxRates() {
   return loadingPromise;
 }
 
+// Refetch on every screen change so an edit saved under Data → FX rates is picked up.
+window.addEventListener('route:change', () => { loadingPromise = null; });
+
 /** Converts an amount in `currency` to EUR. Call loadFxRates() first. Returns null if the currency or amount is unknown — never silently assumes EUR. */
 export function convertToEUR(amount, currency) {
   if (amount == null || !rates || !currency) return null;

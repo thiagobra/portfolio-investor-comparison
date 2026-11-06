@@ -28,10 +28,14 @@ export function loadHistoryEpisodes() {
           belief: row.Belief,
           tags: (row.Tags || '').split(',').map((t) => t.trim()).filter(Boolean),
           // "-78%" -> 78, "~-62% and ~-60%" -> 62. Ranking only, never displayed.
-          severity: parseFloat(String(row.Drawdown).replace(/[^\d.]/g, '')) || 0,
+          // First number only: stripping every non-digit turned "-34% in 33 days" into 3433.
+          severity: parseFloat(String(row.Drawdown).match(/\d+(?:\.\d+)?/)?.[0]) || 0,
         }));
       })
       .catch(() => []);
   }
   return episodesPromise;
 }
+
+// Refetch on every screen change so an edit saved under Data → History episodes is picked up.
+window.addEventListener('route:change', () => { episodesPromise = null; });

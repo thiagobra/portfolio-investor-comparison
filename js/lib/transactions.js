@@ -40,6 +40,9 @@ export function loadTransactions() {
   return loadingPromise;
 }
 
+// Refetch on every screen change so the editor never reopens with pre-Save values.
+window.addEventListener('route:change', () => { loadingPromise = null; });
+
 /** Returns the ledger lots for a symbol, or null if unset/not yet loaded. */
 export function getTransactions(symbol) {
   return cache?.get(symbol) ?? null;

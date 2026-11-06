@@ -35,3 +35,6 @@ export function loadSectorVolatility() {
   }
   return volatilityPromise;
 }
+
+// Refetch on every screen change so an edit saved under Data → Correlations is picked up.
+window.addEventListener('route:change', () => { correlationsPromise = null; volatilityPromise = null; });

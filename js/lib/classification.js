@@ -57,6 +57,10 @@ export function loadClassification() {
   return loadingPromise;
 }
 
+// Refetch on every screen change: a session-long cache reopened the editor with
+// pre-Save values, and the next Save then overwrote what had just been saved.
+window.addEventListener('route:change', () => { loadingPromise = null; });
+
 /** Returns the classification entry for a symbol, or null if unclassified/not yet loaded. */
 export function getClassification(symbol) {
   return cache?.get(symbol) ?? null;
