@@ -30,9 +30,10 @@ Weighted portfolio variance using the sector correlation matrix `ρ` from
 
 `σ_p = sqrt( sum_i sum_j w_i * w_j * σ_i * σ_j * ρ_ij )`
 
-Positions with no sector classification are excluded from the sum and
-their unclassified weight is surfaced separately — never silently folded
-into "Other" with an assumed correlation.
+Positions with no sector classification are excluded from the sum, the
+remaining weights are renormalised to sum to 1 (same convention as weighted
+beta), and the unclassified weight is surfaced separately — never silently
+folded into "Other" with an assumed correlation, nor treated as zero-risk.
 
 ## Weighted beta (`analytics/risk.js` / `analytics/valuation.js`)
 

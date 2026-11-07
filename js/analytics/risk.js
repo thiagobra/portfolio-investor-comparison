@@ -26,12 +26,16 @@ export function concentration(openPositions) {
 export function portfolioVolatility(sectorWeights, correlationMatrix, volatilityBySector) {
   const sectors = Object.keys(sectorWeights).filter((s) => volatilityBySector[s] != null);
   if (sectors.length === 0) return null;
+  // Renormalise over classified weight (same convention as weightedBeta) — otherwise
+  // excluded weight silently counts as zero-risk cash and understates volatility.
+  const base = sectors.reduce((s, k) => s + sectorWeights[k], 0);
+  if (base <= 0) return null;
 
   let variance = 0;
   for (const i of sectors) {
     for (const j of sectors) {
       const rho = i === j ? 1 : (correlationMatrix[i]?.[j] ?? 0);
-      variance += sectorWeights[i] * sectorWeights[j] * volatilityBySector[i] * volatilityBySector[j] * rho;
+      variance += (sectorWeights[i] / base) * (sectorWeights[j] / base) * volatilityBySector[i] * volatilityBySector[j] * rho;
     }
   }
   return Math.sqrt(Math.max(variance, 0));

@@ -10,7 +10,7 @@ export function renderMetrics(container) {
     <h3>Concentration</h3>
     <p><strong>HHI</strong> = sum of weight² across positions. <strong>Effective holdings</strong> = 1 / HHI — ten equal-weight positions score 10; ten wildly unequal ones score much lower. <strong>Top-10 weight</strong> = sum of the ten largest position weights.</p>
     <h3>Portfolio volatility</h3>
-    <p>Weighted variance across sectors using the correlation matrix and per-sector volatility from <strong>Data → Correlations &amp; volatility</strong>. Unclassified positions are excluded from the sum, never silently folded into an "Other" bucket — classify your holdings to sharpen this number.</p>
+    <p>Weighted variance across sectors using the correlation matrix and per-sector volatility from <strong>Data → Correlations &amp; volatility</strong>. Unclassified positions are excluded from the sum and the rest renormalised to the classified weight, never silently folded into an "Other" bucket — classify your holdings to sharpen this number.</p>
     <h3>Weighted beta / P/E / dividend yield</h3>
     <p>Each is a portfolio weight-average over positions that carry the field, renormalised to the weight that actually has data. Positions missing the field are excluded and the excluded weight is shown alongside the number.</p>
     <h3>Technical rating consensus</h3>
