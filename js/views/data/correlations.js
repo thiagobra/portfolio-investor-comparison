@@ -24,7 +24,8 @@ function rewriteAssetClassRows(content, values) {
     if (!inAssetTable || !line.trim().startsWith('|')) return line;
     const cells = line.slice(1, line.endsWith('|') ? -1 : undefined).split('|').map((c) => c.trim());
     const label = cells[0];
-    if (values.has(label)) cells[cells.length - 1] = String(values.get(label));
+    if (!values.has(label)) return line; // header/divider/unmatched rows stay byte-identical
+    cells[cells.length - 1] = String(values.get(label));
     return `| ${cells.join(' | ')} |`;
   }).join('\n');
 }
@@ -48,7 +49,8 @@ async function importDamodaranCsv(file) {
     body: JSON.stringify({ path: 'data/volatility.md', content: updated }),
   });
   const result = await putRes.json();
-  showToast(result.saved ? `✅ Applied ${values.size} asset-class row(s) — reload to see them` : `❌ ${result.error ?? 'save failed'}`, result.saved ? 'info' : 'error');
+  showToast(result.saved ? `✅ Applied ${values.size} asset-class row(s)` : `❌ ${result.error ?? 'save failed'}`, result.saved ? 'info' : 'error');
+  return result.saved;
 }
 
 export async function mount(root) {
@@ -63,6 +65,16 @@ export async function mount(root) {
     </section>
   `;
 
+  const mountVolatility = () => mountTextEditor(root.querySelector('#volatility-editor'), {
+    path: 'data/volatility.md',
+    title: 'Volatility',
+    hint: 'Annualised volatility per sector/region/asset-class.',
+    sources: [
+      { label: 'Ken French Data Library', url: FRENCH_URL },
+      { label: 'Damodaran (NYU Stern)', url: DAMODARAN_URL },
+    ],
+  });
+
   await Promise.all([
     mountTextEditor(root.querySelector('#correlations-editor'), {
       path: 'data/correlations.md',
@@ -73,19 +85,13 @@ export async function mount(root) {
         { label: 'Damodaran (NYU Stern)', url: DAMODARAN_URL },
       ],
     }),
-    mountTextEditor(root.querySelector('#volatility-editor'), {
-      path: 'data/volatility.md',
-      title: 'Volatility',
-      hint: 'Annualised volatility per sector/region/asset-class.',
-      sources: [
-        { label: 'Ken French Data Library', url: FRENCH_URL },
-        { label: 'Damodaran (NYU Stern)', url: DAMODARAN_URL },
-      ],
-    }),
+    mountVolatility(),
   ]);
 
   root.querySelector('#damodaran-file').addEventListener('change', async (e) => {
     const file = e.target.files[0];
-    if (file) await importDamodaranCsv(file);
+    e.target.value = ''; // allow re-importing the same file
+    // Re-mount so the editor shows the imported rows — a stale textarea + Save would overwrite them.
+    if (file && await importDamodaranCsv(file)) await mountVolatility();
   });
 }
