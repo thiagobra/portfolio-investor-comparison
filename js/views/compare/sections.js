@@ -128,9 +128,9 @@ export function initSections(root) {
     });
   }
 
-  for (const id of ['sector-technology', 'sector-financials', 'sector-consumer', 'sector-healthcare', 'sector-energy', 'sector-industrials', 'sector-other']) {
-    const el = $(id);
-    if (el) el.addEventListener('input', () => { ctx.updateSectorTotalDisplay(); ctx.renderSectorSection(); });
+  // Wire whatever sector inputs the partial renders, so a sector list change can't silently drop listeners.
+  for (const el of root.querySelectorAll('input[id^="sector-"]')) {
+    el.addEventListener('input', () => { ctx.updateSectorTotalDisplay(); ctx.renderSectorSection(); });
   }
   for (const id of ['geo-us', 'geo-europe', 'geo-china', 'geo-latam', 'geo-row']) {
     const el = $(id);
