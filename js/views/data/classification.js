@@ -139,17 +139,26 @@ export async function mount(root) {
   root.querySelector('#apply-paste').addEventListener('click', () => {
     const parsed = parsePastedBlock(root.querySelector('#paste-block').value);
     let applied = 0;
+    let skipped = 0;
+    // A value outside a dropdown's list would render blank yet still be saved — reject it instead.
+    const pick = (val, allowed, cur) => {
+      if (!val) return cur;
+      if (allowed.includes(val)) return val;
+      skipped++;
+      return cur;
+    };
     for (const [symbol, sector, industry, region, country, currency, assetClass] of parsed) {
       const row = rows.find((r) => r.symbol === symbol);
       if (!row) continue;
       Object.assign(row, {
-        sector: sector || row.sector, industry: industry || row.industry, region: region || row.region,
-        country: country || row.country, currency: currency || row.currency, assetClass: assetClass || row.assetClass,
+        sector: pick(sector, SECTORS, row.sector), industry: pick(industry, INDUSTRIES, row.industry),
+        region: pick(region, REGIONS, row.region), country: country || row.country,
+        currency: currency || row.currency, assetClass: pick(assetClass, ASSET_CLASSES, row.assetClass),
       });
       applied++;
     }
     tableContainer.innerHTML = renderTable();
-    showToast(`Applied ${applied} pasted row(s) — click Save to keep them`);
+    showToast(`Applied ${applied} pasted row(s)${skipped ? ` · ${skipped} value(s) not in the dropdown lists skipped` : ''} — click Save to keep them`);
   });
 
   root.querySelector('#apply-to-selected').addEventListener('click', () => {
