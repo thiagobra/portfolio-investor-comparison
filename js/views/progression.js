@@ -108,6 +108,8 @@ export async function mount(root) {
   `;
 
   function refresh() {
+    // One snapshot per date (latest added wins), oldest first — re-dropping an archived file must not count twice.
+    snapshots = [...new Map(snapshots.map((s) => [s.date, s])).values()].sort((a, b) => a.date.localeCompare(b.date));
     root.querySelector('#snapshot-count').textContent = `${snapshots.length} snapshot(s) loaded: ${snapshots.map((s) => s.date).join(', ')}`;
     renderResults(root, computeProgression(snapshots));
   }
