@@ -94,11 +94,19 @@ export async function mount(root) {
   root.querySelector('#geo-section').innerHTML = targetSection('Geographic Targets', geoRows, 'geo');
   root.querySelector('#industry-section').innerHTML = targetSection('Industry Targets', industryRows, 'industry');
 
-  function updateAssetTotal() {
-    const total = assetRows.reduce((sum, r) => sum + (parseFloat(r.percent) || 0), 0);
-    root.querySelector('#asset-total').textContent = `Total: ${total}%`;
+  const sumPct = (rows) => rows.reduce((sum, r) => sum + (parseFloat(r.percent) || 0), 0);
+  // Same green/red total convention as Compare (css/base.css .total-value.valid/.invalid).
+  function setTotal(id, rows) {
+    const total = sumPct(rows);
+    const el = root.querySelector(`#${id}`);
+    el.textContent = `Total: ${total}%`;
+    el.className = total === 0 ? 'total-value' : Math.abs(total - 100) < 0.5 ? 'total-value valid' : 'total-value invalid';
   }
+  const updateAssetTotal = () => setTotal('asset-total', assetRows);
   updateAssetTotal();
+  setTotal('sector-total', sectorRows);
+  setTotal('geo-total', geoRows);
+  setTotal('industry-total', industryRows);
 
   root.addEventListener('input', (e) => {
     const group = e.target.dataset.group;
@@ -107,9 +115,9 @@ export async function mount(root) {
     const i = Number(index);
     if (group === 'asset-pct') { assetRows[i].percent = e.target.value; updateAssetTotal(); }
     else if (group === 'asset-eur') { assetRows[i].eur = e.target.value; }
-    else if (group === 'sector') { sectorRows[i].percent = e.target.value; root.querySelector('#sector-total').textContent = `Total: ${sectorRows.reduce((s, r) => s + (parseFloat(r.percent) || 0), 0)}%`; }
-    else if (group === 'geo') { geoRows[i].percent = e.target.value; root.querySelector('#geo-total').textContent = `Total: ${geoRows.reduce((s, r) => s + (parseFloat(r.percent) || 0), 0)}%`; }
-    else if (group === 'industry') { industryRows[i].percent = e.target.value; root.querySelector('#industry-total').textContent = `Total: ${industryRows.reduce((s, r) => s + (parseFloat(r.percent) || 0), 0)}%`; }
+    else if (group === 'sector') { sectorRows[i].percent = e.target.value; setTotal('sector-total', sectorRows); }
+    else if (group === 'geo') { geoRows[i].percent = e.target.value; setTotal('geo-total', geoRows); }
+    else if (group === 'industry') { industryRows[i].percent = e.target.value; setTotal('industry-total', industryRows); }
   });
 
   root.querySelector('#save-allocation').addEventListener('click', async () => {
@@ -119,6 +127,8 @@ export async function mount(root) {
       body: JSON.stringify({ path: 'private/allocation.md', content: serializeToMarkdown(assetRows, sectorRows, geoRows, industryRows) }),
     });
     const result = await res.json();
-    showToast(result.saved ? '✅ Allocation saved' : `❌ ${result.error ?? 'save failed'}`, result.saved ? 'info' : 'error');
+    const assetTotal = sumPct(assetRows);
+    const offNote = assetTotal && Math.abs(assetTotal - 100) >= 0.5 ? ` — but asset classes sum to ${assetTotal}%, not 100%` : '';
+    showToast(result.saved ? `✅ Allocation saved${offNote}` : `❌ ${result.error ?? 'save failed'}`, result.saved ? 'info' : 'error');
   });
 }
