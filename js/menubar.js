@@ -136,6 +136,12 @@ export function initMenubar(container) {
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         focusTopButton((i - 1 + MENUS.length) % MENUS.length);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        focusTopButton(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        focusTopButton(MENUS.length - 1);
       } else if (e.key === 'Escape') {
         closeAll();
       }
