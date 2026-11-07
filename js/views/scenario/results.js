@@ -36,7 +36,7 @@ export function renderResults(container, ctx) {
   const fmtVol = (v) => (v != null ? `${v.toFixed(1)}%` : '—');
   const bySize = (groups) => [...groups].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
   const toBars = (groups) => bySize(groups).slice(0, 6)
-    .map((g) => ({ label: g.label, value: g.weight, formattedValue: fmtPct(g.weight, 1), positive: true }));
+    .map((g) => ({ label: g.label, value: g.weight, formattedValue: fmtPct(g.weight, 1, false), positive: true }));
   const unclassifiedAfter = after.sectorGroups.find((g) => g.label === 'Unclassified')?.weight ?? 0;
 
   container.innerHTML = `

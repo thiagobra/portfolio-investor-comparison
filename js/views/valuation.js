@@ -48,7 +48,7 @@ export async function mount(root) {
         </div>
         <div class="stat-card">
           <div class="stat-label">Weighted dividend yield</div>
-          <div class="stat-value">${fmtPct(yieldStat.value, 2)}</div>
+          <div class="stat-value">${fmtPct(yieldStat.value, 2, false)}</div>
           ${yieldStat.excludedWeight > 0 ? `<div class="stat-sub">${yieldStat.excludedWeight.toFixed(0)}% no yield data</div>` : ''}
         </div>
         <div class="stat-card">
@@ -79,7 +79,7 @@ export async function mount(root) {
   renderBars(root.querySelector('#tilt-bars'), Object.entries(tilt)
     .filter(([, w]) => w > 0)
     .sort(([, a], [, b]) => b - a)
-    .map(([label, w]) => ({ label, value: w, formattedValue: fmtPct(w, 1), positive: true })));
+    .map(([label, w]) => ({ label, value: w, formattedValue: fmtPct(w, 1, false), positive: true })));
   renderBars(root.querySelector('#most-expensive'), byPE(1));
   renderBars(root.querySelector('#least-expensive'), byPE(-1));
 }

@@ -20,12 +20,12 @@ const COLUMNS = [
   { key: 'avgPrice', label: 'Avg', fmt: (p) => fmtMoney(p.avgPrice, p.marketValue?.currency) },
   { key: 'currentPrice', label: 'Current', fmt: (p) => fmtMoney(p.currentPrice, p.marketValue?.currency) },
   { key: '_valueEUR', label: 'Value (€)', fmt: (p) => fmtEUR(p._valueEUR, 2) },
-  { key: 'weight', label: 'Weight', fmt: (p) => fmtPct(p.weight, 1) },
+  { key: 'weight', label: 'Weight', fmt: (p) => fmtPct(p.weight, 1, false) },
   { key: 'dailyPL', label: 'Day P/L', fmt: (p) => fmtMoney(p.dailyPL, p.marketValue?.currency), tone: true },
   { key: 'netPL', label: 'Net P/L', fmt: (p) => fmtMoney(p.netPL, p.marketValue?.currency), tone: true },
   { key: 'netPLPct', label: 'Net %', fmt: (p) => fmtPct(p.netPLPct), tone: true },
   { key: 'peRatio', label: 'P/E', fmt: (p) => fmtNum(p.peRatio, 1) },
-  { key: 'yield', label: 'Yield', fmt: (p) => fmtPct(p.yield, 2) },
+  { key: 'yield', label: 'Yield', fmt: (p) => fmtPct(p.yield, 2, false) },
   { key: 'beta', label: 'Beta', fmt: (p) => fmtNum(p.beta, 2) },
   { key: '_ytd', label: 'YTD', fmt: (p) => fmtPct(p._ytd), tone: true },
 ];
@@ -96,7 +96,7 @@ export async function mount(root) {
   tfootRow.innerHTML = `
     <td>Total</td><td></td><td></td><td></td><td></td><td></td>
     <td>${fmtEUR(totalValueEUR, 2)}</td>
-    <td>${fmtPct(rows.reduce((s, p) => s + (p.weight ?? 0), 0), 0)}</td>
+    <td>${fmtPct(rows.reduce((s, p) => s + (p.weight ?? 0), 0), 0, false)}</td>
     <td class="${toneClass(totalDayPL)}">${fmtEUR(totalDayPL, 2)}</td>
     <td class="${toneClass(totalNetPL)}">${fmtEUR(totalNetPL, 2)}</td>
     <td></td><td></td><td></td><td></td><td></td>

@@ -22,9 +22,10 @@ export function fmtMoney(amount, currency) {
   }
 }
 
-export function fmtPct(n, decimals = 2) {
+// signed=false for shares of a whole (weights, yield) — a "+" there reads as a gain.
+export function fmtPct(n, decimals = 2, signed = true) {
   if (n == null || Number.isNaN(n)) return '—';
-  return `${n >= 0 ? '+' : ''}${n.toFixed(decimals)}%`;
+  return `${signed && n >= 0 ? '+' : ''}${n.toFixed(decimals)}%`;
 }
 
 export function fmtNum(n, decimals = 2) {

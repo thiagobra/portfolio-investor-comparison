@@ -59,7 +59,7 @@ export async function mount(root) {
               <tr>
                 <td>${escapeHtml(g.label)}</td>
                 <td>${fmtEUR(g.valueEUR, 2)}</td>
-                <td>${fmtPct(g.weight, 1)}</td>
+                <td>${fmtPct(g.weight, 1, false)}</td>
                 <td class="muted">${g.positions.map((p) => escapeHtml(p.symbol)).join(', ')}</td>
               </tr>
             `).join('')}
@@ -73,7 +73,7 @@ export async function mount(root) {
   renderBars(root.querySelector('#exchange-bars'), sorted.map((g) => ({
     label: g.label,
     value: g.weight,
-    formattedValue: fmtPct(g.weight, 1),
+    formattedValue: fmtPct(g.weight, 1, false),
     positive: true,
   })));
 }
