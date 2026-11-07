@@ -31,9 +31,13 @@ const CATEGORY_HEADING = {
   FACTS: '## Facts', GOALS: '## Goals', CONSTRAINTS: '## Constraints', RISK: '## Risk appetite', QUESTIONS: '## Open questions',
 };
 
-const NOTE_PROMPT = `You are a financial adviser's assistant taking case notes on your client, based on the conversation so far. Write 0 to 3 short, factual, third-person statements about the client — no advice, no repeating generic info already obvious from the question. Each statement belongs to exactly one category: FACTS, GOALS, CONSTRAINTS, RISK, QUESTIONS (something still unresolved worth asking later). Output ONLY lines in this exact format, one per statement:
-CATEGORY: statement text
-If there is nothing new and specific to note, output exactly: NONE`;
+const NOTE_PROMPT = `You are a financial adviser's assistant taking case notes on your client, based on the conversation so far. Write 0 to 3 short, factual, third-person statements about the client — no advice, no repeating generic info already obvious from the question. Each statement belongs to exactly one category: FACTS, GOALS, CONSTRAINTS, RISK, QUESTIONS (something still unresolved worth asking later).
+Output ONLY one line per statement. Each line starts with the category word itself (FACTS, GOALS, CONSTRAINTS, RISK or QUESTIONS), then a colon, then the statement about this client. For example, a line could look like:
+GOALS: The client wants to buy a house within five years.
+Never write the word CATEGORY. If there is nothing new and specific to note, output exactly: NONE`;
+// The old "CATEGORY: statement text" template made small local models echo the placeholder
+// ("CATEGORY: FACTS", no statement) — so nothing parsed and notes silently never saved.
+const MAX_NOTES = 3;
 
 async function readContextTokens() {
   const text = await fetch('data/settings.md').then((r) => r.text());
@@ -86,8 +90,11 @@ async function takeNotes(question, answer) {
     { role: 'user', content: `Client's question: ${question}\n\nYour answer: ${answer}` },
   ];
   const raw = await streamChat(noteMessages, () => {});
-  const notes = parseNotes(raw);
-  if (notes.length === 0) return { count: 0 };
+  const notes = parseNotes(raw).slice(0, MAX_NOTES);
+  if (notes.length === 0) {
+    if (raw.trim().toUpperCase() !== 'NONE') console.warn('takeNotes: no parseable notes in model reply:', raw);
+    return { count: 0 };
+  }
 
   const res = await fetch('/api/files?path=private/profile.md');
   const { content } = await res.json();
