@@ -18,6 +18,8 @@ from server.safety import ROOT, MAX_UPLOAD_BYTES
 
 SETTINGS_PATH = os.path.join(ROOT, "data", "settings.md")
 DEFAULT_HOST = "http://127.0.0.1:1234"
+# Per socket read, not total: a big model on a slow PC can think minutes before its first token.
+CHAT_TIMEOUT_S = 600
 DEFAULT_MODEL = "google/gemma-4-e2b"
 
 
@@ -97,7 +99,7 @@ def handle_chat(handler):
     )
 
     try:
-        upstream = urllib.request.urlopen(req, timeout=60)
+        upstream = urllib.request.urlopen(req, timeout=CHAT_TIMEOUT_S)
     except (urllib.error.URLError, OSError) as exc:
         error_body = json.dumps({"error": str(exc)}).encode("utf-8")
         handler.send_response(502)
@@ -118,7 +120,7 @@ def handle_chat(handler):
         for line in upstream:
             handler.wfile.write(line)
             handler.wfile.flush()
-    except (BrokenPipeError, ConnectionError):
+    except (BrokenPipeError, ConnectionError, TimeoutError):
         pass
     finally:
         upstream.close()
