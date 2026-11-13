@@ -174,3 +174,16 @@
   outline: none;
   border-color: var(--border-focus);
 }
+
+/* ── In-app confirm dialog (js/lib/confirm-dialog.js): a native <dialog>
+   wearing .overlay-panel (css/palette.css) ── */
+.confirm-dialog {
+  color: var(--text-primary);
+  margin: 15vh auto auto;
+  width: min(480px, 92vw);
+}
+.confirm-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+.confirm-dialog-body p { margin-bottom: var(--space-sm); color: var(--text-secondary); }
+.confirm-dialog-actions { justify-content: flex-end; margin-top: var(--space-md); }
+.btn-danger { background: var(--error); color: #fff; }
+.btn-danger:hover { filter: brightness(1.1); }

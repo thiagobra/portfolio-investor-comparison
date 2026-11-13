@@ -3,12 +3,13 @@
  * @purpose  Saved what-if scenarios: list, load back into the builder
  *           (via sessionStorage handoff), delete. Backed by /api/snapshots.
  * @exports  mount(root)
- * @reads    @js/toast.js
+ * @reads    @js/toast.js @js/lib/confirm-dialog.js
  * @usedby   @js/router.js
  */
 
 import { showToast } from '../toast.js';
 import { escapeHtml } from '../lib/escape.js';
+import { confirmDialog } from '../lib/confirm-dialog.js';
 
 export async function mount(root) {
   const res = await fetch('/api/snapshots');
@@ -68,7 +69,13 @@ export async function mount(root) {
 
     if (e.target.classList.contains('btn-delete')) {
       const label = e.target.dataset.label;
-      if (!confirm(`Delete scenario "${label}"? This cannot be undone.`)) return;
+      const ok = await confirmDialog({
+        title: 'Delete scenario?',
+        body: `"${label}" will be deleted. This cannot be undone.`,
+        confirmLabel: 'Delete',
+        danger: true,
+      });
+      if (!ok) return;
       await fetch('/api/snapshots?name=' + encodeURIComponent(name), { method: 'DELETE' });
       showToast(`Deleted "${label}"`);
       const tbody = e.target.closest('tbody');

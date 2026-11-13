@@ -6,12 +6,13 @@
  *           metrics + all saved snapshots + settings) exported/imported as
  *           one JSON file via the browser's own download/upload.
  * @exports  initBackup()
- * @reads    @js/store.js @js/toast.js
+ * @reads    @js/store.js @js/toast.js @js/lib/confirm-dialog.js
  * @usedby   @js/app.js
  */
 
 import { getPortfolio, setPortfolio } from './store.js';
 import { showToast } from './toast.js';
+import { confirmDialog } from './lib/confirm-dialog.js';
 
 const BUNDLE_FILES = ['private/classification.md', 'private/profile.md', 'private/metrics.md', 'private/transactions.md', 'private/allocation.md', 'data/settings.md'];
 
@@ -64,9 +65,20 @@ async function importBackup(file) {
     showToast('❌ Not a valid backup file', 'error');
     return;
   }
-  if (!confirm(`This will overwrite your current portfolio, classification, profile notes, metrics, settings, and saved snapshots with the contents of "${file.name}" (exported ${bundle.exportedAt ?? 'unknown date'}). Continue?`)) {
-    return;
-  }
+  const positions = getPortfolio()?.openPositions?.length ?? 0;
+  const snapshots = await fetch('/api/snapshots').then((r) => r.json()).then((d) => d.files.length).catch(() => '?');
+  const ok = await confirmDialog({
+    title: 'Restore this backup?',
+    body: [
+      `"${file.name}", exported ${bundle.exportedAt ?? 'on an unknown date'}, will overwrite:`,
+      `• your current portfolio (${positions} open position${positions === 1 ? '' : 's'})`,
+      `• ${snapshots} saved snapshot/scenario file${snapshots === 1 ? '' : 's'} with the same names`,
+      '• classification, profile notes, metrics, transactions, allocation and settings',
+    ],
+    confirmLabel: 'Restore backup',
+    danger: true,
+  });
+  if (!ok) return;
 
   if (bundle.portfolio) setPortfolio(bundle.portfolio, { importedAt: bundle.portfolio.importedAt });
   for (const [path, content] of Object.entries(bundle.files ?? {})) {
