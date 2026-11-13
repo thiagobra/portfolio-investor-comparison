@@ -51,6 +51,7 @@ export const MENUS = [
     items: [
       { label: 'Import Investing.com CSV…', action: 'import' },
       { label: 'Save snapshot', action: 'save-snapshot' },
+      { label: 'Clear imported portfolio', action: 'clear-portfolio' },
       { separator: true },
       { label: 'Export backup…', action: 'export-backup' },
       { label: 'Import backup…', action: 'import-backup' },

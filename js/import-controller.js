@@ -2,13 +2,14 @@
  * @module   import-controller
  * @purpose  Wires the File -> "Import Investing.com CSV…" menu action: file
  *           picker, client-side parse, store update, server-side archive.
+ *           Also File -> "Clear imported portfolio" (drops the localStorage copy).
  * @exports  initImportController() · archive(file, text)
  * @reads    @js/import/csv-positions.js @js/store.js @js/toast.js
  * @usedby   @js/app.js @js/views/progression.js
  */
 
 import { buildPortfolio } from './import/csv-positions.js';
-import { setPortfolio } from './store.js';
+import { setPortfolio, clearPortfolio } from './store.js';
 import { showToast } from './toast.js';
 
 // The server only accepts [A-Za-z0-9_-]+.csv; a browser re-download is named
@@ -70,5 +71,11 @@ export function initImportController() {
 
   document.addEventListener('menu-action', (e) => {
     if (e.detail === 'import') input.click();
+    if (e.detail === 'clear-portfolio') {
+      clearPortfolio();
+      showToast('🧹 Cleared the imported portfolio from this browser');
+      location.hash = '#/dashboard';
+      window.dispatchEvent(new Event('hashchange'));
+    }
   });
 }

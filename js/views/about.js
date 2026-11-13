@@ -30,6 +30,10 @@ export function mount(root) {
           on this machine — gitignored, never committed. The advisor talks to LM Studio on
           <code>127.0.0.1</code> only; nothing about your portfolio is sent anywhere else.
         </p>
+        <p>
+          This browser also keeps a copy of your last import in <code>localStorage</code>, so a reload
+          doesn't lose it. <strong>File → Clear imported portfolio</strong> removes that copy.
+        </p>
         <h3>Source</h3>
         <p><a href="https://github.com/${GITHUB_REPO}" target="_blank" rel="noopener">github.com/${GITHUB_REPO}</a></p>
       </div>
