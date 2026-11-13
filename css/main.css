@@ -1,0 +1,24 @@
+/* Single stylesheet entry (index.html links only this file).
+   Cascade layers make precedence explicit: a later layer beats an earlier one
+   regardless of selector specificity; unlayered rules would beat them all.
+   Imports keep the old <link> order, so files sharing a layer keep their
+   relative order too. */
+@layer tokens, base, components, views;
+
+@import url("variables.css") layer(tokens);
+@import url("layout.css") layer(base);
+@import url("appbar.css") layer(components);
+@import url("menubar.css") layer(components);
+@import url("palette.css") layer(components);
+@import url("base.css") layer(base);
+@import url("forms.css") layer(base);
+@import url("editors.css") layer(base);
+@import url("charts.css") layer(components);
+@import url("compare.css") layer(views);
+@import url("sector-geo.css") layer(views);
+@import url("stats.css") layer(components);
+@import url("metric.css") layer(components);
+@import url("table.css") layer(components);
+@import url("donut-bars.css") layer(components);
+@import url("chat.css") layer(components);
+@import url("prose.css") layer(views); /* was the last <link>: its .card prose rules and component overrides (.data-table-left, Help checklist) beat everything */

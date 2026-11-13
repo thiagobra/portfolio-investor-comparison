@@ -15,15 +15,16 @@ diffs this against the real directory tree. Grouped by directory.
 
 - `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1. `_guard()` 403s a foreign Host/Origin/Sec-Fetch-Site (DNS rebinding, cross-site); `end_headers()` adds CSP, nosniff and no-referrer to every response.
 - `start.bat` — Windows double-click launcher: HTTP-probes 8420, starts `serve.py` minimized only if nothing answers, waits, opens the browser.
-- `index.html` — thin shell (~30 lines): `<nav id="menubar">` + `<div id="view-root">`, loads `js/app.js`.
+- `index.html` — thin shell (~30 lines): `<nav id="menubar">` + `<div id="view-root">`, links `css/main.css` only, loads `js/app.js`; `color-scheme` + per-scheme `theme-color` metas.
 
 ## `css/`
 
+- `css/main.css` — the only stylesheet `index.html` links: `@layer tokens, base, components, views` then one `@import … layer(…)` per file below, in the old `<link>` order. `prose.css` sits last in `views` because it used to load last and its overrides must keep winning. Add a new CSS file here, in the right layer.
 - `css/variables.css` — design tokens (colors, spacing, typography). Every colour token is `light-dark(<light>, <dark>)` under `color-scheme: light dark`, so the app follows the OS theme; series colours (chart/sector/geo) are shared by both.
 - `css/layout.css` — reset, app shell, section, grid, responsive breakpoints, `.sr-only` utility.
 - `css/appbar.css` — sticky app bar: brand `<h1>`, menu bar row, live status rail (`js/appbar-status.js` renders into `#appbar-status`).
 - `css/menubar.css` — menu bar, dropdown menus (icons/edit markers/key hints), and the toast notification widget. Background/border now live on `.appbar` (css/appbar.css), since the menu bar is nested inside it.
-- `css/palette.css` — shared `.overlay-backdrop`/`.overlay-panel` used by both the keyboard cheat-sheet (`js/shortcuts.js`) and the command palette (`js/palette.js`), plus the palette's own input/results styling.
+- `css/palette.css` — shared `.overlay-backdrop`/`.overlay-panel` used by the keyboard cheat-sheet (`js/shortcuts.js`), the command palette (`js/palette.js`) and the confirm dialog (`js/lib/confirm-dialog.js`, `.confirm-dialog`/`.btn-danger`, kept in this file's layer so it can override `.overlay-panel`), plus the palette's own input/results styling.
 - `css/base.css` — generic primitives: cards, buttons, dividers, warnings, section headers, flag icons, snapshot dropdown.
 - `css/forms.css` — inputs, file upload, suggestion form, toggle switch.
 - `css/editors.css` — select + checkbox list (Scenario builder, Ticker classification), raw-text editor (Data editors). Split out of `forms.css` in task 15 once it passed the 200-line cap.
