@@ -207,6 +207,11 @@ approximation.
 - `private/profile.md` — advisor's append-only case notes about you. `## Facts`/`## Goals`/`## Constraints`/`## Risk appetite`/`## Open questions` section skeleton the advisor's auto-append writes under; editable via **Data → Advisor profile** / **Advisor → My profile notes**.
 - `private/snapshots/*.json` — two kinds of file share this directory, distinguished by filename: manual portfolio snapshots (`snapshot_<date>.json`, **File → Save snapshot**) and named what-if scenarios (any other name, **Scenarios → What-if builder → Save scenario…**). `js/views/scenario-saved.js` filters to the latter.
 
+## `tests/` (`npm test`, Node 22 built-in runner, no dependencies)
+
+- `tests/csv-import.test.js` — regression contract: `EXAMPLE_CSV` through `buildPortfolio()` must keep producing the frozen counts, total and key position fields.
+- `tests/analytics.test.js` — `concentration()`, `weightedAverage()`, `applyScenario()` on hand-built positions. Stubs `window` because `js/lib/fx.js` touches it at import time.
+
 ## `tools/`
 
 - `tools/build_reference_data.py` — orchestrator: calls the 3 fetchers below, computes matrices, writes `data/correlations.md` + `data/volatility.md`. Run manually: `python3 -m tools.build_reference_data`.

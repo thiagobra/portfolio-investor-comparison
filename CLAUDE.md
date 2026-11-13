@@ -85,7 +85,7 @@ Features are tracked via GitHub issues, labeled `enhancement`/`data`/`user-sugge
 
 ## Testing
 
-No test suite — verify manually. Start the server, import a real CSV, click through the menu bar, confirm the browser console is clean. `docs/csv-format.md`'s worked example (`Holdings_08042026.csv` → €160.80, +42.49%, closed GOOGL +99.87%/$2,539.60) is the parser's de facto regression test — re-check those exact numbers after touching `js/import/*.js`.
+`npm test` (Node 22, zero dependencies) runs `tests/*.test.js`: the CSV parser regression contract on `EXAMPLE_CSV` plus risk/valuation/scenario maths. CI runs it on every push. Beyond that, verify manually. Start the server, import a real CSV, click through the menu bar, confirm the browser console is clean. `docs/csv-format.md`'s worked example (`Holdings_08042026.csv` → €160.80, +42.49%, closed GOOGL +99.87%/$2,539.60) is the parser's de facto regression test — re-check those exact numbers after touching `js/import/*.js`.
 
 When testing the Advisor against LM Studio live: this dev machine is old and slow, so a reply can take minutes — that is this PC, not a regression. Judge Advisor changes on correctness (does the reply/parse/save land right), never on how long the model took.
 
