@@ -85,5 +85,5 @@
 
 .heatmap-table td {
   font-family: var(--font-mono);
-  color: #fff;
+  color: light-dark(var(--text-primary), #fff); /* cells are translucent blue over the page */
 }

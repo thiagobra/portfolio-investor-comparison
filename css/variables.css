@@ -1,33 +1,35 @@
 :root {
-  /* VS Code Dark Theme */
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #252526;
-  --bg-tertiary: #2d2d2d;
-  --bg-hover: #3e3e3e;
-  --bg-input: #3c3c3c;
-  --border: #3e3e3e;
-  --border-focus: #007acc;
+  /* light-dark(<light>, <dark>): follows the OS setting. Dark side = the original VS Code Dark values.
+     Chart, sector and geo series colours are the same in both modes. */
+  color-scheme: light dark;
+  --bg-primary: light-dark(#ffffff, #1e1e1e);
+  --bg-secondary: light-dark(#f3f3f3, #252526);
+  --bg-tertiary: light-dark(#e8e8e8, #2d2d2d);
+  --bg-hover: light-dark(#dcdcdc, #3e3e3e);
+  --bg-input: light-dark(#ffffff, #3c3c3c);
+  --border: light-dark(#d4d4d4, #3e3e3e);
+  --border-focus: light-dark(#005fb8, #007acc);
 
   /* Text */
-  --text-primary: #d4d4d4;
-  --text-secondary: #9d9d9d;
-  --text-muted: #6a6a6a;
+  --text-primary: light-dark(#1e1e1e, #d4d4d4);
+  --text-secondary: light-dark(#555555, #9d9d9d);
+  --text-muted: light-dark(#8a8a8a, #6a6a6a);
 
   /* Accent */
-  --accent: #007acc;
-  --accent-hover: #1a8ad4;
-  --accent-subtle: rgba(0, 122, 204, 0.15);
+  --accent: light-dark(#005fb8, #007acc);
+  --accent-hover: light-dark(#0a6fd0, #1a8ad4);
+  --accent-subtle: light-dark(rgba(0, 95, 184, 0.12), rgba(0, 122, 204, 0.15));
 
   /* Semantic */
-  --success: #4ec9b0;
-  --warning: #dcdcaa;
-  --error: #f44747;
-  --info: #569cd6;
+  --success: light-dark(#1a7f5a, #4ec9b0);
+  --warning: light-dark(#a0761a, #dcdcaa);
+  --error: light-dark(#cd3131, #f44747);
+  --info: light-dark(#0451a5, #569cd6);
 
   /* Chart */
   --chart-user: #569cd6;
   --chart-investor: #ce9178;
-  --chart-bg: #1a1a1a;
+  --chart-bg: light-dark(#fafafa, #1a1a1a);
 
   /* Sector colors */
   --sector-tech: #569cd6;
@@ -59,8 +61,8 @@
   --radius-lg: 10px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.3));
+  --shadow-md: 0 4px 12px light-dark(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.4));
 
   /* Typography */
   --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;

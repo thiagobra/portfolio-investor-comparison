@@ -19,7 +19,7 @@ diffs this against the real directory tree. Grouped by directory.
 
 ## `css/`
 
-- `css/variables.css` — design tokens (colors, spacing, typography). Extended, not replaced, by v3.
+- `css/variables.css` — design tokens (colors, spacing, typography). Every colour token is `light-dark(<light>, <dark>)` under `color-scheme: light dark`, so the app follows the OS theme; series colours (chart/sector/geo) are shared by both.
 - `css/layout.css` — reset, app shell, section, grid, responsive breakpoints, `.sr-only` utility.
 - `css/appbar.css` — sticky app bar: brand `<h1>`, menu bar row, live status rail (`js/appbar-status.js` renders into `#appbar-status`).
 - `css/menubar.css` — menu bar, dropdown menus (icons/edit markers/key hints), and the toast notification widget. Background/border now live on `.appbar` (css/appbar.css), since the menu bar is nested inside it.
