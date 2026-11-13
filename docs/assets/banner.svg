@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1117"/><stop offset=".6" stop-color="#161b22"/><stop offset="1" stop-color="#0b2540"/></linearGradient>
+    <radialGradient id="glowB" cx=".15" cy=".2" r=".45"><stop offset="0" stop-color="#3b82f6" stop-opacity=".33"/><stop offset="1" stop-color="#3b82f6" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowG" cx=".85" cy=".8" r=".45"><stop offset="0" stop-color="#10b981" stop-opacity=".33"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+    <linearGradient id="motto" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#93c5fd"/><stop offset="1" stop-color="#6ee7b7"/></linearGradient>
+  </defs>
+  <rect width="1200" height="400" rx="20" fill="url(#bg)"/>
+  <rect width="1200" height="400" rx="20" fill="url(#glowB)"/>
+  <rect width="1200" height="400" rx="20" fill="url(#glowG)"/>
+  <polyline fill="none" stroke="#3b82f6" stroke-width="3" opacity=".35" points="0,370 90,360 180,345 270,350 360,328 450,318 540,308 570,305 630,372 690,382 780,368 870,358 960,352 1050,342 1140,332 1200,326"/>
+  <g transform="translate(560 48) scale(1.25)">
+    <rect width="64" height="64" rx="16" fill="url(#tile)"/>
+    <polyline points="10,46 20,40 28,42 37,27" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+    <circle cx="40" cy="30" r="12" fill="#ffffff22" stroke="#fff" stroke-width="4"/>
+    <polyline points="34,30 39,24 44,36" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="49" y1="39" x2="55" y2="45" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text x="600" y="200" text-anchor="middle" fill="#fff" font-size="58" font-weight="700" letter-spacing="-1">Portfolio Workstation</text>
+  <text x="600" y="252" text-anchor="middle" fill="url(#motto)" font-size="32" font-weight="600">Your blind spots, in plain sight.</text>
+  <text x="600" y="296" text-anchor="middle" fill="#c9d1d9" font-size="20">Risk, what-if scenarios and real market history for your own holdings. 100% local.</text>
+</svg>
