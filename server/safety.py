@@ -2,6 +2,7 @@
 @module   server.safety
 @purpose  Exact-match path whitelist, upload filename guard, and size cap shared by every route.
 @exports  ROOT · resolve_safe_path() · resolve_in_dir() · safe_upload_filename() · UnsafePathError
+@exports  is_json()
 @exports  READABLE_FILES · WRITABLE_FILES · MAX_UPLOAD_BYTES
 @usedby   @server/routes_files.py @server/routes_import.py @server/routes_holdings.py
 @usedby   @server/routes_snapshots.py @serve.py
@@ -84,3 +85,9 @@ def resolve_in_dir(name, subdir, pattern):
     if not full.startswith(dir_full + os.sep):
         raise UnsafePathError(f"path escapes {subdir}: {name!r}")
     return full
+
+
+def is_json(handler):
+    """True when the request declares a JSON body. A text/plain POST skips the CORS
+    preflight, so every JSON route refuses anything else with 415."""
+    return handler.headers.get("Content-Type", "").lower().startswith("application/json")

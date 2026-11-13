@@ -14,7 +14,7 @@ import urllib.error
 import urllib.request
 from urllib.parse import urlparse
 
-from server.safety import ROOT, MAX_UPLOAD_BYTES
+from server.safety import ROOT, MAX_UPLOAD_BYTES, is_json
 
 SETTINGS_PATH = os.path.join(ROOT, "data", "settings.md")
 DEFAULT_HOST = "http://127.0.0.1:1234"
@@ -73,6 +73,12 @@ def handle_health(handler):
 
 
 def handle_chat(handler):
+    if not is_json(handler):
+        handler.close_connection = True
+        handler.send_response(415)
+        handler.send_header("Content-Length", "0")
+        handler.end_headers()
+        return
     host, model = _read_settings()
     length = int(handler.headers.get("Content-Length", 0))
     if length > MAX_UPLOAD_BYTES:

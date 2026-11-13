@@ -22,6 +22,11 @@ PORT = int(os.environ.get("PORT", "8420"))
 STATIC_DIRS = ("css", "js", "views", "data")
 STATIC_ROOT_FILES = ("index.html", "favicon.ico")
 
+# DNS-rebinding + cross-site guard: only this app's own pages may talk to it.
+ALLOWED_HOSTS = {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
+ALLOWED_ORIGINS = {f"http://{h}" for h in ALLOWED_HOSTS}
+ALLOWED_FETCH_SITES = ("same-origin", "none")
+
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -29,7 +34,21 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         sys.stderr.write("%s - %s\n" % (self.address_string(), fmt % args))
 
+    def _guard(self):
+        """403 unless Host, Origin and Sec-Fetch-Site all say the request comes from this app."""
+        origin = self.headers.get("Origin")
+        site = self.headers.get("Sec-Fetch-Site")
+        if (self.headers.get("Host") not in ALLOWED_HOSTS
+                or (origin is not None and origin not in ALLOWED_ORIGINS)
+                or (site is not None and site not in ALLOWED_FETCH_SITES)):
+            self.close_connection = True
+            self.send_error(403)
+            return False
+        return True
+
     def do_GET(self):
+        if not self._guard():
+            return
         path = urlparse(self.path).path
         if path == "/api/health":
             return routes_chat.handle_health(self)
@@ -42,6 +61,8 @@ class Handler(BaseHTTPRequestHandler):
         return self._serve_static(path)
 
     def do_PUT(self):
+        if not self._guard():
+            return
         path = urlparse(self.path).path
         if path == "/api/files":
             return routes_files.handle_put(self)
@@ -50,6 +71,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(404)
 
     def do_POST(self):
+        if not self._guard():
+            return
         path = urlparse(self.path).path
         if path == "/api/import":
             return routes_import.handle_post(self)
@@ -58,6 +81,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(404)
 
     def do_DELETE(self):
+        if not self._guard():
+            return
         path = urlparse(self.path).path
         if path == "/api/snapshots":
             return routes_snapshots.handle_delete(self)

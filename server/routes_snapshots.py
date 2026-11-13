@@ -11,7 +11,7 @@ import os
 import re
 from urllib.parse import urlparse, parse_qs
 
-from server.safety import ROOT, resolve_in_dir, UnsafePathError, MAX_UPLOAD_BYTES
+from server.safety import ROOT, resolve_in_dir, UnsafePathError, MAX_UPLOAD_BYTES, is_json
 
 _JSON_NAME = re.compile(r"^[\w\-]+\.json$")
 SNAPSHOTS_DIR = os.path.join(ROOT, "private", "snapshots")
@@ -55,6 +55,9 @@ def handle_get(handler):
 
 
 def handle_put(handler):
+    if not is_json(handler):
+        handler.close_connection = True
+        return _send_json(handler, 415, {"error": "expected application/json"})
     length = int(handler.headers.get("Content-Length", 0))
     if length > MAX_UPLOAD_BYTES:
         handler.close_connection = True
