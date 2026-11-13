@@ -99,12 +99,6 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .overlay-panel {
-    animation: none;
-  }
-}
-
 /* ── In-app confirm dialog (js/lib/confirm-dialog.js): a native <dialog>
    wearing .overlay-panel above; must sit in the same layer to override it ── */
 .confirm-dialog {

@@ -83,3 +83,17 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Global reduced motion (the owner's phone and PC both have it on). Durations
+   collapse to ~0 instead of `none`, so transitionend/animationend still fire.
+   Never hide an element with only an animation end state (`forwards`): put
+   the hidden state (opacity: 0; visibility: hidden) on the class itself.
+   !important in this early layer beats every later layer's !important. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
