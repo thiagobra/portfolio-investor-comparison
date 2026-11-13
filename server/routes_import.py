@@ -10,10 +10,18 @@ import json
 import os
 
 from server.safety import ROOT, MAX_UPLOAD_BYTES, safe_upload_filename, UnsafePathError
+from server.safety import read_body_length, BadLengthError
 
 
 def handle_post(handler):
-    length = int(handler.headers.get("Content-Length", 0))
+    try:
+        length = read_body_length(handler)
+    except BadLengthError:
+        handler.close_connection = True
+        handler.send_response(400)
+        handler.send_header("Content-Length", "0")
+        handler.end_headers()
+        return
     if length > MAX_UPLOAD_BYTES:
         handler.close_connection = True
         handler.send_response(413)

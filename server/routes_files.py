@@ -11,7 +11,7 @@ import shutil
 from urllib.parse import urlparse, parse_qs
 
 from server.safety import READABLE_FILES, WRITABLE_FILES, resolve_safe_path, UnsafePathError, MAX_UPLOAD_BYTES, is_json
-from server.safety import atomic_write_text
+from server.safety import atomic_write_text, read_body_length, BadLengthError
 
 
 def _send_json(handler, status, payload):
@@ -44,7 +44,11 @@ def handle_put(handler):
     if not is_json(handler):
         handler.close_connection = True
         return _send_json(handler, 415, {"error": "expected application/json"})
-    length = int(handler.headers.get("Content-Length", 0))
+    try:
+        length = read_body_length(handler)
+    except BadLengthError:
+        handler.close_connection = True
+        return _send_json(handler, 400, {"error": "bad Content-Length"})
     if length > MAX_UPLOAD_BYTES:
         handler.close_connection = True
         return _send_json(handler, 413, {"error": "payload too large"})

@@ -2,7 +2,7 @@
 @module   server.safety
 @purpose  Exact-match path whitelist, upload filename guard, and size cap shared by every route.
 @exports  ROOT · resolve_safe_path() · resolve_in_dir() · safe_upload_filename() · UnsafePathError
-@exports  is_json() · atomic_write_text()
+@exports  is_json() · atomic_write_text() · read_body_length() · BadLengthError
 @exports  READABLE_FILES · WRITABLE_FILES · MAX_UPLOAD_BYTES
 @usedby   @server/routes_files.py @server/routes_import.py @server/routes_holdings.py
 @usedby   @server/routes_snapshots.py @serve.py
@@ -54,6 +54,10 @@ class UnsafePathError(ValueError):
     pass
 
 
+class BadLengthError(ValueError):
+    pass
+
+
 def resolve_safe_path(rel_path, allowed):
     """Resolve rel_path to an absolute path, or raise if it isn't in the whitelist."""
     if rel_path not in allowed:
@@ -99,3 +103,14 @@ def atomic_write_text(full, text):
     with open(tmp, "w", encoding="utf-8") as f:
         f.write(text)
     os.replace(tmp, full)
+
+
+def read_body_length(handler):
+    """Content-Length as a non-negative int, or BadLengthError (routes answer 400)."""
+    try:
+        length = int(handler.headers.get("Content-Length", 0))
+    except ValueError:
+        raise BadLengthError("Content-Length is not a number") from None
+    if length < 0:
+        raise BadLengthError("negative Content-Length")
+    return length
