@@ -50,12 +50,13 @@ diffs this against the real directory tree. Grouped by directory.
 
 Predate the size-budget/frontmatter convention below and are deliberately not
 retrofitted — reused unchanged, not rewritten, per the original plan.
-`js/renderer.js` (315 lines) is the one file in the repo over the 200-line
-hard cap; every other file was checked in task 15's audit and is within it.
+`js/renderer.js` was split into `renderer.js` + `renderer-breakdowns.js` in
+the hardening pass, so every file is now within the 200-line hard cap.
 
 - `js/engine.js` — `calculateDeviation()`, `generateSuggestions()`.
 - `js/parser.js` — form + simple asset-class CSV reading, `ASSET_CLASSES` etc. Reads/writes via `document.getElementById`, so it works regardless of which view module calls it.
-- `js/renderer.js` — DOM rendering for the Compare screen.
+- `js/renderer.js` — DOM rendering for the Compare screen: asset comparison, scores, sector drilldown, suggestions, philosophy; re-exports the three breakdown renderers below so callers import one module.
+- `js/renderer-breakdowns.js` — Compare's sector/geo/industry comparison sections (`renderSectorComparison()` · `renderGeoAllocation()` · `renderIndustryAllocation()`), split out of `renderer.js` behaviour-unchanged to get both under the 200-line cap.
 - `js/investors-loader.js` — loads/parses `data/*.md` investor files.
 
 ## `js/` (new)
