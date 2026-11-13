@@ -11,6 +11,8 @@ function getContainer() {
   if (!container) {
     container = document.createElement('div');
     container.className = 'toast-container';
+    container.setAttribute('role', 'status'); // screen readers announce each toast politely
+    container.setAttribute('aria-live', 'polite');
     document.body.appendChild(container);
   }
   return container;
