@@ -2,7 +2,7 @@
 @module   server.safety
 @purpose  Exact-match path whitelist, upload filename guard, and size cap shared by every route.
 @exports  ROOT · resolve_safe_path() · resolve_in_dir() · safe_upload_filename() · UnsafePathError
-@exports  is_json()
+@exports  is_json() · atomic_write_text()
 @exports  READABLE_FILES · WRITABLE_FILES · MAX_UPLOAD_BYTES
 @usedby   @server/routes_files.py @server/routes_import.py @server/routes_holdings.py
 @usedby   @server/routes_snapshots.py @serve.py
@@ -91,3 +91,11 @@ def is_json(handler):
     """True when the request declares a JSON body. A text/plain POST skips the CORS
     preflight, so every JSON route refuses anything else with 415."""
     return handler.headers.get("Content-Type", "").lower().startswith("application/json")
+
+
+def atomic_write_text(full, text):
+    """Write to full.tmp, then os.replace: a crash mid-write never leaves a half file."""
+    tmp = full + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.replace(tmp, full)

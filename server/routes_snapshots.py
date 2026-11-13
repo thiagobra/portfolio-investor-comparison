@@ -12,6 +12,7 @@ import re
 from urllib.parse import urlparse, parse_qs
 
 from server.safety import ROOT, resolve_in_dir, UnsafePathError, MAX_UPLOAD_BYTES, is_json
+from server.safety import atomic_write_text
 
 _JSON_NAME = re.compile(r"^[\w\-]+\.json$")
 SNAPSHOTS_DIR = os.path.join(ROOT, "private", "snapshots")
@@ -76,8 +77,7 @@ def handle_put(handler):
         return _send_json(handler, 403, {"error": "path not writable"})
 
     os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-    with open(full, "w", encoding="utf-8") as f:
-        json.dump(content, f, indent=2)
+    atomic_write_text(full, json.dumps(content, indent=2))
 
     return _send_json(handler, 200, {"name": name, "saved": True})
 

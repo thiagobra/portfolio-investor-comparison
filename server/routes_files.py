@@ -11,6 +11,7 @@ import shutil
 from urllib.parse import urlparse, parse_qs
 
 from server.safety import READABLE_FILES, WRITABLE_FILES, resolve_safe_path, UnsafePathError, MAX_UPLOAD_BYTES, is_json
+from server.safety import atomic_write_text
 
 
 def _send_json(handler, status, payload):
@@ -65,7 +66,6 @@ def handle_put(handler):
     except FileNotFoundError:
         pass  # first write for this file, nothing to back up yet
 
-    with open(full, "w", encoding="utf-8") as f:
-        f.write(content)
+    atomic_write_text(full, content)
 
     return _send_json(handler, 200, {"path": rel, "saved": True})
