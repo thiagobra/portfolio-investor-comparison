@@ -1,0 +1,26 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile serve.py server/*.py
+      - name: Host guard smoke test
+        run: |
+          python serve.py &
+          sleep 2
+          node --input-type=module -e "
+          import http from 'node:http';
+          const get = (host) => new Promise((ok, no) => http.get({ host: '127.0.0.1', port: 8420, path: '/', headers: { Host: host } }, (r) => { r.resume(); ok(r.statusCode); }).on('error', no));
+          const good = await get('127.0.0.1:8420'), evil = await get('evil:8420');
+          console.log('good host', good, '| evil host', evil);
+          if (good !== 200 || evil !== 403) process.exit(1);"
