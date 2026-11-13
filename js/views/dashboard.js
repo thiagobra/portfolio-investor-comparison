@@ -136,7 +136,7 @@ export async function mount(root) {
           <div class="metric-verdict tone-${top10Verdict.tone}">${top10Verdict.sentence}</div>
         </div>
       </div>
-      <p class="section-hint" style="margin-top:var(--space-md)"><a href="#/risk">See the full risk picture →</a></p>
+      <p class="section-hint" data-style="margin-top:var(--space-md)"><a href="#/risk">See the full risk picture →</a></p>
     </section>
 
     <p class="section-hint">FX as of ${getFxAsOf() ?? 'unknown'}. Imported ${new Date(portfolio.importedAt).toLocaleString()} from ${escapeHtml(portfolio.filename ?? 'an unknown file')}.</p>

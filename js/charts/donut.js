@@ -66,7 +66,7 @@ export function renderDonut(container, segments) {
     const pct = ((seg.value / total) * 100).toFixed(1);
     const row = document.createElement('div');
     row.className = 'donut-legend-item';
-    row.innerHTML = `<span class="donut-dot" style="background:${color}"></span>${escapeHtml(seg.label)} <span class="donut-legend-pct">${pct}%</span>`;
+    row.innerHTML = `<span class="donut-dot" data-style="background:${color}"></span>${escapeHtml(seg.label)} <span class="donut-legend-pct">${pct}%</span>`;
     legend.appendChild(row);
   });
   container.appendChild(legend);

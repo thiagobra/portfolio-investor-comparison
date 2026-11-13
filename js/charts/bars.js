@@ -34,7 +34,7 @@ export function renderBars(container, items) {
       : `width:${pct}%`;
     row.innerHTML = `
       <span class="rank-bar-label">${escapeHtml(it.label)}</span>
-      <span class="rank-bar-track"><span class="rank-bar-fill ${tone}" style="${fillStyle}"></span></span>
+      <span class="rank-bar-track"><span class="rank-bar-fill ${tone}" data-style="${fillStyle}"></span></span>
       <span class="rank-bar-value ${tone}">${it.formattedValue ?? it.value}</span>
     `;
     container.appendChild(row);

@@ -96,13 +96,13 @@ export async function mount(root) {
       </p>
       <div class="card">
         <label for="paste-block">Paste from getquin (tab or 2+ space separated: Symbol, Sector, Industry, Region, Country, Currency, Asset Class)</label>
-        <textarea id="paste-block" class="editor-textarea" style="height:80px"></textarea>
-        <div class="actions-row" style="margin-top:var(--space-sm)">
+        <textarea id="paste-block" class="editor-textarea" data-style="height:80px"></textarea>
+        <div class="actions-row" data-style="margin-top:var(--space-sm)">
           <button class="btn btn-secondary" id="apply-paste">Apply pasted rows</button>
         </div>
       </div>
       <div id="table-container"></div>
-      <div class="actions-row" style="margin-top:var(--space-md)">
+      <div class="actions-row" data-style="margin-top:var(--space-md)">
         <button class="btn btn-secondary" id="apply-to-selected">Apply first checked row to other checked rows</button>
         <button class="btn btn-primary" id="save-classification">Save</button>
       </div>

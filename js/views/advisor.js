@@ -137,16 +137,16 @@ export async function mount(root) {
     <section class="section">
       <h2 class="section-title">Ask the Advisor</h2>
       <p class="section-hint" id="pipeline-status">Reading holdings…</p>
-      <div class="card" id="chat-card" style="display:none">
+      <div class="card" id="chat-card" data-style="display:none">
         <p class="section-hint">Running against <strong>${escapeHtml(health.model)}</strong> at ${escapeHtml(health.host)}. Nothing leaves your PC.</p>
         <div class="chat-log" id="chat-log"></div>
         <div class="chat-input-row">
           <textarea id="chat-input" placeholder="Ask about your portfolio… (Enter to send, Shift+Enter for a new line)"></textarea>
           <button class="btn btn-primary" id="chat-send">Send</button>
         </div>
-        <details style="margin-top:var(--space-md)">
-          <summary class="section-hint" style="cursor:pointer">Exactly what was sent (<span id="token-summary"></span>)</summary>
-          <pre class="editor-textarea" id="sent-context" style="white-space:pre-wrap;max-height:300px;overflow-y:auto"></pre>
+        <details data-style="margin-top:var(--space-md)">
+          <summary class="section-hint" data-style="cursor:pointer">Exactly what was sent (<span id="token-summary"></span>)</summary>
+          <pre class="editor-textarea" id="sent-context" data-style="white-space:pre-wrap;max-height:300px;overflow-y:auto"></pre>
         </details>
       </div>
     </section>

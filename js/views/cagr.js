@@ -61,11 +61,11 @@ export async function mount(root) {
         holding period is noisy.
       </p>
       ${groups.length === 0 ? '<div class="card"><p class="section-hint">No positions have usable lot data yet — add rows in Data → Transactions.</p></div>' : groups.map((g) => `
-        <div class="card data-table-wrap" style="margin-bottom:var(--space-md)">
+        <div class="card data-table-wrap" data-style="margin-bottom:var(--space-md)">
           <table class="data-table">
             <thead>
               <tr>
-                <th colspan="2">${escapeHtml(g.symbol)} <span class="section-hint" style="font-weight:normal">(${escapeHtml(g.source)})</span></th>
+                <th colspan="2">${escapeHtml(g.symbol)} <span class="section-hint" data-style="font-weight:normal">(${escapeHtml(g.source)})</span></th>
                 <th>Cost basis</th>
                 <th>Current value</th>
                 <th>Symbol CAGR</th>
@@ -80,7 +80,7 @@ export async function mount(root) {
               </tr>
               <tr><th>Buy date</th><th>Shares</th><th>Buy price</th><th>Days held</th><th>Lot CAGR</th></tr>
               ${g.lots.map((l) => `
-                <tr${l.shortPeriod ? ' style="opacity:0.5"' : ''}>
+                <tr${l.shortPeriod ? ' data-style="opacity:0.5"' : ''}>
                   <td>${escapeHtml(l.date)}</td>
                   <td>${l.shares}</td>
                   <td>${fmtMoney(l.price, g.currency)}</td>

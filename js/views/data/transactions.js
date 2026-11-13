@@ -64,7 +64,7 @@ export async function mount(root) {
         the CSV's own lot data is missing or fails its reconciliation check against the average cost.
       </p>
       <div id="table-container"></div>
-      <div class="actions-row" style="margin-top:var(--space-md)">
+      <div class="actions-row" data-style="margin-top:var(--space-md)">
         <button class="btn btn-secondary" id="add-row">+ Add row</button>
         <button class="btn btn-primary" id="save-transactions">Save</button>
       </div>

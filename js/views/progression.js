@@ -98,9 +98,9 @@ export async function mount(root) {
     <section class="section">
       <h2 class="section-title">Portfolio progression 🚧</h2>
       <p class="section-hint">Drop additional Holdings_*.csv exports below to add more snapshots. Archived exports load automatically.</p>
-      <div class="card" id="drop-zone" style="border:2px dashed var(--border);text-align:center;padding:var(--space-lg)">
+      <div class="card" id="drop-zone" data-style="border:2px dashed var(--border);text-align:center;padding:var(--space-lg)">
         Drag CSV files here, or <button class="btn btn-secondary" id="pick-files">choose files</button>
-        <input type="file" id="file-input" accept=".csv" multiple style="display:none">
+        <input type="file" id="file-input" accept=".csv" multiple data-style="display:none">
       </div>
       <p class="section-hint" id="snapshot-count"></p>
     </section>

@@ -33,7 +33,7 @@ function targetSection(title, rows, prefix) {
   const total = rows.reduce((sum, r) => sum + (parseFloat(r.percent) || 0), 0);
   return `
     <div class="card">
-      <div class="section-title" style="font-size:1rem">${title}</div>
+      <div class="section-title" data-style="font-size:1rem">${title}</div>
       <div class="grid-2">
         ${rows.map((r, i) => `
           <div class="input-group">
@@ -68,14 +68,14 @@ export async function mount(root) {
         cash, crypto, gold and bonds alongside your brokerage holdings.
       </p>
       <div class="card">
-        <div class="section-title" style="font-size:1rem">Asset Allocation</div>
+        <div class="section-title" data-style="font-size:1rem">Asset Allocation</div>
         <div class="grid-2" id="asset-form">
           ${assetRows.map((r, i) => `
             <div class="input-group">
               <label for="asset-pct-${i}">${escapeHtml(r.name)}</label>
               <input type="number" id="asset-pct-${i}" min="0" max="100" step="1" value="${escapeHtml(r.percent)}" placeholder="0" data-group="asset-pct" data-index="${i}">
               <span class="suffix">%</span>
-              <input type="number" id="asset-eur-${i}" min="0" step="1" value="${escapeHtml(r.eur)}" placeholder="EUR" data-group="asset-eur" data-index="${i}" style="margin-left:var(--space-sm)">
+              <input type="number" id="asset-eur-${i}" min="0" step="1" value="${escapeHtml(r.eur)}" placeholder="EUR" data-group="asset-eur" data-index="${i}" data-style="margin-left:var(--space-sm)">
             </div>
           `).join('')}
         </div>
@@ -84,7 +84,7 @@ export async function mount(root) {
       <div id="sector-section"></div>
       <div id="geo-section"></div>
       <div id="industry-section"></div>
-      <div class="actions-row" style="margin-top:var(--space-md)">
+      <div class="actions-row" data-style="margin-top:var(--space-md)">
         <button class="btn btn-primary" id="save-allocation">Save</button>
       </div>
     </section>

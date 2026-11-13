@@ -23,7 +23,7 @@ export function renderHeatmap(container, matrix, labels) {
       const v = matrix[rowLabel]?.[colLabel] ?? (rowLabel === colLabel ? 1 : null);
       const alpha = v == null ? 0 : Math.max(0, Math.min(1, v));
       const text = v != null ? v.toFixed(2) : '—';
-      return `<td style="background: rgba(0,122,204,${alpha})" title="${escapeHtml(rowLabel)} × ${escapeHtml(colLabel)}: ${text}">${text}</td>`;
+      return `<td data-style="background: rgba(0,122,204,${alpha})" title="${escapeHtml(rowLabel)} × ${escapeHtml(colLabel)}: ${text}">${text}</td>`;
     }).join('');
     const tr = document.createElement('tr');
     tr.innerHTML = `<th>${escapeHtml(rowLabel)}</th>${cells}`;

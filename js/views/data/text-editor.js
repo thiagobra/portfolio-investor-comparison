@@ -20,7 +20,7 @@ export async function mountTextEditor(container, { path, title, hint, sources })
       ${!exists ? '<div class="warning-banner">⚠️ This file doesn\'t exist yet — saving will create it.</div>' : ''}
       <div class="card">
         <textarea class="editor-textarea" spellcheck="false">${escapeHtml(content)}</textarea>
-        <div class="actions-row" style="margin-top:var(--space-md)">
+        <div class="actions-row" data-style="margin-top:var(--space-md)">
           <button class="btn btn-primary btn-save">Save</button>
         </div>
         ${sources?.length ? `<p class="editor-sources">Source: ${sources.map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.label)}</a>`).join(' · ')}</p>` : ''}

@@ -13,7 +13,7 @@ diffs this against the real directory tree. Grouped by directory.
 
 ## Root
 
-- `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1.
+- `serve.py` — stdlib HTTP entrypoint; static files + wires `server/routes_*`. Bound to 127.0.0.1. `_guard()` 403s a foreign Host/Origin/Sec-Fetch-Site (DNS rebinding, cross-site); `end_headers()` adds CSP, nosniff and no-referrer to every response.
 - `start.bat` — Windows double-click launcher: HTTP-probes 8420, starts `serve.py` minimized only if nothing answers, waits, opens the browser.
 - `index.html` — thin shell (~30 lines): `<nav id="menubar">` + `<div id="view-root">`, loads `js/app.js`.
 
@@ -82,6 +82,7 @@ hard cap; every other file was checked in task 15's audit and is within it.
 - `js/lib/classification.js` — loads `private/classification.md` via `/api/files` into a `Map<symbol, {sector,industry,region,country,currency,assetClass}>`. `loadClassification()` (resolves to the Map) · `getClassification(symbol)`.
 - `js/lib/risk-reference.js` — loads the sector correlation matrix and volatility table `js/analytics/risk.js`'s `portfolioVolatility()` needs. `loadSectorCorrelations()` · `loadSectorVolatility()`.
 - `js/lib/history-reference.js` — loads `data/history.md` into the episode list the What-if historical matcher uses. `loadHistoryEpisodes()`.
+- `js/lib/inline-style.js` — CSP bridge: `serve.py` sends `style-src 'self'`, which blocks `style="…"` attributes in innerHTML templates. Templates write `data-style="…"`; `initInlineStyles()` (a MutationObserver started first thing in `js/app.js`) copies each declaration onto the element via CSSOM, never overwriting a property the code already set.
 - `js/lib/escape.js` — `escapeHtml(str)`, applied at every point CSV/import/file-derived text (symbol, name, exchange, label, host, model, file content) gets interpolated into an `innerHTML` template.
 - `js/lib/verdict.js` — single source of truth turning a raw metric into `{tone, label, sentence}` against a named threshold table in `BANDS` (hhi/effectiveN/top10Weight/volatility/beta/maxDrawdown). `verdict(value, metricKey)`. So Overview/Risk/What-if can never disagree about what a number means.
 - `js/lib/metrics.js` — loads `private/metrics.md` (mirrors `classification.js`'s cached-fetch pattern) into `Map<symbol, {roe,debtEquity,profitMargin,revGrowth,expenseRatio,maxDrawdown,updated}>`. `loadMetrics()` · `getMetrics(symbol)` · `isStale(entry)` (missing or >90 days old).

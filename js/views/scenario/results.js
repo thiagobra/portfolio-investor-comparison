@@ -63,7 +63,7 @@ export function renderResults(container, ctx) {
         ${metricCard('Portfolio volatility (after)', after.volatility, fmtVol, after.volatility != null ? verdict(after.volatility, 'volatility') : { tone: 'neutral', sentence: 'Not enough classified sectors to estimate.' })}
         ${metricCard('Weighted beta (after)', after.beta, (v) => fmtNum(v, 2), after.beta != null ? verdict(after.beta, 'beta') : { tone: 'neutral', sentence: 'No beta data on the resulting positions.' })}
       </div>
-      <p class="section-hint" style="margin-top:var(--space-sm)">
+      <p class="section-hint" data-style="margin-top:var(--space-sm)">
         Volatility before: ${fmtVol(before.volatility)} · Weighted beta before: ${fmtNum(before.beta, 2)}
         ${unclassifiedAfter > 0 ? ` · ${unclassifiedAfter.toFixed(0)}% unclassified weight excluded from volatility (Data → Ticker classification)` : ''}
       </p>

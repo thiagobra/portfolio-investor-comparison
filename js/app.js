@@ -4,7 +4,7 @@
  *           global CSV import controller.
  * @reads    @js/menubar.js @js/router.js @js/import-controller.js
  *           @js/appbar-status.js @js/shortcuts.js @js/palette.js
- *           @js/feedback-fab.js @js/backup.js
+ *           @js/feedback-fab.js @js/backup.js @js/lib/inline-style.js
  * @seealso  @docs/MAP.md
  */
 
@@ -16,7 +16,9 @@ import { initShortcuts } from './shortcuts.js';
 import { initPalette } from './palette.js';
 import { initFeedbackFab } from './feedback-fab.js';
 import { initBackup } from './backup.js';
+import { initInlineStyles } from './lib/inline-style.js';
 
+initInlineStyles(); // before anything renders a data-style template
 initMenubar(document.getElementById('menubar'));
 startRouter(document.getElementById('view-root'));
 initImportController();

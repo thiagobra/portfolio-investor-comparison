@@ -83,7 +83,7 @@ export async function mount(root) {
         <span class="stale-flag">*</span> marks a row missing or older than 90 days. Nothing here is fetched automatically.
       </p>
       <div id="table-container"></div>
-      <div class="actions-row" style="margin-top:var(--space-md)">
+      <div class="actions-row" data-style="margin-top:var(--space-md)">
         <button class="btn btn-primary" id="save-metrics">Save</button>
       </div>
     </section>

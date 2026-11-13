@@ -76,11 +76,11 @@ export function renderHistoryPanel(container, ctx) {
       ${matches.length
         ? `<div class="stat-grid">${cards}</div>`
         : '<div class="card"><p class="section-hint">No historical concentration analogue triggered — this scenario stays reasonably spread out. You can still ask the model what it thinks you are missing.</p></div>'}
-      <div class="actions-row" style="margin-top:var(--space-md)">
+      <div class="actions-row" data-style="margin-top:var(--space-md)">
         <button class="btn btn-secondary" id="ask-history">🔍 What am I not seeing?</button>
       </div>
       <p class="section-hint" id="history-status">&nbsp;</p>
-      <pre class="editor-textarea" id="history-answer" style="white-space:pre-wrap;display:none"></pre>
+      <pre class="editor-textarea" id="history-answer" data-style="white-space:pre-wrap;display:none"></pre>
     </section>
   `;
 

@@ -75,7 +75,7 @@ export async function mount(root) {
         between the two sectors. Feeds the portfolio volatility figure above via your
         sector weights (see <strong>Data → Ticker classification</strong>).
       </p>
-      <div class="card" style="overflow-x:auto" id="correlation-heatmap"></div>
+      <div class="card" data-style="overflow-x:auto" id="correlation-heatmap"></div>
     </section>
   `;
 

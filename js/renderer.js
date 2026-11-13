@@ -39,14 +39,14 @@ export function renderAssetComparison(container, userAllocation, investorAllocat
         <div class="bar-line">
           <span class="tag">You</span>
           <div class="bar-track">
-            <div class="bar-fill user" style="width: ${userVal}%"></div>
+            <div class="bar-fill user" data-style="width: ${userVal}%"></div>
           </div>
           <span class="value">${Math.round(userVal)}%</span>
         </div>
         <div class="bar-line">
           <span class="tag">${esc(getInitials(investorName))}</span>
           <div class="bar-track">
-            <div class="bar-fill investor" style="width: ${investorVal}%"></div>
+            <div class="bar-fill investor" data-style="width: ${investorVal}%"></div>
           </div>
           <span class="value">${Math.round(investorVal)}%</span>
         </div>
@@ -84,14 +84,14 @@ export function renderSectorComparison(container, userSectors, investorSectors, 
         <div class="bar-line">
           <span class="tag">You</span>
           <div class="bar-track">
-            <div class="bar-fill user" style="width: ${userVal}%"></div>
+            <div class="bar-fill user" data-style="width: ${userVal}%"></div>
           </div>
           <span class="value">${Math.round(userVal)}%</span>
         </div>
         <div class="bar-line">
           <span class="tag">${esc(getInitials(investorName))}</span>
           <div class="bar-track">
-            <div class="bar-fill investor" style="width: ${investorVal}%"></div>
+            <div class="bar-fill investor" data-style="width: ${investorVal}%"></div>
           </div>
           <span class="value">${Math.round(investorVal)}%</span>
         </div>
@@ -123,7 +123,7 @@ function buildGeoStack(geoData) {
     const item = document.createElement('div');
     item.className = 'geo-legend-item';
     item.innerHTML = `
-      <span class="geo-dot" style="background: ${GEO_COLORS[region] || 'var(--text-muted)'}"></span>
+      <span class="geo-dot" data-style="background: ${GEO_COLORS[region] || 'var(--text-muted)'}"></span>
       ${esc(region)} ${Math.round(pct)}%
     `;
     legend.appendChild(item);
@@ -182,7 +182,7 @@ export function renderSectorDrilldown(container, sectorData) {
         <span class="sector-pct">${Math.round(pct)}%</span>
       </div>
       <div class="sector-bar-track">
-        <div class="sector-bar-fill" style="width: ${pct}%; background: ${color}"></div>
+        <div class="sector-bar-fill" data-style="width: ${pct}%; background: ${color}"></div>
       </div>
       ${industries.length > 0 ? `
         <div class="sector-industries">
@@ -275,14 +275,14 @@ export function renderIndustryAllocation(container, investorIndustries, userIndu
         <div class="bar-line">
           <span class="tag">You</span>
           <div class="bar-track">
-            <div class="bar-fill user" style="width: ${userVal}%"></div>
+            <div class="bar-fill user" data-style="width: ${userVal}%"></div>
           </div>
           <span class="value">${Math.round(userVal)}%</span>
         </div>
         <div class="bar-line">
           <span class="tag">${esc(getInitials(investorName))}</span>
           <div class="bar-track">
-            <div class="bar-fill investor" style="width: ${investorVal}%"></div>
+            <div class="bar-fill investor" data-style="width: ${investorVal}%"></div>
           </div>
           <span class="value">${Math.round(investorVal)}%</span>
         </div>
@@ -306,7 +306,7 @@ function buildIndustryList(industries) {
         <span class="sector-pct">${Math.round(pct)}%</span>
       </div>
       <div class="sector-bar-track">
-        <div class="sector-bar-fill" style="width: ${pct}%; background: var(--accent)"></div>
+        <div class="sector-bar-fill" data-style="width: ${pct}%; background: var(--accent)"></div>
       </div>
     `;
     wrap.appendChild(row);

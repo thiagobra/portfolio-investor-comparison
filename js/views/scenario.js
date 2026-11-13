@@ -50,7 +50,7 @@ export async function mount(root) {
           Move a slider to sell part of that holding. 50% on AAPL means you sell half your AAPL —
           the other half stays. 100% closes the position entirely.
         </p>
-        <div class="sell-list" id="sell-list" style="max-height:260px;overflow-y:auto">
+        <div class="sell-list" id="sell-list" data-style="max-height:260px;overflow-y:auto">
           ${positions.map((p) => `
             <div class="sell-row" data-symbol-row="${escapeHtml(p.symbol)}">
               <span class="sell-row-label">${escapeHtml(p.symbol)} <span class="section-hint">(${fmtNum(p.weight, 1)}% of portfolio)</span></span>
@@ -59,7 +59,7 @@ export async function mount(root) {
             </div>
           `).join('')}
         </div>
-        <div class="grid-2" style="margin-top:var(--space-md)">
+        <div class="grid-2" data-style="margin-top:var(--space-md)">
           <div class="form-field">
             <label for="buy-target">Buy target (ticker or sector)</label>
             <input type="text" class="form-select" id="buy-target" list="sector-options" placeholder="e.g. NVDA or Information Technology">
@@ -76,10 +76,10 @@ export async function mount(root) {
             </p>
           </div>
         </div>
-        <p class="section-hint" style="margin-top:var(--space-sm)">
+        <p class="section-hint" data-style="margin-top:var(--space-sm)">
           This is a simulation of portfolio weights only — no live prices, no fees, no tax.
         </p>
-        <div class="actions-row" style="margin-top:var(--space-md)">
+        <div class="actions-row" data-style="margin-top:var(--space-md)">
           <button class="btn btn-primary" id="run-scenario">Run scenario</button>
           <button class="btn btn-secondary" id="save-scenario">Save scenario…</button>
         </div>
