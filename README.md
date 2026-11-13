@@ -1,152 +1,107 @@
-# Portfolio Investor Comparison
+<div align="center">
 
-> A local portfolio workstation that tells you what your numbers *mean* — and what they hide.
+<img src="docs/assets/banner.svg" alt="Portfolio Workstation: your blind spots, in plain sight" width="100%">
 
-## Running Locally
+<br>
 
-The app ships its own stdlib server (static files + the `/api/*` endpoints — a plain
-static server is not enough, CSV import and the LM Studio proxy need it):
+![license](https://img.shields.io/badge/license-MIT-1f883d)
+![dependencies](https://img.shields.io/badge/dependencies-zero-1f883d)
+![python](https://img.shields.io/badge/python-stdlib%20only-0969da)
+![privacy](https://img.shields.io/badge/privacy-100%25%20local-8250df)
+![AI](https://img.shields.io/badge/AI-LM%20Studio-bf3989)
 
-```bash
-python serve.py
-```
+[Features](#-features) · [Quick start](#-quick-start) · [How it compares](#-how-it-compares) · [FAQ](#-faq)
 
-Then open `http://127.0.0.1:8420`.
+<br>
 
-On Windows, double-click `start.bat` instead: it starts the server in a minimized window
-(only if it isn't already running) and opens the app in your browser. Close that window to stop it.
+<img src="docs/assets/hero.png" alt="What-if results: historical episodes that match the simulated portfolio" width="100%">
 
-To use another port (e.g. if 8420 is taken):
+<sub>Shift 30% into tech and the app shows you who made that bet before, and how it ended. (Demo data, invented companies.)</sub>
+
+</div>
+
+## 💡 Why
+
+Tracker apps tell you **what you hold**. This one tells you **what you're not seeing**:
+
+- 🔍 **Blind spots:** concentration, correlation and currency exposure no broker screen puts in front of you.
+- 🧪 **Untested assumptions:** "bonds are the safe half", "defensive sectors don't crash", "I know my home market".
+- 📜 **Real history, not abstract risk:** go all-in on tech and it tells you the Nasdaq fell **78%** from March 2000 and took **~15 years** to recover.
+- 🗣️ **Plain language:** every number comes with a one-line verdict on what it means.
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%"><img src="docs/assets/dashboard.png" alt="Dashboard"><br><b>Dashboard:</b> total value, P/L, currency split, top movers.</td>
+<td width="50%"><img src="docs/assets/risk.png" alt="Risk"><br><b>Risk & diversification:</b> volatility, beta, concentration, sector correlation heatmap.</td>
+</tr>
+<tr>
+<td><img src="docs/assets/scenario.png" alt="What-if builder"><br><b>What-if builder:</b> sell, buy a sector or ticker, see risk recomputed and matched against real crashes.</td>
+<td><img src="docs/assets/valuation.png" alt="Valuation"><br><b>Valuation:</b> weighted P/E, dividend yield, market-cap tilt.</td>
+</tr>
+</table>
+
+Also inside: momentum ratings, closed positions, per-lot CAGR, progression across exports, ticker classification, a comparison with Buffett, Dalio, Burry and Lynch, a **local AI advisor** (LM Studio) that interprets your figures but is forbidden to invent new ones, plus `Ctrl K` command palette and keyboard shortcuts.
+
+## 🚀 Quick start
+
+1. **Get it:** `git clone https://github.com/thiagobra/portfolio-investor-comparison.git`
+2. **Run it:** `python serve.py` (or double-click `start.bat` on Windows), then open <http://127.0.0.1:8420>
+3. **Load your data:** File → *Import Investing.com CSV…* ([format reference](docs/csv-format.md))
+
+No install step: just Python 3, standard library only.
+
+<details>
+<summary>Use another port</summary>
 
 ```bash
 PORT=9000 python serve.py          # macOS / Linux
 $env:PORT=9000; python serve.py    # Windows PowerShell
 ```
+</details>
 
-## Why this exists
+## ⚖️ How it compares
 
-Getquin and Investing.com already do the tracking part well — holdings, P/L, sector splits, and on
-their paid tiers an AI that comments on what you own. What none of them do is tell you **what you
-are not looking at**, and their analytics stop short in three specific places:
+| | This app | Getquin | InvestingPro |
+|---|:---:|:---:|:---:|
+| Tracks holdings and P/L | ✅ | ✅ | ✅ |
+| Portfolio-level volatility, beta, correlation | ✅ | ❌ | ❌ |
+| Free-form what-if with risk recomputed | ✅ | ❌ | ❌ |
+| Matches your bet against real historical crashes | ✅ | ❌ | ❌ |
+| AI runs on your own PC | ✅ | ❌ | ❌ |
+| Free and open source | ✅ | ❌ | ❌ |
 
-- no portfolio-level **volatility, beta or cross-holding correlation** — only per-position data;
-- no **arbitrary what-if simulation** — Getquin's scenarios are retirement projections, not "sell
-  half of everything and go all-in on tech, now recompute my risk";
-- no **historical analogue** — neither ever tells you that the bet you are about to make has been
-  made before, and how it ended.
+## ❓ FAQ
 
-This app is built for that second job — the overview of the possibilities and scenarios you might be
-missing:
+<details>
+<summary><b>Does my data leave my computer?</b></summary>
 
-- **Blind spots** — concentration, correlation and currency exposure that no single screen in a
-  broker app puts in front of you.
-- **Untested assumptions** — the belief baked into an allocation ("bonds are the safe half",
-  "defensive sectors don't crash", "my home market is the one I understand").
-- **Preconception and prejudice** — familiarity bias toward your own country, your employer's
-  sector, or the position that already worked.
-- **Scenarios you never considered** — the What-if builder does not just recompute your risk
-  metrics; it holds your simulated portfolio up against real historical episodes. Sell everything
-  into tech and it will tell you, with figures, that the Nasdaq Composite fell **78%** peak-to-trough
-  from March 2000 and took roughly **15 years** to make a new high.
+No. The server binds to `127.0.0.1`, your files live in the gitignored `private/` folder, and the AI advisor talks only to LM Studio on your own machine.
+</details>
 
-Every number on every screen carries a plain-language verdict. Historical figures come from a
-committed, editable reference file (`data/history.md`) — never from a model. A local LLM (LM Studio,
-nothing leaves the machine) is used only to *interpret* those figures and name the blind spots, and
-is explicitly forbidden from inventing new ones.
+<details>
+<summary><b>Do I need the AI part?</b></summary>
 
+No. Every screen works without it. [LM Studio](https://lmstudio.ai) only adds the advisor chat and the "What am I not seeing?" reading.
+</details>
 
-## What It Does
+<details>
+<summary><b>Where do the historical figures come from?</b></summary>
 
-You enter your portfolio percentages across 5 asset classes, pick an investor, and instantly see:
+From [`data/history.md`](data/history.md), a committed, editable reference file, matched by plain code, never generated by a model. Sources for the other reference data are in [`docs/data-sources.md`](docs/data-sources.md).
+</details>
 
-- **Similarity Score** -- how closely your allocation matches theirs
-- **Side-by-side bars** -- your percentages vs. the investor's
-- **Geographic breakdown** -- where the investor is allocated globally
-- **Sector drilldown** -- their equity split by sector with key industries
-- **Industry allocation** -- top industries breakdown with optional user comparison
-- **Actionable suggestions** -- specific tips to align your portfolio
-- **Investment philosophy** -- their core principles and style
-- **Portfolio snapshots** -- save and restore past portfolios from browser storage
+<details>
+<summary><b>How do I add an investor to Compare?</b></summary>
 
-## How It Works
+Copy an existing `data/*.md` investor file, add its ID to `INVESTOR_FILES` in `js/investors-loader.js`, and add an `investor-card` button in `index.html`.
+</details>
 
-1. **Pick an investor** -- click one of the four cards at the top
-2. **Enter your allocation** -- type percentages for each asset class (must total 100%)
-3. **See results** -- comparison renders automatically when both are ready
+## 🤝 Contributing
 
-You can also upload a CSV file instead of typing manually. A sample CSV is provided.
+Got an idea? Use the 💡 button in the app: it opens a prefilled GitHub issue. Developers: start with [`docs/MAP.md`](docs/MAP.md) (every module, one line each) and [`docs/metrics.md`](docs/metrics.md) (every formula).
 
-### Advanced Mode
+## 📄 License
 
-Toggle **Advanced Mode** to unlock optional deeper analysis:
-
-- **Sector breakdown** — split your equities across 7 sectors and get a second similarity score
-- **Geographic allocation** — enter your regional exposure and compare it to the investor's
-- **Industry allocation** — break down your holdings into 11 industries for a granular match
-
-All three advanced inputs are optional; leave any blank to see only the investor's data.
-
-### Got a suggestion?
-
-Every page has an in-app suggestion box at the bottom. Type a title and description, click submit, and it opens a prefilled GitHub issue tagged `user-suggestion` — no account setup dance.
-
-## Asset Classes
-
-| Class | Example |
-|---|---|
-| Equities (stocks) | Individual stocks, ETFs |
-| Cash and Savings | Savings accounts, money market |
-| Fixed income (bonds) | Government & corporate bonds |
-| Crypto | Bitcoin, Ethereum, etc. |
-| Gold | Physical gold, gold ETFs |
-
-## Available Investors
-
-| Investor | Style |
-|---|---|
-| **Warren Buffett** | Value investing, concentrated long-term bets |
-| **Ray Dalio** | All-Weather, risk-balanced diversification |
-| **Michael Burry** | Contrarian, asymmetric bets with margin of safety |
-| **Peter Lynch** | GARP, invest in what you know, hunt for tenbaggers |
-
-Investor data lives in editable Markdown files under `data/`. You can add or modify investors by following the same format.
-
-## Tech Stack
-
-- **Zero dependencies** -- no npm, no bundler, no framework
-- **ES Modules** -- native `import`/`export`
-- **CSS Custom Properties** -- VS Code dark theme
-- **Markdown as data** -- investor profiles parsed at runtime via `fetch()`
-
-## Project Structure
-
-```
-finantial-planner/
-  index.html              -- Single page app shell
-  css/
-    variables.css         -- Theme tokens (colors, spacing, typography)
-    layout.css            -- Grid layout, responsive breakpoints
-    components.css        -- Cards, bars, forms, buttons
-  js/
-    app.js                -- Entry point, event listeners, orchestration
-    parser.js             -- CSV parsing, form read/write
-    engine.js             -- Deviation calculation, suggestion generation
-    renderer.js           -- All DOM rendering
-    investors-loader.js   -- Fetch + parse investor Markdown files
-  data/
-    warren-buffett.md     -- Buffett profile + allocations
-    ray-dalio.md          -- Dalio profile + allocations
-    michael-burry.md      -- Burry profile + allocations
-    peter-lynch.md        -- Lynch profile + allocations
-  sample-portfolio.csv    -- Example CSV for upload testing
-```
-
-## Adding a New Investor
-
-1. Create `data/your-investor.md` following the format in existing files
-2. Add the investor ID to `INVESTOR_FILES` in `js/investors-loader.js`
-3. Add a new `<button class="investor-card">` in `index.html`
-
-## License
-
-MIT
+[MIT](LICENSE)
